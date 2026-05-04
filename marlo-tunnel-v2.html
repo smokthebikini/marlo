@@ -1106,7 +1106,11 @@ function showRapport() {
 // ── RESTART ──
 function restart() {
   Object.keys(DATA).forEach(k => DATA[k] = null);
-  // Reset loading steps
+  // Lire paramètres URL
+const urlParams = new URLSearchParams(window.location.search);
+const prixParam = urlParams.get('prix');
+if (prixParam) { const inp = document.getElementById('s4_input'); if (inp) inp.value = prixParam; }
+// Reset loading steps
   ['ls1','ls2','ls3','ls4','ls5'].forEach((id, i) => {
     const el = document.getElementById(id);
     el.classList.remove('active', 'done');
