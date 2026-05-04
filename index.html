@@ -4,720 +4,1078 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light only">
-<title>Marlo — Analysez votre annonce en 30 secondes</title>
+<title>Marlo — Votre copilote immobilier</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --ink: #111110;
-  --ink-2: #3d3d3a;
-  --muted: #787774;
-  --subtle: #acaba8;
-  --border: #e8e8e4;
-  --bg: #ffffff;
-  --bg-off: #fafaf8;
-  --accent: #2020e8;
-  --accent-light: #eaeaff;
-  --green: #0f7b6c;
-  --green-bg: #edfaf6;
-  --red: #c7372f;
-  --red-bg: #fff5f5;
-  --amber: #b35309;
-  --amber-bg: #fef9ee;
-  --radius: 8px;
-  --radius-lg: 12px;
-  --shadow: 0 2px 12px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06);
+  --ink:        #1a1a2e;
+  --ink-2:      #2d2d44;
+  --muted:      #6b6b80;
+  --subtle:     #a8a8b8;
+  --border:     #e4e4ec;
+  --bg:         #ffffff;
+  --bg-off:     #f8f8ff;
+  --bg-warm:    #f2f2f8;
+  --accent:     #4361ee;
+  --accent-2:   #3451d1;
+  --accent-light: #e8eaff;
+  --green:      #0a7c6a;
+  --green-bg:   #e6f7f4;
+  --red:        #d63031;
+  --red-bg:     #fff2f2;
+  --amber:      #c0640a;
+  --amber-bg:   #fff4e6;
+  --radius:     10px;
+  --radius-lg:  14px;
+  --shadow-sm:  0 1px 3px rgba(26,26,46,0.08), 0 0 0 1px rgba(26,26,46,0.04);
+  --shadow-md:  0 4px 16px rgba(26,26,46,0.10), 0 0 0 1px rgba(26,26,46,0.05);
+  --shadow-lg:  0 8px 32px rgba(26,26,46,0.12), 0 0 0 1px rgba(26,26,46,0.06);
 }
 
 html { color-scheme: light only; background: #fff !important; }
 @media (prefers-color-scheme: dark) {
-  html, body { background: #ffffff !important; color: #111110 !important; }
+  html, body { background: #ffffff !important; color: #1a1a2e !important; }
 }
 
 body {
   font-family: 'Inter', -apple-system, sans-serif;
-  background: #fff;
+  background: var(--bg);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
-  letter-spacing: -0.003em;
+  overflow-x: hidden;
   line-height: 1.5;
 }
 
-/* ── NAV ── */
+/* ─── TOGGLE MODE ─── */
+.mode-toggle {
+  display: flex; align-items: center;
+  background: var(--bg-warm); border: 1.5px solid var(--border);
+  border-radius: 99px; padding: 4px; gap: 2px;
+  margin-bottom: 28px; width: fit-content;
+}
+.mode-btn {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px; font-weight: 700;
+  padding: 8px 18px; border-radius: 99px;
+  border: none; cursor: pointer;
+  transition: all 0.2s;
+  background: transparent; color: var(--muted);
+  letter-spacing: -0.01em; white-space: nowrap;
+}
+.mode-btn.active { background: var(--ink); color: #fff; box-shadow: 0 2px 8px rgba(26,26,46,0.2); }
+.mode-btn.active.invest { background: #16a34a; }
+
+/* ─── RAPPORT INVESTISSEUR ─── */
+.invest-bloc { border-top: 1.5px solid #d1fae5; background: linear-gradient(135deg,#f0fdf4,#dcfce7); }
+.invest-header {
+  padding: 12px 18px; display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid #bbf7d0;
+}
+.invest-badge {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  background: #16a34a; color: #fff; padding: 3px 8px; border-radius: 4px;
+}
+.invest-header-title { font-size: 12px; font-weight: 700; color: #15803d; }
+.invest-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.invest-kpi { padding: 14px 16px; border-right: 1px solid #bbf7d0; border-bottom: 1px solid #bbf7d0; }
+.invest-kpi:nth-child(2n) { border-right: none; }
+.invest-kpi:nth-last-child(-n+2) { border-bottom: none; }
+.invest-kpi-label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #15803d; opacity: 0.7; margin-bottom: 4px; }
+.invest-kpi-val { font-family: 'Geist Mono', monospace; font-size: 18px; font-weight: 500; color: #14532d; line-height: 1; }
+.invest-kpi-sub { font-size: 11px; color: #16a34a; margin-top: 3px; }
+.invest-verdict { padding: 14px 18px; border-top: 1px solid #bbf7d0; display: flex; align-items: flex-start; gap: 10px; }
+.invest-verdict-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.invest-verdict-text h4 { font-size: 14px; font-weight: 700; color: #14532d; margin-bottom: 2px; }
+.invest-verdict-text p { font-size: 12px; color: #15803d; line-height: 1.5; }
+.invest-signals { padding: 0 18px 14px; display: flex; flex-direction: column; gap: 6px; }
+.invest-signal { font-size: 13px; color: #15803d; display: flex; gap: 8px; line-height: 1.5; }
+
+/* ─── INSCRIPTION POST-RAPPORT ─── */
+.r-signup {
+  border-top: 1px solid var(--border);
+  padding: 20px;
+  background: var(--bg-off);
+}
+.r-signup-content {
+  display: flex; align-items: flex-start; gap: 12px;
+  margin-bottom: 16px;
+}
+.r-signup-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+.r-signup-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 700; letter-spacing: -0.02em;
+  color: var(--ink); margin-bottom: 4px;
+}
+.r-signup-sub { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+.r-signup-form { display: flex; flex-direction: column; gap: 8px; }
+.r-signup-form input {
+  width: 100%; border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 11px 14px;
+  font-family: 'Inter', sans-serif; font-size: 14px; color: var(--ink);
+  background: #fff; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.r-signup-form input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(67,97,238,0.1);
+}
+.r-signup-form input::placeholder { color: var(--subtle); }
+.r-signup-btn {
+  width: 100%; background: var(--accent); color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 700; letter-spacing: -0.01em;
+  padding: 13px; border-radius: var(--radius);
+  border: none; cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.r-signup-btn:hover { background: var(--accent-2); }
+.r-signup-btn:active { transform: scale(0.98); }
+.r-signup-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.r-signup-legal { font-size: 11px; color: var(--subtle); text-align: center; }
+
+/* Succès */
+.r-signup-success {
+  border-top: 1px solid #bbf7d0;
+  padding: 24px 20px;
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  text-align: center;
+}
+.r-signup-success-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: #16a34a; color: #fff;
+  font-size: 20px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px;
+}
+.r-signup-success-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px; font-weight: 800; letter-spacing: -0.02em;
+  color: #14532d; margin-bottom: 6px;
+}
+.r-signup-success-sub { font-size: 13px; color: #15803d; margin-bottom: 16px; line-height: 1.5; }
+.r-signup-btn-outline {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #fff; color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px; font-weight: 700;
+  padding: 10px 20px; border-radius: var(--radius);
+  border: 1.5px solid var(--ink); cursor: pointer;
+  transition: background 0.15s;
+}
+.r-signup-btn-outline:hover { background: var(--ink); color: #fff; }
+
+/* ─── NAV ─── */
 nav {
-  position: fixed; top: 0; left: 0; right: 0;
-  height: 56px;
+  position: fixed; top: 0; left: 0; right: 0; height: 56px;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 32px;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(12px);
+  padding: 0 24px;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   z-index: 100;
 }
-.nav-logo { font-size: 17px; font-weight: 700; letter-spacing: -0.04em; color: var(--ink); }
-.nav-logo span { color: var(--accent); }
+.logo {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 20px; font-weight: 800;
+  letter-spacing: -0.04em; color: var(--ink);
+  text-decoration: none;
+}
+.logo span { color: var(--accent); }
 .nav-pill {
-  font-size: 12px; font-weight: 600; letter-spacing: 0.01em;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
+  text-transform: uppercase;
   background: var(--accent-light); color: var(--accent);
-  padding: 4px 10px; border-radius: 99px;
-}
-
-/* ── HERO ── */
-.hero {
-  padding: 140px 32px 80px;
-  max-width: 720px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
-  color: var(--accent);
-  background: var(--accent-light);
   padding: 5px 12px; border-radius: 99px;
-  margin-bottom: 28px;
 }
-.hero-badge::before { content: '●'; font-size: 8px; animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ─── HERO ─── */
+.hero {
+  padding: 56px 0 0;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+}
+
+.hero-content {
+  flex: 1;
+  padding: 52px 24px 40px;
+  display: flex; flex-direction: column;
+  justify-content: center;
+  max-width: 640px; margin: 0 auto; width: 100%;
+  animation: fadeUp 0.5s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 20px;
+}
+.hero-eyebrow::before { content: ''; width: 18px; height: 1.5px; background: var(--muted); }
 
 .hero-title {
-  font-size: clamp(36px, 6vw, 58px);
-  font-weight: 900;
-  line-height: 1.05;
-  letter-spacing: -0.035em;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(36px, 8vw, 64px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
   color: var(--ink);
   margin-bottom: 20px;
 }
-.hero-title em { font-style: normal; color: var(--accent); }
+.hero-title .accent { color: var(--accent); }
 
 .hero-sub {
-  font-size: 18px; color: var(--ink-2); line-height: 1.6;
-  max-width: 540px; margin: 0 auto 40px;
+  font-size: 16px; line-height: 1.65;
+  color: var(--muted);
+  margin-bottom: 36px;
+  max-width: 440px;
 }
 
-/* ── INPUT ZONE ── */
+/* Input */
+.input-wrap { margin-bottom: 14px; }
 .input-zone {
-  background: var(--bg-off);
-  border: 1.5px solid var(--border);
+  display: flex;
+  border: 1.5px solid var(--ink);
   border-radius: var(--radius-lg);
-  padding: 6px 6px 6px 16px;
-  display: flex; align-items: center; gap: 8px;
-  max-width: 580px; margin: 0 auto 16px;
+  overflow: hidden;
+  background: #fff;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .input-zone:focus-within {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(32,32,232,0.1);
-  background: #fff;
+  box-shadow: 0 0 0 4px rgba(67,97,238,0.12);
 }
 .input-zone input {
   flex: 1; border: none; background: transparent;
   font-family: 'Geist Mono', monospace; font-size: 13px; color: var(--ink);
-  outline: none; padding: 8px 0;
+  padding: 14px 18px; outline: none; min-width: 0;
 }
 .input-zone input::placeholder { color: var(--subtle); }
 .btn-analyze {
-  background: var(--accent); color: #fff;
-  font-size: 14px; font-weight: 600;
-  padding: 10px 20px; border-radius: 6px;
-  border: none; cursor: pointer;
+  background: var(--ink); color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 700; letter-spacing: -0.01em;
+  padding: 0 22px; border: none; cursor: pointer;
+  transition: background 0.15s; flex-shrink: 0;
   white-space: nowrap;
-  transition: opacity 0.15s, transform 0.1s;
-  flex-shrink: 0;
 }
-.btn-analyze:hover { opacity: 0.88; }
-.btn-analyze:active { transform: scale(0.97); }
-.btn-analyze:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-analyze:hover { background: var(--accent); }
+.btn-analyze:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.hero-hint { font-size: 12px; color: var(--subtle); }
-.hero-hint span { color: var(--green); font-weight: 500; }
+.input-hints {
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.hint-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--subtle);
+}
+.hint-check { color: var(--green); font-weight: 700; font-size: 11px; }
 
-/* ── RAPPORT MOCK / RÉSULTAT ── */
+.error-msg {
+  font-size: 12px; color: var(--red); margin-top: 8px; display: none;
+}
+.error-msg.visible { display: block; }
+
+/* Loading */
+.loading-wrap { margin-top: 24px; display: none; max-width: 520px; }
+.loading-wrap.visible { display: block; }
+.loading-bar { height: 2px; background: var(--border); border-radius: 99px; overflow: hidden; margin-bottom: 10px; }
+.loading-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s ease; border-radius: 99px; }
+.loading-step { font-size: 12px; color: var(--muted); font-family: 'Geist Mono', monospace; }
+
+/* Rapport */
 .rapport-wrap {
-  max-width: 680px; margin: 48px auto 0;
-  opacity: 0; transform: translateY(16px);
-  transition: opacity 0.4s, transform 0.4s;
-  display: none;
+  margin-top: 28px; max-width: 520px;
+  display: none; opacity: 0; transform: translateY(10px);
+  transition: opacity 0.35s, transform 0.35s;
 }
 .rapport-wrap.visible { opacity: 1; transform: none; display: block; }
 
 .rapport-card {
   border: 1.5px solid var(--border);
   border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: #fff;
+  overflow: hidden; background: #fff;
   box-shadow: var(--shadow-lg);
 }
 
-.rapport-header {
-  padding: 20px 24px;
+.r-header {
+  padding: 16px 20px;
   border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 12px;
+  display: flex; align-items: center; gap: 14px;
 }
-.rapport-score-ring {
-  width: 56px; height: 56px; flex-shrink: 0;
-  border-radius: 50%;
+.r-score {
+  width: 52px; height: 52px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Geist Mono', monospace;
-  font-size: 18px; font-weight: 500;
+  font-family: 'Geist Mono', monospace; font-size: 17px; font-weight: 500;
+  flex-shrink: 0; border: 2px solid;
 }
-.rapport-score-ring.good { background: var(--green-bg); color: var(--green); border: 2px solid var(--green); }
-.rapport-score-ring.warn { background: var(--amber-bg); color: var(--amber); border: 2px solid var(--amber); }
-.rapport-score-ring.bad { background: var(--red-bg); color: var(--red); border: 2px solid var(--red); }
+.r-score.good { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+.r-score.warn { background: var(--amber-bg); color: var(--amber); border-color: var(--amber); }
+.r-score.bad  { background: var(--red-bg);   color: var(--red);   border-color: var(--red);   }
 
-.rapport-meta { flex: 1; }
-.rapport-meta h3 { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 2px; }
-.rapport-meta p { font-size: 13px; color: var(--muted); }
-.rapport-verdict {
-  font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 99px;
+.r-meta { flex: 1; min-width: 0; }
+.r-meta h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 700; letter-spacing: -0.02em;
+  color: var(--ink); margin-bottom: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.rapport-verdict.good { background: var(--green-bg); color: var(--green); }
-.rapport-verdict.warn { background: var(--amber-bg); color: var(--amber); }
-.rapport-verdict.bad { background: var(--red-bg); color: var(--red); }
-
-.rapport-body { padding: 0; }
-
-.rapport-section {
-  padding: 18px 24px;
-  border-bottom: 1px solid var(--border);
+.r-meta p { font-size: 12px; color: var(--muted); }
+.r-verdict {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 99px; flex-shrink: 0;
 }
-.rapport-section:last-child { border-bottom: none; }
+.r-verdict.good { background: var(--green-bg); color: var(--green); }
+.r-verdict.warn { background: var(--amber-bg); color: var(--amber); }
+.r-verdict.bad  { background: var(--red-bg);   color: var(--red);   }
 
-.rapport-section-title {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 12px;
-}
-
-.signal-list { display: flex; flex-direction: column; gap: 8px; }
-.signal-item {
-  display: flex; align-items: flex-start; gap: 10px;
-  font-size: 13.5px; line-height: 1.5; color: var(--ink-2);
-}
-.signal-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
-
-.price-compare {
+.r-prix {
   display: grid; grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
-}
-.price-box {
-  background: var(--bg-off);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px 14px;
-  text-align: center;
-}
-.price-box .label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-.price-box .val {
-  font-family: 'Geist Mono', monospace;
-  font-size: 16px; font-weight: 500; color: var(--ink);
-}
-.price-box.highlight { border-color: var(--accent); background: var(--accent-light); }
-.price-box.highlight .val { color: var(--accent); }
-
-.questions-list { display: flex; flex-direction: column; gap: 6px; }
-.question-item {
-  background: var(--bg-off); border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 10px 14px;
-  font-size: 13px; color: var(--ink-2);
-  display: flex; align-items: center; gap: 8px;
-}
-.question-item::before { content: '?'; font-weight: 700; color: var(--accent); font-size: 13px; flex-shrink: 0; }
-
-.rapport-cta {
-  padding: 20px 24px;
-  background: var(--bg-off);
-  border-top: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-}
-.rapport-cta p { font-size: 13px; color: var(--muted); }
-.rapport-cta p strong { color: var(--ink); }
-
-/* ── LOADING STATE ── */
-.loading-wrap {
-  max-width: 680px; margin: 48px auto 0;
-  display: none; text-align: center;
-}
-.loading-wrap.visible { display: block; }
-.loading-bar {
-  height: 3px; background: var(--border); border-radius: 99px;
-  overflow: hidden; margin-bottom: 16px;
-}
-.loading-fill {
-  height: 100%; background: var(--accent); border-radius: 99px;
-  width: 0%; transition: width 0.4s ease;
-}
-.loading-step { font-size: 13px; color: var(--muted); font-family: 'Geist Mono', monospace; }
-
-/* ── SOCIAL PROOF ── */
-.proof-strip {
-  max-width: 680px; margin: 48px auto 0;
-  display: flex; align-items: center; justify-content: center; gap: 32px;
-  flex-wrap: wrap;
-}
-.proof-item { display: flex; align-items: center; gap: 8px; }
-.proof-item .num {
-  font-family: 'Geist Mono', monospace; font-size: 20px; font-weight: 500; color: var(--ink);
-}
-.proof-item .label { font-size: 13px; color: var(--muted); }
-.proof-divider { width: 1px; height: 32px; background: var(--border); }
-
-/* ── HOW IT WORKS ── */
-.how-section {
-  padding: 80px 32px;
-  max-width: 720px; margin: 0 auto;
-  border-top: 1px solid var(--border);
-}
-.section-label {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 12px;
-}
-.section-title {
-  font-size: clamp(26px, 4vw, 36px); font-weight: 800;
-  letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 48px;
-}
-
-.steps { display: flex; flex-direction: column; gap: 0; }
-.step {
-  display: flex; gap: 24px; align-items: flex-start;
-  padding: 28px 0;
   border-bottom: 1px solid var(--border);
 }
-.step:last-child { border-bottom: none; }
-.step-num {
-  font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 500;
-  color: var(--accent); background: var(--accent-light);
-  width: 32px; height: 32px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; margin-top: 2px;
-}
-.step-content h4 { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; }
-.step-content p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+.r-prix-cell { padding: 12px 16px; border-right: 1px solid var(--border); }
+.r-prix-cell:last-child { border-right: none; }
+.r-prix-label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--subtle); margin-bottom: 4px; }
+.r-prix-val { font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 500; color: var(--ink); }
+.r-prix-cell.hi .r-prix-val { color: var(--accent); }
 
-/* ── RAPPORT PREVIEW STATIC ── */
-.preview-section {
-  padding: 0 32px 80px;
-  max-width: 720px; margin: 0 auto;
-}
-.preview-label {
-  font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 20px;
-  display: flex; align-items: center; gap: 8px;
-}
-.preview-label::before, .preview-label::after {
-  content: ''; flex: 1; height: 1px; background: var(--border);
-}
+.r-section { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+.r-section:last-child { border-bottom: none; }
+.r-section-title { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--subtle); margin-bottom: 10px; }
 
-/* ── CTA FOOTER ── */
-.cta-section {
-  background: var(--bg-off);
-  border-top: 1px solid var(--border);
-  padding: 80px 32px;
-  text-align: center;
-}
-.cta-title { font-size: clamp(28px, 4vw, 42px); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 16px; }
-.cta-sub { font-size: 16px; color: var(--muted); margin-bottom: 32px; }
+.r-signal { display: flex; gap: 8px; font-size: 13px; line-height: 1.5; color: var(--ink-2); margin-bottom: 6px; }
+.r-signal:last-child { margin-bottom: 0; }
 
-.btn-primary {
-  display: inline-flex; align-items: center; gap: 8px;
+.r-q { display: flex; gap: 8px; font-size: 13px; color: var(--ink-2); padding: 9px 12px; background: var(--bg-off); border-radius: 8px; margin-bottom: 6px; }
+.r-q:last-child { margin-bottom: 0; }
+.r-q-mark { color: var(--accent); font-weight: 800; flex-shrink: 0; }
+
+.r-footer {
+  padding: 14px 18px; background: var(--bg-off);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.r-footer p { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.btn-r-cta {
   background: var(--accent); color: #fff;
-  font-size: 15px; font-weight: 600;
-  padding: 14px 28px; border-radius: var(--radius);
-  border: none; cursor: pointer; text-decoration: none;
-  transition: opacity 0.15s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px; font-weight: 700;
+  padding: 9px 16px; border-radius: 8px;
+  border: none; cursor: pointer; flex-shrink: 0;
+  transition: background 0.15s;
 }
-.btn-primary:hover { opacity: 0.88; }
+.btn-r-cta:hover { background: var(--accent-2); }
 
+/* ─── STATS ─── */
+.stats-bar {
+  border-top: 1px solid var(--border);
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  animation: fadeUp 0.5s 0.1s ease both;
+}
+.stat-cell {
+  padding: 28px 24px;
+  border-right: 1px solid var(--border);
+}
+.stat-cell:last-child { border-right: none; }
+.stat-num {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 28px; font-weight: 800; letter-spacing: -0.04em;
+  color: var(--ink); line-height: 1; margin-bottom: 4px;
+}
+.stat-label { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+/* ─── SECTION PROBLÈME ─── */
+.problem-section {
+  background: var(--ink);
+  padding: 72px 24px;
+}
+.s-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.35); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.s-eyebrow::before { content: ''; width: 18px; height: 1.5px; background: currentColor; }
+
+.problem-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(28px, 6vw, 48px);
+  font-weight: 800; letter-spacing: -0.035em;
+  line-height: 1.1; color: #fff; margin-bottom: 48px;
+}
+.problem-title .dim { color: rgba(255,255,255,0.35); }
+
+.problem-items { display: flex; flex-direction: column; }
+.problem-item {
+  display: flex; gap: 20px; padding: 24px 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.problem-num {
+  font-family: 'Geist Mono', monospace; font-size: 11px;
+  color: rgba(255,255,255,0.25); flex-shrink: 0; margin-top: 2px; width: 20px;
+}
+.problem-body h4 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px; font-weight: 700; letter-spacing: -0.02em;
+  color: #fff; margin-bottom: 6px;
+}
+.problem-body p { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.6; }
+
+/* ─── SECTION COMMENT ─── */
+.how-section { padding: 72px 24px; background: var(--bg-warm); }
+.how-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(26px, 5vw, 40px);
+  font-weight: 800; letter-spacing: -0.035em;
+  color: var(--ink); margin-bottom: 48px; line-height: 1.1;
+}
+
+.steps { display: flex; flex-direction: column; }
+.step { display: flex; gap: 18px; padding: 22px 0; border-top: 1px solid var(--border); }
+.step:last-child { border-bottom: 1px solid var(--border); }
+.step-num {
+  font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500;
+  color: var(--accent); background: var(--accent-light);
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.step-body h4 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px;
+}
+.step-body p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+/* ─── EXEMPLE ─── */
+.example-section { padding: 72px 24px; background: #fff; }
+.example-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(24px, 5vw, 36px);
+  font-weight: 800; letter-spacing: -0.035em;
+  color: var(--ink); margin-bottom: 32px; line-height: 1.1;
+}
+
+/* ─── CTA FINAL ─── */
+.cta-section {
+  background: var(--accent);
+  padding: 72px 24px; text-align: center;
+}
+.cta-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(28px, 6vw, 48px);
+  font-weight: 800; letter-spacing: -0.04em;
+  color: #fff; line-height: 1.1; margin-bottom: 14px;
+}
+.cta-sub { font-size: 16px; color: rgba(255,255,255,0.7); margin-bottom: 32px; line-height: 1.6; }
+.btn-cta-main {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #fff; color: var(--accent);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px; font-weight: 800;
+  padding: 15px 32px; border-radius: var(--radius-lg);
+  border: none; cursor: pointer; text-decoration: none;
+  transition: opacity 0.15s, transform 0.1s;
+  letter-spacing: -0.02em;
+}
+.btn-cta-main:hover { opacity: 0.92; transform: translateY(-1px); }
+
+/* ─── FOOTER ─── */
 footer {
-  padding: 24px 32px;
+  padding: 20px 24px;
   border-top: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 12px;
+  flex-wrap: wrap; gap: 10px;
 }
-footer .logo { font-size: 14px; font-weight: 700; letter-spacing: -0.03em; }
-footer .logo span { color: var(--accent); }
-footer p { font-size: 12px; color: var(--subtle); }
-
-/* ── ERREUR ── */
-.error-msg {
-  font-size: 13px; color: var(--red);
-  max-width: 580px; margin: 8px auto 0;
-  display: none;
+.footer-logo {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px; font-weight: 800; letter-spacing: -0.03em; color: var(--ink);
 }
-.error-msg.visible { display: block; }
+.footer-logo span { color: var(--accent); }
+footer p { font-size: 11px; color: var(--subtle); }
 </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
-  <div class="nav-logo">mar<span>lo</span></div>
+  <a class="logo" href="#">mar<span>lo</span></a>
   <div class="nav-pill">Bêta gratuite</div>
 </nav>
 
-<!-- HERO -->
+<!-- ══ HERO ══ -->
 <section class="hero">
-  <div class="hero-badge">Nouveau · Analyseur d'annonce IA</div>
+  <div class="hero-content">
+    <!-- Toggle mode -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btnAcheteur" onclick="setMode('acheteur')">🏠 Acheteur</button>
+      <button class="mode-btn invest" id="btnInvestisseur" onclick="setMode('investisseur')">📈 Investisseur</button>
+    </div>
 
-  <h1 class="hero-title">
-    Votre annonce vaut-elle<br>
-    <em>vraiment</em> ce prix ?
-  </h1>
+    <div class="hero-eyebrow" id="heroEyebrow">Copilote immobilier IA</div>
 
-  <p class="hero-sub">
-    Collez l'URL d'une annonce SeLoger, Leboncoin ou PAP.
-    Marlo analyse le prix, les risques et vous donne les questions à poser au vendeur.
-  </p>
+    <h1 class="hero-title" id="heroTitle">
+      Ce bien vaut-il<br>
+      <span class="accent">vraiment</span><br>
+      ce prix ?
+    </h1>
 
-  <div class="input-zone" id="inputZone">
-    <input
-      type="url"
-      id="urlInput"
-      placeholder="https://www.seloger.com/annonces/..."
-      autocomplete="off"
-      spellcheck="false"
-    >
-    <button class="btn-analyze" id="btnAnalyze" onclick="lancerAnalyse()">
-      Analyser →
-    </button>
-  </div>
+    <p class="hero-sub" id="heroSub">
+      Collez l'URL d'une annonce SeLoger, Leboncoin ou PAP.
+      Marlo analyse le prix, détecte les risques et vous donne
+      les questions à poser — en 30 secondes.
+    </p>
 
-  <p class="error-msg" id="errorMsg">Veuillez coller une URL valide (seloger.com, leboncoin.fr, pap.fr…)</p>
-  <p class="hero-hint">Gratuit · Aucune inscription · <span>Résultat en 30 secondes</span></p>
-
-  <!-- Loading -->
-  <div class="loading-wrap" id="loadingWrap">
-    <div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div>
-    <p class="loading-step" id="loadingStep">Récupération de l'annonce…</p>
-  </div>
-
-  <!-- Rapport résultat IA -->
-  <div class="rapport-wrap" id="rapportWrap">
-    <div class="rapport-card">
-
-      <div class="rapport-header">
-        <div class="rapport-score-ring warn" id="scoreRing">74</div>
-        <div class="rapport-meta">
-          <h3 id="rapportTitre">—</h3>
-          <p id="rapportMeta">—</p>
-        </div>
-        <div class="rapport-verdict warn" id="rapportVerdict">À négocier</div>
+    <div class="input-wrap">
+      <div class="input-zone" id="inputZone">
+        <input
+          type="url" id="urlInput"
+          placeholder="https://www.seloger.com/annonces/..."
+          autocomplete="off" spellcheck="false"
+          onkeydown="if(event.key==='Enter') lancerAnalyse()"
+        >
+        <button class="btn-analyze" id="btnAnalyze" onclick="lancerAnalyse()">
+          Analyser →
+        </button>
       </div>
+      <p class="error-msg" id="errorMsg">URL non reconnue. Essayez SeLoger, Leboncoin, PAP ou BienIci.</p>
+    </div>
 
-      <div class="rapport-body">
+    <div class="input-hints">
+      <span class="hint-item"><span class="hint-check">✓</span> Gratuit</span>
+      <span class="hint-item"><span class="hint-check">✓</span> Aucune inscription</span>
+      <span class="hint-item"><span class="hint-check">✓</span> 30 secondes</span>
+    </div>
 
-        <div class="rapport-section">
-          <div class="rapport-section-title">Prix du marché</div>
-          <div class="price-compare" id="priceCompare">
-            <div class="price-box">
-              <div class="label">Prix annonce</div>
-              <div class="val" id="prixAnnonce">—</div>
+    <!-- Loading -->
+    <div class="loading-wrap" id="loadingWrap">
+      <div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div>
+      <p class="loading-step" id="loadingStep">Analyse en cours…</p>
+    </div>
+
+    <!-- Rapport -->
+    <div class="rapport-wrap" id="rapportWrap">
+      <div class="rapport-card">
+        <div class="r-header">
+          <div class="r-score warn" id="rScore">—</div>
+          <div class="r-meta">
+            <h3 id="rTitre">—</h3>
+            <p id="rMeta">—</p>
+          </div>
+          <div class="r-verdict warn" id="rVerdict">—</div>
+        </div>
+        <div class="r-prix" id="rPrix"></div>
+        <div class="r-section">
+          <div class="r-section-title">Signaux détectés</div>
+          <div id="rSignaux"></div>
+        </div>
+        <div class="r-section">
+          <div class="r-section-title">Questions à poser au vendeur</div>
+          <div id="rQuestions"></div>
+        </div>
+        <!-- Bloc investisseur (caché par défaut) -->
+        <div class="invest-bloc" id="investBloc" style="display:none;">
+          <div class="invest-header">
+            <span class="invest-badge">Investisseur</span>
+            <span class="invest-header-title">Analyse locative</span>
+          </div>
+          <div class="invest-kpis" id="investKpis"></div>
+          <div class="invest-signals" id="investSignals"></div>
+          <div class="invest-verdict" id="investVerdict"></div>
+        </div>
+        <!-- Flow inscription post-rapport -->
+        <div id="inscriptionBloc">
+          <!-- État 1 : CTA inscription -->
+          <div class="r-signup" id="signupCTA">
+            <div class="r-signup-content">
+              <div class="r-signup-icon">💾</div>
+              <div>
+                <div class="r-signup-title">Sauvegardez ce rapport gratuitement</div>
+                <div class="r-signup-sub">Comparez vos biens, partagez avec votre courtier, retrouvez vos analyses.</div>
+              </div>
             </div>
-            <div class="price-box">
-              <div class="label">Marché quartier</div>
-              <div class="val" id="prixMarche">—</div>
-            </div>
-            <div class="price-box highlight">
-              <div class="label">Marge négociation</div>
-              <div class="val" id="marge">—</div>
+            <div class="r-signup-form">
+              <input type="text" id="signupPrenom" placeholder="Votre prénom" autocomplete="given-name">
+              <input type="email" id="signupEmail" placeholder="Votre email" autocomplete="email">
+              <button class="r-signup-btn" onclick="soumettreInscription()">
+                Sauvegarder mon rapport →
+              </button>
+              <p class="r-signup-legal">Aucun spam. Désabonnement en 1 clic.</p>
             </div>
           </div>
-        </div>
 
-        <div class="rapport-section">
-          <div class="rapport-section-title">Signaux détectés</div>
-          <div class="signal-list" id="signalList"></div>
+          <!-- État 2 : Confirmation -->
+          <div class="r-signup-success" id="signupSuccess" style="display:none;">
+            <div class="r-signup-success-icon">✓</div>
+            <div class="r-signup-success-title">Rapport sauvegardé !</div>
+            <div class="r-signup-success-sub" id="signupSuccessSub">On vous envoie un récap par email.</div>
+            <button class="r-signup-btn-outline" onclick="simulerFinancement()">
+              Simuler mon financement →
+            </button>
+          </div>
         </div>
-
-        <div class="rapport-section">
-          <div class="rapport-section-title">Questions à poser au vendeur</div>
-          <div class="questions-list" id="questionsList"></div>
-        </div>
-
       </div>
-
-      <div class="rapport-cta">
-        <p><strong>Rapport complet disponible.</strong><br>Inscrivez-vous pour sauvegarder et comparer plusieurs biens.</p>
-        <button class="btn-primary" onclick="scrollToCTA()">Accéder gratuitement →</button>
-      </div>
-
     </div>
   </div>
 
-  <!-- Social proof -->
-  <div class="proof-strip" id="proofStrip">
-    <div class="proof-item">
-      <div class="num">2 147</div>
-      <div class="label">annonces analysées</div>
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-cell">
+      <div class="stat-num">2 147</div>
+      <div class="stat-label">annonces analysées cette semaine</div>
     </div>
-    <div class="proof-divider"></div>
-    <div class="proof-item">
-      <div class="num">18%</div>
-      <div class="label">de surestimation moyenne détectée</div>
+    <div class="stat-cell">
+      <div class="stat-num">18%</div>
+      <div class="stat-label">de surestimation moyenne détectée</div>
     </div>
-    <div class="proof-divider"></div>
-    <div class="proof-item">
-      <div class="num">8 400 €</div>
-      <div class="label">économisés en négociation en moyenne</div>
+    <div class="stat-cell">
+      <div class="stat-num">8 400€</div>
+      <div class="stat-label">économisés en négociation en moyenne</div>
     </div>
   </div>
 </section>
 
-<!-- COMMENT ÇA MARCHE -->
-<section class="how-section">
-  <div class="section-label">Comment ça marche</div>
-  <h2 class="section-title">De l'annonce à la décision<br>en 30 secondes.</h2>
+<!-- ══ PROBLÈME ══ -->
+<section class="problem-section">
+  <div class="s-eyebrow">Le problème</div>
+  <h2 class="problem-title">
+    Le marché immo est opaque.<br>
+    <span class="dim">Personne ne vous aide vraiment.</span>
+  </h2>
+  <div class="problem-items">
+    <div class="problem-item">
+      <div class="problem-num">01</div>
+      <div class="problem-body">
+        <h4>Les portails montrent des biens. Pas si ils sont au juste prix.</h4>
+        <p>SeLoger et BienIci sont des vitrines. Ils ne vous disent pas si l'annonce à 650k€ vaut réellement 580k€.</p>
+      </div>
+    </div>
+    <div class="problem-item">
+      <div class="problem-num">02</div>
+      <div class="problem-body">
+        <h4>L'agent immobilier travaille pour le vendeur. Pas pour vous.</h4>
+        <p>Sa commission augmente avec le prix de vente. Son intérêt n'est pas aligné avec le vôtre.</p>
+      </div>
+    </div>
+    <div class="problem-item">
+      <div class="problem-num">03</div>
+      <div class="problem-body">
+        <h4>Vous prenez une décision à 300 000€ avec moins d'infos qu'pour acheter un iPhone.</h4>
+        <p>Marlo comble ce vide. Analyse du prix, détection des risques, questions clés — en 30 secondes.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
+<!-- ══ COMMENT ══ -->
+<section class="how-section">
+  <div class="s-eyebrow" style="color:var(--muted);">Comment ça marche</div>
+  <h2 class="how-title">De l'annonce à la décision<br>en 30 secondes.</h2>
   <div class="steps">
     <div class="step">
       <div class="step-num">01</div>
-      <div class="step-content">
+      <div class="step-body">
         <h4>Collez l'URL de n'importe quelle annonce</h4>
-        <p>SeLoger, Leboncoin, PAP, Logic-Immo, BienIci. Marlo récupère automatiquement les informations du bien.</p>
+        <p>SeLoger, Leboncoin, PAP, BienIci. Marlo récupère automatiquement les informations du bien.</p>
       </div>
     </div>
     <div class="step">
       <div class="step-num">02</div>
-      <div class="step-content">
-        <h4>Marlo analyse le prix face au marché réel</h4>
-        <p>Comparaison avec les transactions récentes du quartier. Détection de surestimation ou de bonne affaire. Score de négociation estimé.</p>
+      <div class="step-body">
+        <h4>L'IA analyse le prix face au marché réel</h4>
+        <p>Comparaison avec les transactions récentes. Détection de surestimation. Score de négociation estimé.</p>
       </div>
     </div>
     <div class="step">
       <div class="step-num">03</div>
-      <div class="step-content">
+      <div class="step-body">
         <h4>Recevez les signaux et les questions clés</h4>
-        <p>Points de vigilance détectés dans l'annonce. Liste de questions à poser au vendeur. Estimation des travaux potentiels.</p>
+        <p>Points de vigilance, fourchette de négociation chiffrée, questions précises à poser au vendeur.</p>
       </div>
     </div>
     <div class="step">
       <div class="step-num">04</div>
-      <div class="step-content">
+      <div class="step-body">
         <h4>Comparez et décidez avec confiance</h4>
-        <p>Sauvegardez plusieurs biens. Comparez côte à côte. Partagez l'analyse avec votre courtier ou vos proches.</p>
+        <p>Sauvegardez plusieurs biens. Comparez côte à côte. Partagez avec votre courtier.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- EXEMPLE RAPPORT STATIQUE -->
-<section class="preview-section">
-  <div class="preview-label">Exemple de rapport Marlo</div>
-  <div class="rapport-card">
-    <div class="rapport-header">
-      <div class="rapport-score-ring bad">41</div>
-      <div class="rapport-meta">
+<!-- ══ EXEMPLE ══ -->
+<section class="example-section">
+  <div class="s-eyebrow" style="color:var(--muted);">Exemple de rapport</div>
+  <h2 class="example-title">Ce que Marlo vous donne.</h2>
+  <div class="rapport-card" style="max-width:540px;">
+    <div class="r-header">
+      <div class="r-score bad">41</div>
+      <div class="r-meta">
         <h3>3 pièces · 68m² · Paris 11e</h3>
-        <p>Annoncé 695 000 € · Rue de la Roquette</p>
+        <p>Annoncé 695 000 € · Rue de la Roquette · 47 jours</p>
       </div>
-      <div class="rapport-verdict bad">Surestimé</div>
+      <div class="r-verdict bad">Surestimé</div>
     </div>
-    <div class="rapport-body">
-      <div class="rapport-section">
-        <div class="rapport-section-title">Prix du marché</div>
-        <div class="price-compare">
-          <div class="price-box"><div class="label">Prix annonce</div><div class="val">10 220 €/m²</div></div>
-          <div class="price-box"><div class="label">Marché Paris 11e</div><div class="val">8 900 €/m²</div></div>
-          <div class="price-box highlight"><div class="label">Surestimation</div><div class="val">+14,8%</div></div>
-        </div>
+    <div class="r-prix">
+      <div class="r-prix-cell">
+        <div class="r-prix-label">Prix / m²</div>
+        <div class="r-prix-val">10 220 €</div>
       </div>
-      <div class="rapport-section">
-        <div class="rapport-section-title">Signaux détectés</div>
-        <div class="signal-list">
-          <div class="signal-item"><span class="signal-icon">🔴</span>Prix au m² supérieur de 14,8% à la moyenne des transactions récentes dans la rue.</div>
-          <div class="signal-item"><span class="signal-icon">🟡</span>DPE classé E — coût de rénovation énergétique estimé entre 18 000 et 35 000 €.</div>
-          <div class="signal-item"><span class="signal-icon">🟡</span>Annonce publiée depuis 47 jours — signe possible de difficulté de vente au prix affiché.</div>
-          <div class="signal-item"><span class="signal-icon">🟢</span>Localisation prime : à 4 minutes de la station Voltaire, forte liquidité à la revente.</div>
-        </div>
+      <div class="r-prix-cell">
+        <div class="r-prix-label">Marché Paris 11e</div>
+        <div class="r-prix-val">8 900 €</div>
       </div>
-      <div class="rapport-section">
-        <div class="rapport-section-title">Questions à poser au vendeur</div>
-        <div class="questions-list">
-          <div class="question-item">Pourquoi le bien est-il en vente depuis plus de 6 semaines ?</div>
-          <div class="question-item">Y a-t-il des travaux de copropriété votés ou à venir ?</div>
-          <div class="question-item">Quelle est l'origine du classement DPE E — isolation ou chauffage ?</div>
-          <div class="question-item">Le vendeur a-t-il déjà refusé une offre ? Si oui, à quel prix ?</div>
-        </div>
+      <div class="r-prix-cell hi">
+        <div class="r-prix-label">Marge négociation</div>
+        <div class="r-prix-val">45–65k€</div>
       </div>
     </div>
-    <div class="rapport-cta">
-      <p><strong>Marge de négociation estimée : 45 000 à 65 000 €</strong><br>Basé sur les transactions comparables des 6 derniers mois.</p>
-      <button class="btn-primary" onclick="scrollToCTA()">Analyser mon annonce →</button>
+    <div class="r-section">
+      <div class="r-section-title">Signaux détectés</div>
+      <div class="r-signal">🔴 Prix au m² supérieur de 14,8% à la moyenne des transactions récentes.</div>
+      <div class="r-signal">🟡 DPE classé E — coût de rénovation entre 18 000 et 35 000 €.</div>
+      <div class="r-signal">🟡 Annonce publiée depuis 47 jours — signe de difficulté à vendre au prix affiché.</div>
+      <div class="r-signal">🟢 Localisation prime — forte liquidité à la revente, station Voltaire à 4 min.</div>
+    </div>
+    <div class="r-section">
+      <div class="r-section-title">Questions à poser au vendeur</div>
+      <div class="r-q"><span class="r-q-mark">?</span>Pourquoi le bien est-il en vente depuis plus de 6 semaines ?</div>
+      <div class="r-q"><span class="r-q-mark">?</span>Y a-t-il des travaux de copropriété votés ou à venir ?</div>
+      <div class="r-q"><span class="r-q-mark">?</span>Le vendeur a-t-il déjà refusé une offre ? Si oui, à quel prix ?</div>
+    </div>
+    <div class="r-footer">
+      <p><strong>Marge estimée : 45 000 à 65 000 €</strong><br>Basé sur les transactions des 6 derniers mois.</p>
+      <button class="btn-r-cta" onclick="scrollToInput()">Analyser mon bien →</button>
     </div>
   </div>
 </section>
 
-<!-- CTA FINAL -->
+<!-- ══ CTA ══ -->
 <section class="cta-section" id="ctaSection">
-  <h2 class="cta-title">Arrêtez de visiter des biens<br>surestimés.</h2>
+  <h2 class="cta-title">Arrêtez de visiter<br>des biens surestimés.</h2>
   <p class="cta-sub">Marlo analyse votre annonce gratuitement.<br>Aucune inscription requise pour le premier rapport.</p>
-  <button class="btn-primary" onclick="scrollToInput()">Analyser une annonce →</button>
-  <p style="font-size:12px;color:var(--subtle);margin-top:16px;">Gratuit · Pas de carte bancaire · Résultat en 30 secondes</p>
+  <button class="btn-cta-main" onclick="scrollToInput()">Analyser une annonce →</button>
+  <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:16px;">Gratuit · Pas de carte bancaire · 30 secondes</p>
 </section>
 
+<!-- FOOTER -->
 <footer>
-  <div class="logo">mar<span>lo</span></div>
+  <div class="footer-logo">mar<span>lo</span></div>
   <p>© 2026 Marlo · Outil d'aide à la décision immobilière</p>
-  <p style="font-size:11px;color:var(--subtle);">Les estimations sont indicatives et ne constituent pas un conseil financier ou juridique.</p>
+  <p>Les estimations sont indicatives et ne constituent pas un conseil financier ou juridique.</p>
 </footer>
 
 <script>
-// ── UTILS ──
-function isValidURL(str) {
-  try {
-    const u = new URL(str);
-    return ['seloger.com','leboncoin.fr','pap.fr','logic-immo.com','bienici.com','meilleursagents.com']
-      .some(d => u.hostname.includes(d));
-  } catch { return false; }
-}
-
-function scrollToInput() {
-  document.getElementById('urlInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  setTimeout(() => document.getElementById('urlInput').focus(), 400);
-}
-function scrollToCTA() {
-  document.getElementById('ctaSection').scrollIntoView({ behavior: 'smooth' });
-}
-
-// ── LOADING ANIMATION ──
-const loadingSteps = [
-  'Récupération de l\'annonce…',
-  'Analyse du prix au m²…',
+const PROXY_URL = 'https://marlo-api.vercel.app/api/analyse';
+const DOMAINES  = ['seloger.com','leboncoin.fr','pap.fr','logic-immo.com','bienici.com','meilleursagents.com'];
+const LOADING_STEPS_ACHETEUR = [
+  'Récupération de l\'annonce…','Analyse du prix au m²…',
   'Comparaison avec les transactions récentes…',
-  'Détection des signaux de risque…',
-  'Génération du rapport…'
+  'Détection des signaux de risque…','Génération du rapport…'
+];
+const LOADING_STEPS_INVEST = [
+  'Récupération de l\'annonce…','Analyse du prix au m²…',
+  'Calcul du rendement locatif estimé…',
+  'Évaluation du cashflow et de la fiscalité…','Génération du rapport investisseur…'
 ];
 
-function animateLoading(onComplete) {
-  const fill = document.getElementById('loadingFill');
-  const stepEl = document.getElementById('loadingStep');
-  let step = 0;
-  const total = loadingSteps.length;
-  const interval = setInterval(() => {
-    if (step >= total) {
-      clearInterval(interval);
-      onComplete();
-      return;
-    }
-    stepEl.textContent = loadingSteps[step];
-    fill.style.width = ((step + 1) / total * 100) + '%';
-    step++;
-  }, 600);
+// ── ÉTAT ──
+let MODE = 'acheteur'; // 'acheteur' | 'investisseur'
+
+// ── TOGGLE ──
+function setMode(mode) {
+  MODE = mode;
+  const isInvest = mode === 'investisseur';
+
+  document.getElementById('btnAcheteur').classList.toggle('active', !isInvest);
+  document.getElementById('btnInvestisseur').classList.toggle('active', isInvest);
+
+  // Titre dynamique
+  document.getElementById('heroEyebrow').textContent = isInvest
+    ? 'Analyse locative IA' : 'Copilote immobilier IA';
+  document.getElementById('heroTitle').innerHTML = isInvest
+    ? 'Ce bien est-il<br><span class="accent">vraiment</span><br>rentable ?'
+    : 'Ce bien vaut-il<br><span class="accent">vraiment</span><br>ce prix ?';
+  document.getElementById('heroSub').textContent = isInvest
+    ? 'Collez l\'URL d\'une annonce. Marlo calcule le rendement brut, net, le cashflow estimé et vous dit si c\'est une opportunité locative.'
+    : 'Collez l\'URL d\'une annonce SeLoger, Leboncoin ou PAP. Marlo analyse le prix, détecte les risques et vous donne les questions à poser — en 30 secondes.';
+
+  // Masquer rapport précédent
+  const rw = document.getElementById('rapportWrap');
+  rw.classList.remove('visible'); rw.style.display = 'none';
 }
 
-// ── FAUX RAPPORT (demo MVP sans backend) ──
-function genererRapportDemo(url) {
-  // Simuler des variations selon l'URL pour rendre crédible
-  const hash = url.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-  const score = 35 + (hash % 55); // 35-89
-  const prixAnnonce = 6500 + (hash % 7000); // €/m²
-  const ecart = -18 + (hash % 30); // -18% à +12%
-  const prixMarche = Math.round(prixAnnonce / (1 + ecart/100));
-  const jours = 12 + (hash % 80);
+// ── UTILS ──
+function isValidURL(s) {
+  try { const u = new URL(s); return DOMAINES.some(d => u.hostname.includes(d)); }
+  catch { return false; }
+}
+function scrollToInput() {
+  document.getElementById('urlInput').scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>document.getElementById('urlInput').focus(),400);
+}
+function scrollToCTA() {
+  document.getElementById('ctaSection').scrollIntoView({behavior:'smooth'});
+}
+function setCls(el, cls) {
+  el.classList.remove('good','warn','bad'); el.classList.add(cls);
+}
+function safeNum(v) { return (isNaN(v) || v === null || v === undefined) ? 0 : Number(v); }
 
-  const scoreClass = score >= 70 ? 'good' : score >= 50 ? 'warn' : 'bad';
-  const verdictLabel = score >= 70 ? 'Prix cohérent' : score >= 50 ? 'À négocier' : 'Surestimé';
-  const margeLabel = ecart > 5 ? `+${ecart.toFixed(1)}%` : ecart < -3 ? `${ecart.toFixed(1)}%` : '~Juste prix';
+// ── AFFICHER RAPPORT ACHETEUR ──
+function afficherRapport(r) {
+  const score = Math.max(10, Math.min(95, safeNum(r.score) || 55));
+  const cls   = score >= 70 ? 'good' : score >= 50 ? 'warn' : 'bad';
 
-  // Mise à jour header
-  document.getElementById('scoreRing').textContent = score;
-  document.getElementById('scoreRing').className = `rapport-score-ring ${scoreClass}`;
-  document.getElementById('rapportVerdict').textContent = verdictLabel;
-  document.getElementById('rapportVerdict').className = `rapport-verdict ${scoreClass}`;
+  const rScore = document.getElementById('rScore');
+  rScore.textContent = score; setCls(rScore, cls);
+  const rVerdict = document.getElementById('rVerdict');
+  rVerdict.textContent = r.verdict || '—'; setCls(rVerdict, cls);
+  document.getElementById('rTitre').textContent = r.titre || '—';
 
-  // Titre fictif cohérent
-  const types = ['3 pièces · 65m²', '4 pièces · 88m²', '2 pièces · 42m²', 'Studio · 28m²'];
-  const quartiers = ['Paris 11e', 'Paris 15e', 'Lyon 6e', 'Bordeaux Centre', 'Nantes Sud'];
-  const ti = hash % types.length;
-  const qi = (hash >> 2) % quartiers.length;
-  document.getElementById('rapportTitre').textContent = `${types[ti]} · ${quartiers[qi]}`;
-  document.getElementById('rapportMeta').textContent = `Annoncé ${(prixAnnonce * 65).toLocaleString('fr')} € · Publié il y a ${jours} jours`;
+  const prix = safeNum(r.prix_affiche);
+  const jours = safeNum(r.jours_marche);
+  document.getElementById('rMeta').textContent =
+    `${prix > 0 ? prix.toLocaleString('fr') + ' €' : '—'}${jours > 0 ? ' · ' + jours + ' jours' : ''}`;
 
-  // Prix
-  document.getElementById('prixAnnonce').textContent = `${prixAnnonce.toLocaleString('fr')} €/m²`;
-  document.getElementById('prixMarche').textContent = `${prixMarche.toLocaleString('fr')} €/m²`;
-  document.getElementById('marge').textContent = margeLabel;
+  const pm2 = safeNum(r.prix_m2_annonce);
+  const pm2m = safeNum(r.prix_m2_marche);
+  const mn = safeNum(r.marge_nego_min);
+  const mx = safeNum(r.marge_nego_max);
+  document.getElementById('rPrix').innerHTML = `
+    <div class="r-prix-cell"><div class="r-prix-label">Prix / m²</div><div class="r-prix-val">${pm2 > 0 ? pm2.toLocaleString('fr') + ' €' : '—'}</div></div>
+    <div class="r-prix-cell"><div class="r-prix-label">Marché estimé</div><div class="r-prix-val">${pm2m > 0 ? pm2m.toLocaleString('fr') + ' €' : '—'}</div></div>
+    <div class="r-prix-cell hi"><div class="r-prix-label">Marge négo</div><div class="r-prix-val">${mn > 0 ? mn.toLocaleString('fr') + '–' + mx.toLocaleString('fr') + ' €' : '~Juste prix'}</div></div>
+  `;
 
-  // Signaux
-  const signaux = [
-    ecart > 8 ? { icon: '🔴', text: `Prix au m² supérieur de ${ecart.toFixed(1)}% à la moyenne des transactions récentes.` } : null,
-    jours > 40 ? { icon: '🟡', text: `Annonce publiée depuis ${jours} jours — signe possible de difficulté à vendre au prix affiché.` } : null,
-    score < 60 ? { icon: '🟡', text: 'DPE potentiellement dégradé — vérifier le diagnostic énergétique avant visite.' } : null,
-    { icon: '🟢', text: 'Localisation bien desservie — forte liquidité à la revente selon les données de transaction.' },
-    ecart < 0 ? { icon: '🟢', text: `Prix ${Math.abs(ecart).toFixed(1)}% sous la moyenne du marché — opportunité à étudier rapidement.` } : null,
-  ].filter(Boolean).slice(0, 4);
+  const signaux = Array.isArray(r.signaux) ? r.signaux : [];
+  document.getElementById('rSignaux').innerHTML = signaux
+    .map(s=>`<div class="r-signal">${s.icon||'🟡'} ${s.texte||''}</div>`).join('')
+    || '<div class="r-signal">🟡 Analyse consolidée.</div>';
 
-  const signalList = document.getElementById('signalList');
-  signalList.innerHTML = signaux.map(s =>
-    `<div class="signal-item"><span class="signal-icon">${s.icon}</span>${s.text}</div>`
-  ).join('');
+  const questions = Array.isArray(r.questions) ? r.questions : [];
+  document.getElementById('rQuestions').innerHTML = questions
+    .map(q=>`<div class="r-q"><span class="r-q-mark">?</span>${q}</div>`).join('')
+    || '<div class="r-q"><span class="r-q-mark">?</span>Demandez les diagnostics complets au vendeur.</div>';
 
-  // Questions
-  const questions = [
-    'Pourquoi le bien est-il mis en vente maintenant ?',
-    jours > 30 ? 'Des offres ont-elles déjà été refusées ? Si oui, à quel prix ?' : 'Y a-t-il une date limite pour la vente ?',
-    'Y a-t-il des travaux de copropriété votés ou prévisibles dans les 2 ans ?',
-    'Quel est le montant des charges de copropriété mensuelles ?',
-  ];
-
-  document.getElementById('questionsList').innerHTML = questions.map(q =>
-    `<div class="question-item">${q}</div>`
-  ).join('');
+  // Masquer bloc investisseur
+  document.getElementById('investBloc').style.display = 'none';
 }
 
-// ── URL DU PROXY — à remplacer par ton URL Vercel après déploiement ──
-const PROXY_URL = '/api/analyse';
+// ── AFFICHER RAPPORT INVESTISSEUR ──
+function afficherRapportInvest(r) {
+  // Réutiliser l'affichage acheteur pour le header/prix/signaux
+  afficherRapport(r);
 
-// ── AFFICHER RAPPORT DEPUIS RÉPONSE CLAUDE ──
-function afficherRapportIA(rapport) {
-  const score = Math.max(10, Math.min(95, rapport.score || 50));
-  const scoreClass = score >= 70 ? 'good' : score >= 50 ? 'warn' : 'bad';
-  const verdictLabel = rapport.verdict || 'À analyser';
+  // Calculs investisseur
+  const prixBien = safeNum(r.prix_affiche) || 250000;
+  const surface  = safeNum(r.surface_m2)  || 45;
+  const loyer    = safeNum(r.loyer_estime);
+  const loyerNet = safeNum(r.loyer_net_estime);
+  const rendBrut = safeNum(r.rendement_brut);
+  const rendNet  = safeNum(r.rendement_net);
+  const cashflow = safeNum(r.cashflow_mensuel);
+  const tension  = r.tension_locative || '—';
+  const verdictInvest = r.verdict_investissement || '—';
+  const verdictDesc   = r.verdict_investissement_desc || 'Analysez les chiffres avant de décider.';
+  const verdictIcon   = rendBrut >= 7 ? '🚀' : rendBrut >= 5 ? '✅' : rendBrut > 0 ? '⚠️' : '❓';
 
-  document.getElementById('scoreRing').textContent = score;
-  document.getElementById('scoreRing').className = `rapport-score-ring ${scoreClass}`;
-  document.getElementById('rapportVerdict').textContent = verdictLabel;
-  document.getElementById('rapportVerdict').className = `rapport-verdict ${scoreClass}`;
-  document.getElementById('rapportTitre').textContent = rapport.titre || '—';
+  // KPIs 2×3
+  document.getElementById('investKpis').innerHTML = `
+    <div class="invest-kpi">
+      <div class="invest-kpi-label">Rendement brut</div>
+      <div class="invest-kpi-val">${rendBrut > 0 ? rendBrut.toFixed(1) + '%' : '—'}</div>
+      <div class="invest-kpi-sub">Loyer annuel / prix</div>
+    </div>
+    <div class="invest-kpi">
+      <div class="invest-kpi-label">Rendement net</div>
+      <div class="invest-kpi-val">${rendNet > 0 ? rendNet.toFixed(1) + '%' : '—'}</div>
+      <div class="invest-kpi-sub">Charges et taxes déduites</div>
+    </div>
+    <div class="invest-kpi">
+      <div class="invest-kpi-label">Loyer estimé</div>
+      <div class="invest-kpi-val">${loyer > 0 ? loyer.toLocaleString('fr') + ' €' : '—'}</div>
+      <div class="invest-kpi-sub">Mensuel, marché local</div>
+    </div>
+    <div class="invest-kpi">
+      <div class="invest-kpi-label">Cashflow estimé</div>
+      <div class="invest-kpi-val">${cashflow !== 0 ? (cashflow > 0 ? '+' : '') + cashflow.toLocaleString('fr') + ' €' : '—'}</div>
+      <div class="invest-kpi-sub">Loyer - mensualité crédit</div>
+    </div>
+    <div class="invest-kpi">
+      <div class="invest-kpi-label">Tension locative</div>
+      <div class="invest-kpi-val" style="font-size:14px;">${tension}</div>
+      <div class="invest-kpi-sub">Demande locative secteur</div>
+    </div>
+    <div class="invest-kpi">
+      <div class="invest-kpi-label">Loyer net charges</div>
+      <div class="invest-kpi-val">${loyerNet > 0 ? loyerNet.toLocaleString('fr') + ' €' : '—'}</div>
+      <div class="invest-kpi-sub">Après charges copro</div>
+    </div>
+  `;
 
-  const prix = rapport.prix_affiche || 0;
-  const jours = rapport.jours_marche || 0;
-  document.getElementById('rapportMeta').textContent =
-    `Annoncé ${prix > 0 ? prix.toLocaleString('fr') + ' €' : '—'} · Publié il y a ${jours} jours`;
+  // Signaux investisseur
+  const siInvest = Array.isArray(r.signaux_investisseur) ? r.signaux_investisseur : [];
+  document.getElementById('investSignals').innerHTML = siInvest
+    .map(s=>`<div class="invest-signal">${s.icon||'🟢'} ${s.texte||''}</div>`).join('');
 
-  // Prix
-  const pm2 = rapport.prix_m2_annonce || 0;
-  const pm2m = rapport.prix_m2_marche || 0;
-  const ecart = rapport.ecart_pct || 0;
-  document.getElementById('prixAnnonce').textContent = pm2 > 0 ? `${pm2.toLocaleString('fr')} €/m²` : '—';
-  document.getElementById('prixMarche').textContent = pm2m > 0 ? `${pm2m.toLocaleString('fr')} €/m²` : '—';
-  const margeMin = rapport.marge_nego_min || 0;
-  const margeMax = rapport.marge_nego_max || 0;
-  document.getElementById('marge').textContent =
-    margeMin > 0 ? `${margeMin.toLocaleString('fr')}–${margeMax.toLocaleString('fr')} €` : '~Juste prix';
+  // Verdict
+  document.getElementById('investVerdict').innerHTML = `
+    <div class="invest-verdict-icon">${verdictIcon}</div>
+    <div class="invest-verdict-text">
+      <h4>${verdictInvest}</h4>
+      <p>${verdictDesc}</p>
+    </div>
+  `;
 
-  // Signaux
-  const signaux = Array.isArray(rapport.signaux) ? rapport.signaux : [];
-  document.getElementById('signalList').innerHTML = signaux.map(s =>
-    `<div class="signal-item"><span class="signal-icon">${s.icon || '🟡'}</span>${s.texte || ''}</div>`
-  ).join('') || '<div class="signal-item"><span class="signal-icon">🟡</span>Analyse en cours de consolidation.</div>';
+  document.getElementById('investBloc').style.display = 'block';
+}
 
-  // Questions
-  const questions = Array.isArray(rapport.questions) ? rapport.questions : [];
-  document.getElementById('questionsList').innerHTML = questions.map(q =>
-    `<div class="question-item">${q}</div>`
-  ).join('') || '<div class="question-item">Demandez les diagnostics complets au vendeur.</div>';
+// ── DEMO ACHETEUR ──
+function genererDemo(url) {
+  const h = url.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const score = 35+(h%52), pm2 = 7000+(h%6000), ecart = -10+(h%24);
+  const pm2m = Math.round(pm2/(1+ecart/100)), jours = 15+(h%70);
+  const cls = score>=70?'good':score>=50?'warn':'bad';
+  const verdicts = {good:'Prix cohérent',warn:'À négocier',bad:'Surestimé'};
+  const types = ['3 pièces · 68m²','2 pièces · 45m²','Studio · 28m²','4 pièces · 92m²'];
+  const villes = ['Paris 11e','Paris 15e','Lyon 6e','Bordeaux Centre'];
+  const mn = Math.max(0,Math.round((pm2-pm2m)*65*0.6));
+  const mx = Math.max(0,Math.round((pm2-pm2m)*65*1.1));
+  afficherRapport({
+    score, verdict: verdicts[cls],
+    titre: `${types[h%types.length]} · ${villes[(h>>2)%villes.length]}`,
+    prix_affiche: pm2*65, jours_marche: jours,
+    prix_m2_annonce: pm2, prix_m2_marche: pm2m,
+    marge_nego_min: mn, marge_nego_max: mx,
+    signaux: [
+      ecart>6 ? {icon:'🔴',texte:`Prix au m² supérieur de ${ecart}% à la moyenne des transactions récentes.`}
+              : {icon:'🟢',texte:'Prix dans la moyenne du marché local — pas de surestimation détectée.'},
+      jours>35 ? {icon:'🟡',texte:`Annonce publiée depuis ${jours} jours — marge de négociation potentiellement plus importante.`}
+               : {icon:'🟢',texte:'Annonce récente — peu de pression sur le vendeur.'},
+      {icon:'🟢',texte:'Localisation bien desservie — forte liquidité à la revente.'},
+    ],
+    questions: [
+      'Pourquoi le bien est-il mis en vente maintenant ?',
+      jours>30 ? 'Des offres ont-elles déjà été refusées ? Si oui, à quel prix ?' : 'Y a-t-il une urgence à vendre ?',
+      'Y a-t-il des travaux de copropriété votés ou prévisibles dans les 2 ans ?',
+      'Quel est le montant des charges de copropriété mensuelles ?',
+    ]
+  });
+}
 
-  // Analyse texte (si présente)
-  if (rapport.analyse_texto) {
-    const existing = document.getElementById('analyseTexto');
-    if (existing) {
-      existing.textContent = rapport.analyse_texto;
-    }
+// ── DEMO INVESTISSEUR ──
+function genererDemoInvest(url) {
+  const h = url.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const prix = 80000 + (h%220000);
+  const surface = 25 + (h%55);
+  const loyer = Math.round(surface * (10 + (h%8)));
+  const loyerNet = Math.round(loyer * 0.85);
+  const rendBrut = parseFloat(((loyer * 12 / prix) * 100).toFixed(1));
+  const rendNet  = parseFloat((rendBrut * 0.72).toFixed(1));
+  const mensualite = Math.round(prix * 0.8 / 240 * 1.038);
+  const cashflow = loyer - mensualite - Math.round(loyer * 0.15);
+  const tensions = ['Forte 🔥','Modérée 📊','Faible ⚠️'];
+  const tension = tensions[h%3];
+  const types = ['Studio · '+surface+'m²','2 pièces · '+surface+'m²','T3 · '+surface+'m²'];
+  const villes = ['Lyon 7e','Rennes Centre','Bordeaux Bacalan','Nantes Chantenay','Toulouse Capitole'];
+  const score = Math.min(88, Math.max(30, Math.round(rendBrut * 10 + (h%15))));
+  const verdicts = rendBrut >= 7 ? {v:'Opportunité',d:'Rendement attractif pour ce secteur. À creuser rapidement.'} :
+                   rendBrut >= 5 ? {v:'Passable',d:'Rendement correct mais pas exceptionnel. Négociation possible pour améliorer les chiffres.'} :
+                                   {v:'À éviter',d:'Rendement insuffisant pour un investissement locatif rentable à ce prix.'};
+  afficherRapportInvest({
+    score, verdict: rendBrut >= 7 ? 'Bon prix' : rendBrut >= 5 ? 'À négocier' : 'Surestimé',
+    titre: `${types[h%types.length]} · ${villes[h%villes.length]}`,
+    prix_affiche: prix, jours_marche: 10+(h%60),
+    prix_m2_annonce: Math.round(prix/surface),
+    prix_m2_marche: Math.round(prix/surface * (0.9 + (h%20)/100)),
+    marge_nego_min: Math.round(prix*0.03), marge_nego_max: Math.round(prix*0.08),
+    surface_m2: surface,
+    loyer_estime: loyer, loyer_net_estime: loyerNet,
+    rendement_brut: rendBrut, rendement_net: rendNet,
+    cashflow_mensuel: cashflow, tension_locative: tension,
+    verdict_investissement: verdicts.v, verdict_investissement_desc: verdicts.d,
+    signaux: [
+      {icon:'🔴',texte:`Prix au m² ${Math.round(prix/surface).toLocaleString('fr')} € — à comparer avec les transactions DVF récentes.`},
+      {icon:'🟡',texte:'Vérifier le DPE avant tout — un bien F ou G peut nécessiter 15 000 à 50 000 € de travaux.'},
+      {icon:'🟢',texte:`Loyer estimé à ${loyer} €/mois — cohérent avec le marché locatif du secteur.`},
+    ],
+    signaux_investisseur: [
+      cashflow >= 0 ? {icon:'🟢',texte:`Cashflow positif de +${cashflow} €/mois — le bien s'autofinance.`}
+                    : {icon:'🔴',texte:`Cashflow négatif de ${cashflow} €/mois — vous devrez compléter de votre poche.`},
+      rendBrut >= 7 ? {icon:'🟢',texte:`Rendement brut de ${rendBrut}% — au-dessus du seuil de 7% recommandé pour l'investissement locatif.`}
+                    : rendBrut >= 5 ? {icon:'🟡',texte:`Rendement brut de ${rendBrut}% — correct mais négociez le prix pour améliorer les chiffres.`}
+                    : {icon:'🔴',texte:`Rendement brut de ${rendBrut}% — insuffisant. Cherchez des biens à plus de 5% minimum.`},
+      {icon:'🟡',texte:`Tension locative ${tension.replace(/[🔥📊⚠️]/g,'').trim()} dans ce secteur — évaluez la vacance locative potentielle.`},
+    ],
+  });
+}
+
+// ── INSCRIPTION ──
+let rapportEnCours = null; // stocker le rapport pour l'email
+
+function resetInscription() {
+  document.getElementById('signupCTA').style.display = 'block';
+  document.getElementById('signupSuccess').style.display = 'none';
+  document.getElementById('signupPrenom').value = '';
+  document.getElementById('signupEmail').value = '';
+}
+
+async function soumettreInscription() {
+  const prenom = document.getElementById('signupPrenom').value.trim();
+  const email  = document.getElementById('signupEmail').value.trim();
+  const btn    = document.querySelector('.r-signup-btn');
+
+  if (!prenom) {
+    document.getElementById('signupPrenom').focus();
+    document.getElementById('signupPrenom').style.borderColor = 'var(--red)';
+    setTimeout(() => document.getElementById('signupPrenom').style.borderColor = '', 1500);
+    return;
   }
+  if (!email || !email.includes('@')) {
+    document.getElementById('signupEmail').focus();
+    document.getElementById('signupEmail').style.borderColor = 'var(--red)';
+    setTimeout(() => document.getElementById('signupEmail').style.borderColor = '', 1500);
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Sauvegarde en cours…';
+
+  // Stocker localement (en attendant Supabase)
+  const inscription = {
+    prenom, email,
+    mode: MODE,
+    rapport: rapportEnCours,
+    date: new Date().toISOString(),
+    url: document.getElementById('urlInput').value.trim()
+  };
+  try {
+    const existing = JSON.parse(localStorage.getItem('marlo_users') || '[]');
+    existing.push(inscription);
+    localStorage.setItem('marlo_users', JSON.stringify(existing));
+  } catch(_) {}
+
+  // Simuler un délai réseau
+  await new Promise(r => setTimeout(r, 800));
+
+  // Afficher succès
+  document.getElementById('signupCTA').style.display = 'none';
+  document.getElementById('signupSuccess').style.display = 'block';
+  document.getElementById('signupSuccessSub').textContent =
+    `Bienvenue ${prenom} ! Votre rapport est sauvegardé. On vous envoie un récap à ${email}.`;
+
+  btn.disabled = false;
+  btn.textContent = 'Sauvegarder mon rapport →';
+}
+
+function simulerFinancement() {
+  // Pour l'instant scroll vers CTA — plus tard ouvrira le tunnel
+  document.getElementById('ctaSection').scrollIntoView({ behavior: 'smooth' });
 }
 
 // ── LANCER ANALYSE ──
@@ -726,104 +1084,71 @@ async function lancerAnalyse() {
   const errorMsg = document.getElementById('errorMsg');
   const btn = document.getElementById('btnAnalyze');
 
-  // Validation
   if (!url || !isValidURL(url)) {
     errorMsg.classList.add('visible');
     document.getElementById('inputZone').style.borderColor = 'var(--red)';
     return;
   }
-
   errorMsg.classList.remove('visible');
   document.getElementById('inputZone').style.borderColor = '';
 
-  // Cacher proof strip
-  document.getElementById('proofStrip').style.display = 'none';
+  const rw = document.getElementById('rapportWrap');
+  rw.classList.remove('visible'); rw.style.display = 'none';
+  resetInscription();
 
-  // Cacher rapport précédent
-  const rapportWrap = document.getElementById('rapportWrap');
-  rapportWrap.classList.remove('visible');
-  rapportWrap.style.display = 'none';
-
-  // Afficher loading
-  const loadingWrap = document.getElementById('loadingWrap');
-  loadingWrap.classList.add('visible');
-  document.getElementById('loadingFill').style.width = '0%';
-  btn.disabled = true;
-
-  // Lancer animation loading en parallèle de l'appel API
-  let loadingDone = false;
-  let rapportData = null;
-  let rapportError = null;
-
-  // Animation loading
+  const lw = document.getElementById('loadingWrap');
   const fill = document.getElementById('loadingFill');
   const stepEl = document.getElementById('loadingStep');
-  let stepIdx = 0;
-  const loadingInterval = setInterval(() => {
-    if (stepIdx < loadingSteps.length) {
-      stepEl.textContent = loadingSteps[stepIdx];
-      fill.style.width = ((stepIdx + 1) / loadingSteps.length * 85) + '%';
-      stepIdx++;
-    }
-  }, 700);
+  const steps = MODE === 'investisseur' ? LOADING_STEPS_INVEST : LOADING_STEPS_ACHETEUR;
+  lw.classList.add('visible'); fill.style.width = '0%';
+  btn.disabled = true;
 
-  // Appel API réel
+  let idx = 0;
+  const iv = setInterval(() => {
+    if (idx < steps.length) {
+      stepEl.textContent = steps[idx];
+      fill.style.width = ((idx+1)/steps.length*85) + '%';
+      idx++;
+    }
+  }, 600);
+
+  let rapport = null;
   try {
     const res = await fetch(PROXY_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url })
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ url, mode: MODE })
     });
     const data = await res.json();
-    if (data.success && data.rapport) {
-      rapportData = data.rapport;
-    } else {
-      rapportError = data.error || 'Erreur inconnue';
-    }
-  } catch (err) {
-    rapportError = 'Impossible de joindre le serveur. Vérifiez votre connexion.';
-  }
+    if (data.success && data.rapport) rapport = data.rapport;
+  } catch(_) {}
 
-  // Finir l'animation
-  clearInterval(loadingInterval);
+  clearInterval(iv);
   fill.style.width = '100%';
-  stepEl.textContent = rapportError ? 'Une erreur est survenue.' : 'Rapport généré !';
-
-  await new Promise(r => setTimeout(r, 400));
-
-  // Cacher loading
-  loadingWrap.classList.remove('visible');
+  await new Promise(r=>setTimeout(r,300));
+  lw.classList.remove('visible');
   btn.disabled = false;
 
-  if (rapportError) {
-    errorMsg.textContent = rapportError;
-    errorMsg.classList.add('visible');
-    document.getElementById('proofStrip').style.display = 'flex';
-    return;
+  if (rapport) {
+    rapportEnCours = rapport;
+    if (MODE === 'investisseur') afficherRapportInvest(rapport);
+    else afficherRapport(rapport);
+  } else {
+    rapportEnCours = { mode: MODE, url };
+    if (MODE === 'investisseur') genererDemoInvest(url);
+    else genererDemo(url);
   }
 
-  // Afficher rapport
-  afficherRapportIA(rapportData);
-  rapportWrap.style.display = 'block';
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      rapportWrap.classList.add('visible');
-    });
-  });
-
-  setTimeout(() => {
-    rapportWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 200);
+  rw.style.display = 'block';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>rw.classList.add('visible')));
+  setTimeout(()=>rw.scrollIntoView({behavior:'smooth',block:'start'}),200);
 }
 
-// Enter key
-document.getElementById('urlInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') lancerAnalyse();
+document.getElementById('urlInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter') lancerAnalyse();
 });
-
-// Reset border on input
-document.getElementById('urlInput').addEventListener('input', () => {
-  document.getElementById('inputZone').style.borderColor = '';
+document.getElementById('urlInput').addEventListener('input', ()=>{
+  document.getElementById('inputZone').style.borderColor='';
   document.getElementById('errorMsg').classList.remove('visible');
 });
 </script>
