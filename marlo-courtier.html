@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>Marlo — Être mis en relation avec un courtier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:          #1a1a2e;
+  --ink-2:        #2d2d44;
+  --muted:        #6b6b80;
+  --subtle:       #a8a8b8;
+  --border:       #e4e4ec;
+  --bg:           #ffffff;
+  --bg-off:       #f8f8ff;
+  --bg-warm:      #f2f2f8;
+  --accent:       #4361ee;
+  --accent-2:     #3451d1;
+  --accent-light: #e8eaff;
+  --green:        #16a34a;
+  --green-bg:     #dcfce7;
+  --green-light:  #f0fdf4;
+  --radius:       10px;
+  --radius-lg:    14px;
+}
+
+html { color-scheme: light only; background: var(--bg-warm) !important; }
+@media (prefers-color-scheme: dark) { html, body { background: #f2f2f8 !important; color: #1a1a2e !important; } }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg-warm);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+/* NAV */
+nav {
+  background: rgba(255,255,255,0.96); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.logo {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 20px; font-weight: 800; letter-spacing: -0.04em;
+  color: var(--ink); text-decoration: none;
+}
+.logo span { color: var(--accent); }
+.nav-back {
+  font-size: 13px; font-weight: 600; color: var(--muted);
+  background: none; border: none; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: color 0.15s;
+}
+.nav-back:hover { color: var(--ink); }
+
+/* LAYOUT */
+.page { max-width: 600px; margin: 0 auto; padding: 32px 24px; }
+
+/* HERO */
+.hero-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hero-label::before { content: ''; width: 18px; height: 1.5px; background: var(--accent); }
+
+.hero-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(26px, 5vw, 36px);
+  font-weight: 800; letter-spacing: -0.035em;
+  color: var(--ink); line-height: 1.1; margin-bottom: 10px;
+}
+.hero-sub {
+  font-size: 15px; color: var(--muted); line-height: 1.6; margin-bottom: 28px;
+}
+
+/* BRIEF CARD */
+.brief-card {
+  background: var(--ink); border-radius: var(--radius-lg);
+  padding: 20px; margin-bottom: 24px;
+  position: relative; overflow: hidden;
+}
+.brief-card::before {
+  content: '';
+  position: absolute; top: 0; right: 0;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(67,97,238,0.3) 0%, transparent 70%);
+  pointer-events: none;
+}
+.brief-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.brief-label::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
+
+.brief-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 18px; font-weight: 800; letter-spacing: -0.03em;
+  color: #fff; margin-bottom: 16px;
+}
+
+.brief-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.brief-item { }
+.brief-item-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: rgba(255,255,255,0.35); margin-bottom: 3px;
+}
+.brief-item-val {
+  font-family: 'Geist Mono', monospace;
+  font-size: 14px; font-weight: 500; color: #fff;
+}
+.brief-item-val.accent { color: #a5b4fc; }
+.brief-item-val.green { color: #86efac; }
+.brief-item-val.warn { color: #fde68a; }
+
+.brief-maturite {
+  margin-top: 14px; padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; gap: 10px;
+}
+.maturite-badge {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 99px;
+  background: var(--accent); color: #fff;
+}
+.maturite-badge.chaud { background: #dc2626; }
+.maturite-badge.tiede { background: #d97706; }
+.maturite-badge.froid { background: #6b7280; }
+.maturite-desc { font-size: 12px; color: rgba(255,255,255,0.5); }
+
+.brief-biens {
+  margin-top: 14px; padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.brief-biens-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: rgba(255,255,255,0.35); margin-bottom: 8px;
+}
+.brief-bien-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: rgba(255,255,255,0.6);
+  margin-bottom: 4px;
+}
+.brief-bien-score {
+  font-family: 'Geist Mono', monospace; font-size: 11px;
+  padding: 1px 6px; border-radius: 4px;
+  background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);
+  flex-shrink: 0;
+}
+
+/* FORMULAIRE */
+.form-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 24px;
+  margin-bottom: 16px;
+}
+.form-card h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px; font-weight: 700; letter-spacing: -0.02em;
+  margin-bottom: 18px; color: var(--ink);
+}
+
+.field { margin-bottom: 14px; }
+.field label {
+  display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--subtle); margin-bottom: 6px;
+}
+.field input, .field select, .field textarea {
+  width: 100%; border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 11px 14px;
+  font-family: 'Inter', sans-serif; font-size: 14px; color: var(--ink);
+  background: #fff; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(67,97,238,0.1);
+}
+.field input::placeholder, .field textarea::placeholder { color: var(--subtle); }
+.field textarea { resize: vertical; min-height: 80px; }
+.field-hint { font-size: 11px; color: var(--subtle); margin-top: 4px; }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* DISPONIBILITÉS */
+.dispos { display: flex; flex-wrap: wrap; gap: 8px; }
+.dispo-btn {
+  padding: 8px 14px; border-radius: 8px;
+  border: 1.5px solid var(--border);
+  font-size: 13px; font-weight: 500; color: var(--muted);
+  cursor: pointer; background: #fff; transition: all 0.15s;
+}
+.dispo-btn:hover { border-color: var(--accent); color: var(--accent); }
+.dispo-btn.active { background: var(--accent-light); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
+/* ENGAGEMENTS */
+.engagements {
+  background: var(--green-light); border: 1px solid #bbf7d0;
+  border-radius: var(--radius-lg); padding: 18px 20px;
+  margin-bottom: 20px;
+}
+.engagement-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px; font-weight: 700; color: #15803d; margin-bottom: 12px;
+}
+.engagement-item {
+  display: flex; gap: 10px; font-size: 13px; color: #15803d;
+  margin-bottom: 6px; line-height: 1.5;
+}
+.engagement-item:last-child { margin-bottom: 0; }
+.engagement-check { font-size: 14px; flex-shrink: 0; }
+
+/* CTA */
+.btn-submit {
+  width: 100%; background: var(--accent); color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px; font-weight: 800; letter-spacing: -0.01em;
+  padding: 15px; border-radius: var(--radius-lg);
+  border: none; cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-submit:hover { background: var(--accent-2); }
+.btn-submit:active { transform: scale(0.99); }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.submit-legal {
+  font-size: 11px; color: var(--subtle); text-align: center; margin-top: 10px; line-height: 1.5;
+}
+
+/* SUCCÈS */
+.success-screen {
+  display: none;
+  text-align: center; padding: 48px 24px;
+}
+.success-screen.visible { display: block; }
+.success-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--green); color: #fff;
+  font-size: 28px; display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+}
+.success-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 24px; font-weight: 800; letter-spacing: -0.03em;
+  color: var(--ink); margin-bottom: 10px;
+}
+.success-sub { font-size: 15px; color: var(--muted); margin-bottom: 32px; line-height: 1.6; }
+
+.next-steps {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px; text-align: left;
+  margin-bottom: 24px;
+}
+.next-steps h4 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 700; margin-bottom: 14px; color: var(--ink);
+}
+.next-step {
+  display: flex; gap: 12px; align-items: flex-start;
+  margin-bottom: 12px; font-size: 13px; color: var(--ink-2); line-height: 1.5;
+}
+.next-step:last-child { margin-bottom: 0; }
+.step-num {
+  font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500;
+  background: var(--accent-light); color: var(--accent);
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+
+.btn-dashboard {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--ink); color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 700;
+  padding: 13px 28px; border-radius: var(--radius-lg);
+  border: none; cursor: pointer; text-decoration: none;
+  transition: opacity 0.15s;
+}
+.btn-dashboard:hover { opacity: 0.85; }
+
+/* ID lead */
+.lead-id {
+  margin-top: 16px; padding: 10px 16px;
+  background: var(--bg-off); border-radius: var(--radius);
+  font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--subtle);
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="marlo-v5.html">mar<span>lo</span></a>
+  <button class="nav-back" onclick="history.back()">← Retour</button>
+</nav>
+
+<!-- ═══ FORMULAIRE ═══ -->
+<div class="page" id="formPage">
+
+  <div class="hero-label">Mise en relation</div>
+  <h1 class="hero-title">Votre dossier est prêt.<br>On s'occupe du reste.</h1>
+  <p class="hero-sub">Marlo transmet votre profil complet à un courtier partenaire. Votre premier RDV est gratuit et sans engagement.</p>
+
+  <!-- Brief auto-généré -->
+  <div class="brief-card" id="briefCard">
+    <div class="brief-label">Brief transmis au courtier</div>
+    <div class="brief-name" id="briefName">—</div>
+    <div class="brief-grid" id="briefGrid"></div>
+    <div class="brief-maturite" id="briefMaturite"></div>
+    <div class="brief-biens" id="briefBiens" style="display:none;"></div>
+  </div>
+
+  <!-- Formulaire -->
+  <div class="form-card">
+    <h3>Vos coordonnées</h3>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Prénom *</label>
+        <input type="text" id="fPrenom" placeholder="Caio" autocomplete="given-name">
+      </div>
+      <div class="field">
+        <label>Nom</label>
+        <input type="text" id="fNom" placeholder="Coelho" autocomplete="family-name">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Email *</label>
+      <input type="email" id="fEmail" placeholder="caio@email.com" autocomplete="email">
+    </div>
+
+    <div class="field">
+      <label>Téléphone *</label>
+      <input type="tel" id="fTel" placeholder="06 12 34 56 78" autocomplete="tel">
+      <div class="field-hint">Le courtier vous contactera dans les 24h ouvrées</div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3>Vos disponibilités pour le premier RDV</h3>
+    <div class="dispos" id="dispos">
+      <button class="dispo-btn" onclick="toggleDispo(this, 'matin')">🌅 Matin (9h–12h)</button>
+      <button class="dispo-btn" onclick="toggleDispo(this, 'dejeuner')">☀️ Déjeuner (12h–14h)</button>
+      <button class="dispo-btn" onclick="toggleDispo(this, 'aprem')">🌤 Après-midi (14h–18h)</button>
+      <button class="dispo-btn" onclick="toggleDispo(this, 'soir')">🌙 Soir (18h–20h)</button>
+      <button class="dispo-btn" onclick="toggleDispo(this, 'weekend')">📅 Week-end</button>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3>Précisions sur votre projet <span style="font-weight:400;color:var(--subtle);">(optionnel)</span></h3>
+
+    <div class="field">
+      <label>Avez-vous déjà une annonce en tête ?</label>
+      <select id="fAnnonce">
+        <option value="">Sélectionner…</option>
+        <option value="oui_precise">Oui, un bien précis que je veux acheter</option>
+        <option value="oui_plusieurs">Oui, plusieurs biens que je compare</option>
+        <option value="non">Non, je suis encore en phase de recherche</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Avez-vous déjà rencontré d'autres courtiers ?</label>
+      <select id="fAutresCourtiers">
+        <option value="">Sélectionner…</option>
+        <option value="non">Non, c'est ma première démarche</option>
+        <option value="oui_insatisfait">Oui, mais pas satisfait du suivi</option>
+        <option value="oui_compare">Oui, je compare les offres</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Message pour le courtier</label>
+      <textarea id="fMessage" placeholder="Ex : je cherche un bien dans le 11e ou 12e arrondissement, j'ai une offre qui m'intéresse mais j'ai besoin de connaître ma capacité exacte avant de me positionner…"></textarea>
+    </div>
+  </div>
+
+  <!-- Engagements -->
+  <div class="engagements">
+    <div class="engagement-title">Ce que Marlo s'engage à faire</div>
+    <div class="engagement-item">
+      <span class="engagement-check">✓</span>
+      Transmettre votre dossier complet à un courtier indépendant partenaire
+    </div>
+    <div class="engagement-item">
+      <span class="engagement-check">✓</span>
+      Vous garantir un premier contact dans les 24h ouvrées
+    </div>
+    <div class="engagement-item">
+      <span class="engagement-check">✓</span>
+      Ce service est entièrement gratuit pour vous — le courtier est rémunéré par la banque
+    </div>
+    <div class="engagement-item">
+      <span class="engagement-check">✓</span>
+      Vos données ne sont jamais revendues à des tiers
+    </div>
+  </div>
+
+  <button class="btn-submit" id="btnSubmit" onclick="soumettreFormulaire()">
+    Envoyer mon dossier au courtier →
+  </button>
+  <p class="submit-legal">En soumettant ce formulaire, vous acceptez d'être contacté par un courtier partenaire Marlo. Sans engagement.</p>
+
+</div>
+
+<!-- ═══ SUCCÈS ═══ -->
+<div class="page success-screen" id="successPage">
+  <div class="success-icon">✓</div>
+  <h2 class="success-title">Dossier transmis !</h2>
+  <p class="success-sub" id="successSub">Votre courtier Marlo va vous contacter dans les 24h ouvrées pour prendre rendez-vous.</p>
+
+  <div class="next-steps">
+    <h4>La suite du processus</h4>
+    <div class="next-step">
+      <div class="step-num">1</div>
+      Le courtier analyse votre dossier Marlo (budget, revenus, projet)
+    </div>
+    <div class="next-step">
+      <div class="step-num">2</div>
+      Il vous contacte dans les 24h pour un premier RDV de 30 min
+    </div>
+    <div class="next-step">
+      <div class="step-num">3</div>
+      Il consulte les banques partenaires et vous présente les meilleures offres
+    </div>
+    <div class="next-step">
+      <div class="step-num">4</div>
+      Vous signez uniquement si vous êtes satisfait — zéro engagement
+    </div>
+  </div>
+
+  <a href="marlo-dashboard.html" class="btn-dashboard">Retour à mes biens →</a>
+
+  <div class="lead-id" id="leadId"></div>
+</div>
+
+<script>
+// ── DONNÉES UTILISATEUR (depuis localStorage) ──
+let userData = {};
+let biens = [];
+let dispoSelected = new Set();
+
+function init() {
+  // Charger profil
+  try {
+    const profil = JSON.parse(localStorage.getItem('marlo_profil') || '{}');
+    const users  = JSON.parse(localStorage.getItem('marlo_users')  || '[]');
+    const biensRaw = JSON.parse(localStorage.getItem('marlo_biens') || '[]');
+    biens = biensRaw;
+
+    const lastUser = users.length ? users[users.length - 1] : {};
+    userData = { ...profil, ...lastUser };
+
+    // Pré-remplir formulaire
+    if (userData.prenom) document.getElementById('fPrenom').value = userData.prenom;
+    if (userData.email)  document.getElementById('fEmail').value  = userData.email;
+
+  } catch(_) {}
+
+  renderBrief();
+}
+
+// ── BRIEF AUTO-GÉNÉRÉ ──
+function renderBrief() {
+  const prenom  = userData.prenom || 'Votre client';
+  const budget  = userData.budget  ? parseInt(userData.budget).toLocaleString('fr') + ' €' : 'Non renseigné';
+  const revenus = userData.revenus ? parseInt(userData.revenus).toLocaleString('fr') + ' €/mois' : 'Non renseigné';
+  const apport  = userData.apport  ? parseInt(userData.apport).toLocaleString('fr') + ' €' : 'Non renseigné';
+  const zone    = userData.zone    || 'Non renseignée';
+  const mode    = userData.mode === 'investisseur' ? '📈 Investisseur' : '🏠 Acheteur résidence principale';
+
+  // Capacité emprunt estimée
+  const revNum = parseInt(userData.revenus) || 3500;
+  const capacite = Math.round(revNum * 0.35 * 240 / (3.8/100/12 / (1 - Math.pow(1+3.8/100/12, -240))));
+  const capaciteLabel = capacite > 0 ? capacite.toLocaleString('fr') + ' €' : 'À calculer';
+
+  // Maturité
+  const nbBiens = biens.length;
+  let maturite, maturiteClass, maturiteDesc;
+  if (nbBiens >= 3) {
+    maturite = 'Chaud 🔥'; maturiteClass = 'chaud';
+    maturiteDesc = `${nbBiens} biens analysés — en phase de décision`;
+  } else if (nbBiens >= 1) {
+    maturite = 'Tiède'; maturiteClass = 'tiede';
+    maturiteDesc = `${nbBiens} bien${nbBiens > 1 ? 's' : ''} analysé${nbBiens > 1 ? 's' : ''} — en recherche active`;
+  } else {
+    maturite = 'Froid'; maturiteClass = 'froid';
+    maturiteDesc = 'Début de recherche — à qualifier';
+  }
+
+  document.getElementById('briefName').textContent = prenom;
+
+  document.getElementById('briefGrid').innerHTML = `
+    <div class="brief-item">
+      <div class="brief-item-label">Budget</div>
+      <div class="brief-item-val accent">${budget}</div>
+    </div>
+    <div class="brief-item">
+      <div class="brief-item-label">Capacité emprunt</div>
+      <div class="brief-item-val green">${capaciteLabel}</div>
+    </div>
+    <div class="brief-item">
+      <div class="brief-item-label">Revenus</div>
+      <div class="brief-item-val">${revenus}</div>
+    </div>
+    <div class="brief-item">
+      <div class="brief-item-label">Apport</div>
+      <div class="brief-item-val">${apport}</div>
+    </div>
+    <div class="brief-item">
+      <div class="brief-item-label">Zone cible</div>
+      <div class="brief-item-val">${zone}</div>
+    </div>
+    <div class="brief-item">
+      <div class="brief-item-label">Profil</div>
+      <div class="brief-item-val" style="font-size:12px;">${mode}</div>
+    </div>
+  `;
+
+  document.getElementById('briefMaturite').innerHTML = `
+    <span class="maturite-badge ${maturiteClass}">${maturite}</span>
+    <span class="maturite-desc">${maturiteDesc}</span>
+  `;
+
+  // Biens analysés
+  if (biens.length > 0) {
+    const biensEl = document.getElementById('briefBiens');
+    biensEl.style.display = 'block';
+    biensEl.innerHTML = `
+      <div class="brief-biens-label">Biens analysés (${biens.length})</div>
+      ${biens.slice(0, 3).map(b => `
+        <div class="brief-bien-item">
+          <span class="brief-bien-score">${b.score || '—'}</span>
+          ${b.titre || '—'} · ${b.verdict || '—'}
+        </div>
+      `).join('')}
+      ${biens.length > 3 ? `<div class="brief-bien-item" style="color:rgba(255,255,255,0.4);">+ ${biens.length - 3} autre${biens.length - 3 > 1 ? 's' : ''}</div>` : ''}
+    `;
+  }
+}
+
+// ── DISPONIBILITÉS ──
+function toggleDispo(btn, val) {
+  if (dispoSelected.has(val)) {
+    dispoSelected.delete(val);
+    btn.classList.remove('active');
+  } else {
+    dispoSelected.add(val);
+    btn.classList.add('active');
+  }
+}
+
+// ── SOUMISSION ──
+async function soumettreFormulaire() {
+  const prenom = document.getElementById('fPrenom').value.trim();
+  const email  = document.getElementById('fEmail').value.trim();
+  const tel    = document.getElementById('fTel').value.trim();
+  const btn    = document.getElementById('btnSubmit');
+
+  // Validation
+  if (!prenom) { showError('fPrenom', 'Votre prénom est requis'); return; }
+  if (!email || !email.includes('@')) { showError('fEmail', 'Email invalide'); return; }
+  if (!tel || tel.length < 10) { showError('fTel', 'Numéro de téléphone requis'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Envoi en cours…';
+
+  // Générer ID lead unique
+  const leadId = 'MLO-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
+
+  // Construire le brief complet
+  const brief = {
+    leadId,
+    date: new Date().toISOString(),
+    contact: {
+      prenom,
+      nom: document.getElementById('fNom').value.trim(),
+      email,
+      tel,
+    },
+    profil: {
+      budget: userData.budget || null,
+      apport: userData.apport || null,
+      revenus: userData.revenus || null,
+      zone: userData.zone || null,
+      mode: userData.mode || 'acheteur',
+    },
+    disponibilites: Array.from(dispoSelected),
+    annonce: document.getElementById('fAnnonce').value,
+    autresCourtiers: document.getElementById('fAutresCourtiers').value,
+    message: document.getElementById('fMessage').value.trim(),
+    biens: biens.map(b => ({
+      titre: b.titre,
+      prix: b.prix,
+      score: b.score,
+      verdict: b.verdict,
+    })),
+    maturite: biens.length >= 3 ? 'chaud' : biens.length >= 1 ? 'tiede' : 'froid',
+  };
+
+  // Stocker localement (→ sera envoyé à Supabase + email courtier)
+  try {
+    const leads = JSON.parse(localStorage.getItem('marlo_leads') || '[]');
+    leads.push(brief);
+    localStorage.setItem('marlo_leads', JSON.stringify(leads));
+  } catch(_) {}
+
+  // Simuler délai envoi
+  await new Promise(r => setTimeout(r, 1200));
+
+  // Afficher succès
+  document.getElementById('formPage').style.display = 'none';
+  const successPage = document.getElementById('successPage');
+  successPage.classList.add('visible');
+  document.getElementById('successSub').textContent =
+    `Parfait ${prenom} ! Votre dossier a été transmis. Un courtier Marlo vous contactera à ${email} ou au ${tel} dans les 24h ouvrées.`;
+  document.getElementById('leadId').textContent = `Référence dossier : ${leadId}`;
+
+  window.scrollTo(0, 0);
+}
+
+function showError(fieldId, msg) {
+  const el = document.getElementById(fieldId);
+  el.style.borderColor = '#d63031';
+  el.focus();
+  setTimeout(() => { el.style.borderColor = ''; }, 2000);
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>Marlo — Votre copilote immobilier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink: #111110;
+  --ink-2: #3d3d3a;
+  --muted: #787774;
+  --subtle: #acaba8;
+  --border: #e8e8e4;
+  --bg: #ffffff;
+  --bg-off: #fafaf8;
+  --accent: #2020e8;
+  --accent-light: #eaeaff;
+  --accent-hover: #1818c4;
+  --green: #0f7b6c;
+  --green-bg: #edfaf6;
+  --red: #c7372f;
+  --red-bg: #fff5f5;
+  --amber: #b35309;
+  --amber-bg: #fef9ee;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.05);
+}
+
+html { color-scheme: light only; background: #fff !important; }
+@media (prefers-color-scheme: dark) { html, body { background: #fff !important; color: #111110 !important; } }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: #fff;
+  color: var(--ink);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.003em;
+  line-height: 1.5;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  z-index: 200;
+}
+.nav-logo { font-size: 16px; font-weight: 800; letter-spacing: -0.04em; }
+.nav-logo span { color: var(--accent); }
+.nav-step { font-size: 12px; color: var(--muted); font-family: 'Geist Mono', monospace; }
+
+/* ── PROGRESS BAR ── */
+.progress-bar {
+  position: fixed; top: 52px; left: 0; right: 0; height: 2px;
+  background: var(--border); z-index: 200;
+}
+.progress-fill {
+  height: 100%; background: var(--accent);
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+/* ── SCREENS ── */
+.screen {
+  display: none;
+  min-height: 100vh;
+  padding: 52px 0 0;
+}
+.screen.active { display: flex; flex-direction: column; }
+
+/* ── TUNNEL SCREEN ── */
+.tunnel-screen {
+  align-items: center; justify-content: center;
+  padding: 52px 24px 40px;
+}
+.tunnel-inner {
+  width: 100%; max-width: 540px;
+  animation: slideUp 0.35s ease;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: none; }
+}
+
+.tunnel-section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 8px;
+}
+
+.tunnel-sentence {
+  font-size: clamp(22px, 4vw, 28px);
+  font-weight: 700; line-height: 1.3; letter-spacing: -0.025em;
+  color: var(--ink); margin-bottom: 28px;
+}
+.tunnel-sentence .dyn {
+  display: inline-block;
+  background: var(--accent-light); color: var(--accent);
+  padding: 2px 8px; border-radius: 6px;
+  font-weight: 700; transition: all 0.2s;
+}
+.tunnel-sentence .dyn.placeholder { background: var(--bg-off); color: var(--subtle); }
+
+.choices { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.choice-btn {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #fff; border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  font-size: 15px; font-weight: 500; color: var(--ink);
+  cursor: pointer; text-align: left;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+}
+.choice-btn:hover { border-color: var(--accent); background: var(--accent-light); }
+.choice-btn:active { transform: scale(0.98); }
+.choice-btn.selected { border-color: var(--accent); background: var(--accent-light); color: var(--accent); font-weight: 600; }
+.choice-btn .arrow { font-size: 14px; opacity: 0.4; }
+
+/* Input inline */
+.inline-input-wrap { margin-bottom: 24px; }
+.inline-input {
+  width: 100%;
+  border: 1.5px solid var(--border); border-radius: var(--radius);
+  padding: 14px 18px;
+  font-family: 'Geist Mono', monospace; font-size: 18px; font-weight: 500;
+  color: var(--ink); background: #fff;
+  outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+}
+.inline-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(32,32,232,0.1); }
+.inline-input::placeholder { color: var(--subtle); }
+.input-hint { font-size: 12px; color: var(--subtle); margin-top: 8px; }
+
+.info-box {
+  background: var(--bg-off); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+  font-size: 13px; color: var(--ink-2); line-height: 1.6;
+  margin-bottom: 24px;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.info-box .icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+.btn-next {
+  width: 100%; background: var(--accent); color: #fff;
+  font-size: 15px; font-weight: 600; letter-spacing: -0.01em;
+  padding: 15px; border-radius: var(--radius);
+  border: none; cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-next:hover { opacity: 0.88; }
+.btn-next:active { transform: scale(0.98); }
+.btn-next:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.btn-back {
+  background: none; border: none; cursor: pointer;
+  font-size: 13px; color: var(--muted); padding: 12px 0 0;
+  display: flex; align-items: center; gap: 6px;
+  transition: color 0.15s;
+}
+.btn-back:hover { color: var(--ink); }
+
+/* ── LOADING SCREEN ── */
+.loading-screen {
+  align-items: center; justify-content: center;
+  flex-direction: column; gap: 32px; text-align: center;
+  padding: 52px 24px 40px;
+}
+.loading-orbit {
+  position: relative; width: 140px; height: 140px;
+}
+.orbit-center {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--accent); display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.orbit-ring {
+  position: absolute; top: 50%; left: 50%;
+  width: 120px; height: 120px;
+  border: 1.5px solid var(--border);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: spin 4s linear infinite;
+}
+.orbit-dot {
+  position: absolute; top: -5px; left: 50%; margin-left: -5px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--accent);
+}
+@keyframes spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+.loading-steps { display: flex; flex-direction: column; gap: 8px; max-width: 280px; }
+.loading-step-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--subtle);
+  font-family: 'Geist Mono', monospace;
+  transition: color 0.3s;
+}
+.loading-step-item.active { color: var(--accent); }
+.loading-step-item.done { color: var(--green); }
+.step-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+/* ── RAPPORT SCREEN ── */
+.rapport-screen {
+  flex-direction: column;
+  padding: 52px 0 60px;
+  max-width: 640px; margin: 0 auto; width: 100%;
+}
+
+.rapport-hero {
+  padding: 32px 24px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.rapport-date { font-size: 11px; color: var(--subtle); font-family: 'Geist Mono', monospace; margin-bottom: 12px; }
+.rapport-title { font-size: clamp(26px, 5vw, 36px); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 8px; }
+.rapport-subtitle { font-size: 15px; color: var(--muted); line-height: 1.6; }
+
+/* Score global */
+.score-band {
+  margin: 0 24px 24px;
+  margin-top: 24px;
+  background: var(--bg-off); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px;
+  display: flex; align-items: center; gap: 20px;
+}
+.score-circle {
+  width: 72px; height: 72px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  border: 3px solid;
+}
+.score-circle .num { font-family: 'Geist Mono', monospace; font-size: 22px; font-weight: 500; line-height: 1; }
+.score-circle .label { font-size: 9px; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 2px; }
+.score-circle.good { border-color: var(--green); color: var(--green); background: var(--green-bg); }
+.score-circle.warn { border-color: var(--amber); color: var(--amber); background: var(--amber-bg); }
+.score-circle.bad { border-color: var(--red); color: var(--red); background: var(--red-bg); }
+
+.score-content h3 { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+.score-content p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+/* Sections rapport */
+.rapport-section {
+  margin: 0 24px 16px;
+  border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden;
+}
+.rapport-section-header {
+  padding: 14px 18px;
+  background: var(--bg-off);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.rapport-section-header .section-icon { font-size: 14px; }
+.rapport-section-header .section-title { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.rapport-section-body { padding: 16px 18px; }
+
+/* Price compare */
+.price-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.price-cell { text-align: center; }
+.price-cell .p-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.price-cell .p-val { font-family: 'Geist Mono', monospace; font-size: 15px; font-weight: 500; }
+.price-cell.accent .p-val { color: var(--accent); }
+.price-cell.good .p-val { color: var(--green); }
+.price-cell.bad .p-val { color: var(--red); }
+
+/* Signals */
+.signal-list { display: flex; flex-direction: column; gap: 10px; }
+.signal-item { display: flex; gap: 10px; font-size: 13.5px; line-height: 1.55; color: var(--ink-2); }
+.signal-icon { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+
+/* Questions */
+.q-list { display: flex; flex-direction: column; gap: 8px; }
+.q-item {
+  background: var(--bg-off); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 11px 14px;
+  font-size: 13px; color: var(--ink-2);
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.q-mark { font-weight: 800; color: var(--accent); flex-shrink: 0; font-size: 13px; }
+
+/* Finançabilité */
+.financement-card {
+  margin: 0 24px 16px;
+  border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--border);
+}
+.financement-header {
+  padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.financement-header.good { background: var(--green-bg); border-bottom: 1px solid #c5f0e8; }
+.financement-header.warn { background: var(--amber-bg); border-bottom: 1px solid #fde8c4; }
+.financement-header.bad { background: var(--red-bg); border-bottom: 1px solid #ffd5d3; }
+.financement-header h3 { font-size: 15px; font-weight: 700; }
+.financement-badge {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 99px;
+}
+.financement-badge.good { background: var(--green); color: #fff; }
+.financement-badge.warn { background: var(--amber); color: #fff; }
+.financement-badge.bad { background: var(--red); color: #fff; }
+.financement-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-2); line-height: 1.6; background: #fff; }
+
+/* Mensualité estimée */
+.mensualite-row {
+  display: flex; align-items: baseline; gap: 8px;
+  margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border);
+}
+.mensualite-val { font-family: 'Geist Mono', monospace; font-size: 28px; font-weight: 500; color: var(--ink); }
+.mensualite-label { font-size: 13px; color: var(--muted); }
+
+/* CTA rapport */
+.rapport-cta {
+  margin: 0 24px;
+  background: var(--ink); color: #fff;
+  border-radius: var(--radius-lg); padding: 24px;
+  text-align: center;
+}
+.rapport-cta h3 { font-size: 18px; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 8px; }
+.rapport-cta p { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 20px; line-height: 1.5; }
+.btn-cta-white {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #fff; color: var(--ink);
+  font-size: 14px; font-weight: 700; letter-spacing: -0.01em;
+  padding: 13px 24px; border-radius: var(--radius);
+  border: none; cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-cta-white:hover { opacity: 0.9; }
+.rapport-restart {
+  margin: 16px 24px 0;
+  text-align: center;
+}
+.btn-restart {
+  background: none; border: none; cursor: pointer;
+  font-size: 13px; color: var(--muted);
+  text-decoration: underline;
+  transition: color 0.15s;
+}
+.btn-restart:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">mar<span>lo</span></div>
+  <div class="nav-step" id="navStep">Votre projet</div>
+</nav>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- ══════════════════════════════════════════
+     ÉCRAN 1 — Type de projet
+══════════════════════════════════════════ -->
+<div class="screen tunnel-screen active" id="s1">
+  <div class="tunnel-inner">
+    <div class="tunnel-section-label">Votre projet</div>
+    <div class="tunnel-sentence">
+      Vous souhaitez acheter
+      <span class="dyn placeholder" id="s1_dyn">un logement</span>.
+    </div>
+    <div class="choices">
+      <button class="choice-btn" onclick="pick('s1','Votre résidence principale','rp')">Votre résidence principale <span class="arrow">→</span></button>
+      <button class="choice-btn" onclick="pick('s1','Une résidence secondaire','rs')">Une résidence secondaire <span class="arrow">→</span></button>
+      <button class="choice-btn" onclick="pick('s1','Un bien locatif','loc')">Un bien locatif <span class="arrow">→</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ÉCRAN 2 — Achat seul ou à deux
+══════════════════════════════════════════ -->
+<div class="screen tunnel-screen" id="s2">
+  <div class="tunnel-inner">
+    <div class="tunnel-section-label">Votre projet</div>
+    <div class="tunnel-sentence" id="s2_sentence">
+      Vous achetez
+      <span class="dyn placeholder" id="s2_dyn">comment</span>.
+    </div>
+    <div class="choices">
+      <button class="choice-btn" onclick="pick('s2','seul(e)','solo')">Seul(e) <span class="arrow">→</span></button>
+      <button class="choice-btn" onclick="pick('s2','à deux','duo')">À deux <span class="arrow">→</span></button>
+      <button class="choice-btn" onclick="pick('s2','à trois ou plus','groupe')">À trois ou plus <span class="arrow">→</span></button>
+    </div>
+    <button class="btn-back" onclick="goBack(1)">← Retour</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ÉCRAN 3 — Type de bien
+══════════════════════════════════════════ -->
+<div class="screen tunnel-screen" id="s3">
+  <div class="tunnel-inner">
+    <div class="tunnel-section-label">Le bien</div>
+    <div class="tunnel-sentence">
+      Il s'agit d'
+      <span class="dyn placeholder" id="s3_dyn">un type de bien</span>.
+    </div>
+    <div class="choices">
+      <button class="choice-btn" onclick="pick('s3','un logement ancien','ancien')">Un logement ancien <span class="arrow">→</span></button>
+      <button class="choice-btn" onclick="pick('s3','un logement neuf','neuf')">Un logement neuf / VEFA <span class="arrow">→</span></button>
+      <button class="choice-btn" onclick="pick('s3','un terrain + construction','terrain')">Un terrain + construction <span class="arrow">→</span></button>
+    </div>
+    <button class="btn-back" onclick="goBack(2)">← Retour</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ÉCRAN 4 — Prix du bien
+══════════════════════════════════════════ -->
+<div class="screen tunnel-screen" id="s4">
+  <div class="tunnel-inner">
+    <div class="tunnel-section-label">Le bien</div>
+    <div class="tunnel-sentence">
+      Le prix du bien est de
+      <span class="dyn placeholder" id="s4_dyn">— €</span>.
+    </div>
+    <div class="inline-input-wrap">
+      <input type="number" class="inline-input" id="s4_input" placeholder="280 000" min="50000" max="5000000"
+        oninput="updateDyn('s4', formatEur(this.value))"
+        onkeydown="if(event.key==='Enter') tryNext(4)">
+      <div class="input-hint">Entrez le prix affiché dans l'annonce (frais d'agence inclus)</div>
+    </div>
+    <div class="info-box">
+      <span class="icon">💡</span>
+      <span>Si vous n'avez pas encore de bien précis en tête, entrez le budget maximum que vous souhaitez mettre.</span>
+    </div>
+    <button class="btn-next" onclick="tryNext(4)">Continuer →</button>
+    <button class="btn-back" onclick="goBack(3)">← Retour</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ÉCRAN 5 — Apport
+══════════════════════════════════════════ -->
+<div class="screen tunnel-screen" id="s5">
+  <div class="tunnel-inner">
+    <div class="tunnel-section-label">Votre financement</div>
+    <div class="tunnel-sentence">
+      Votre apport est de
+      <span class="dyn placeholder" id="s5_dyn">— €</span>.
+    </div>
+    <div class="inline-input-wrap">
+      <input type="number" class="inline-input" id="s5_input" placeholder="30 000" min="0"
+        oninput="updateDyn('s5', formatEur(this.value))"
+        onkeydown="if(event.key==='Enter') tryNext(5)">
+      <div class="input-hint">Épargne que vous pouvez mobiliser pour cet achat</div>
+    </div>
+    <div class="info-box">
+      <span class="icon">ℹ️</span>
+      <span>L'apport couvre idéalement les frais de notaire (~8% dans l'ancien, ~3% dans le neuf). Un apport plus élevé améliore votre dossier auprès des banques.</span>
+    </div>
+    <button class="btn-next" onclick="tryNext(5)">Continuer →</button>
+    <button class="btn-back" onclick="goBack(4)">← Retour</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ÉCRAN 6 — Revenus
+══════════════════════════════════════════ -->
+<div class="screen tunnel-screen" id="s6">
+  <div class="tunnel-inner">
+    <div class="tunnel-section-label">Votre situation</div>
+    <div class="tunnel-sentence">
+      Votre revenu mensuel net est de
+      <span class="dyn placeholder" id="s6_dyn">— €</span>.
+    </div>
+    <div class="inline-input-wrap">
+      <input type="number" class="inline-input" id="s6_input" placeholder="3 500" min="0"
+        oninput="updateDyn('s6', formatEur(this.value))"
+        onkeydown="if(event.key==='Enter') tryNext(6)">
+      <div class="input-hint">Pour un achat à deux, indiquez le total des deux revenus</div>
+    </div>
+    <div class="info-box">
+      <span class="icon">💡</span>
+      <span>Incluez primes régulières et revenus locatifs si vous en avez. Les banques calculent votre capacité d'emprunt sur la moyenne des 3 dernières années.</span>
+    </div>
+    <button class="btn-next" onclick="tryNext(6)">Continuer →</button>
+    <button class="btn-back" onclick="goBack(5)">← Retour</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ÉCRAN 7 — Charges actuelles
+══════════════════════════════════════════ -->
+<div class="screen tunnel-screen" id="s7">
+  <div class="tunnel-inner">
+    <div class="tunnel-section-label">Votre situation</div>
+    <div class="tunnel-sentence">
+      Vos charges mensuelles actuelles (loyer + crédits) sont de
+      <span class="dyn placeholder" id="s7_dyn">— €</span>.
+    </div>
+    <div class="inline-input-wrap">
+      <input type="number" class="inline-input" id="s7_input" placeholder="1 200" min="0"
+        oninput="updateDyn('s7', formatEur(this.value))"
+        onkeydown="if(event.key==='Enter') tryNext(7)">
+      <div class="input-hint">Loyer actuel + mensualités de crédits en cours (hors crédit immo futur)</div>
+    </div>
+    <button class="btn-next" onclick="tryNext(7)">Continuer →</button>
+    <button class="btn-back" onclick="goBack(6)">← Retour</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ÉCRAN 8 — Situation logement actuelle
+══════════════════════════════════════════ -->
+<div class="screen tunnel-screen" id="s8">
+  <div class="tunnel-inner">
+    <div class="tunnel-section-label">Votre situation</div>
+    <div class="tunnel-sentence">
+      Vous êtes actuellement
+      <span class="dyn placeholder" id="s8_dyn">votre situation</span>.
+    </div>
+    <div class="choices">
+      <button class="choice-btn" onclick="pickLogement('locataire','loc')">Locataire <span class="arrow">→</span></button>
+      <button class="choice-btn" onclick="pickLogement('propriétaire sans crédit en cours','prop_libre')">Propriétaire sans crédit en cours <span class="arrow">→</span></button>
+      <button class="choice-btn" onclick="pickLogement('propriétaire avec crédit en cours','prop_credit')">Propriétaire avec crédit en cours <span class="arrow">→</span></button>
+      <button class="choice-btn" onclick="pickLogement('hébergé(e) gratuitement','heberge')">Hébergé(e) gratuitement <span class="arrow">→</span></button>
+    </div>
+    <button class="btn-back" onclick="goBack(7)">← Retour</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ÉCRAN 8b — Détails crédit existant (conditionnel)
+══════════════════════════════════════════ -->
+<div class="screen tunnel-screen" id="s8b">
+  <div class="tunnel-inner">
+    <div class="tunnel-section-label">Votre situation</div>
+    <div class="tunnel-sentence">
+      Vous êtes <span class="dyn" id="s8b_dyn" style="background:var(--accent-light);color:var(--accent);padding:2px 8px;border-radius:6px;">propriétaire avec crédit</span>.
+      Votre mensualité actuelle est de
+      <span class="dyn placeholder" id="s8b_mens_dyn">— €</span>
+      et il vous reste
+      <span class="dyn placeholder" id="s8b_duree_dyn">— mois</span>.
+    </div>
+
+    <div class="inline-input-wrap">
+      <input type="number" class="inline-input" id="s8b_mens_input" placeholder="850" min="0"
+        oninput="updateDyn('s8b_mens', formatEur(this.value))"
+        onkeydown="if(event.key==='Enter') document.getElementById('s8b_duree_input').focus()">
+      <div class="input-hint">Mensualité de votre crédit immobilier actuel (€/mois)</div>
+    </div>
+
+    <div class="inline-input-wrap" style="margin-top:12px;">
+      <input type="number" class="inline-input" id="s8b_duree_input" placeholder="180" min="0" max="360"
+        oninput="updateDyn('s8b_duree', this.value ? this.value + ' mois restants' : null)"
+        onkeydown="if(event.key==='Enter') tryNextLogement()">
+      <div class="input-hint">Nombre de mois restants sur ce crédit</div>
+    </div>
+
+    <!-- Loyers perçus si investisseur -->
+    <div id="loyersBlock" style="display:none;">
+      <div class="inline-input-wrap" style="margin-top:12px;">
+        <input type="number" class="inline-input" id="s8b_loyers_input" placeholder="0" min="0"
+          oninput="updateDyn('s8b_loyers', formatEur(this.value))">
+        <div class="input-hint">Loyers mensuels perçus sur vos biens existants (0 si aucun)</div>
+      </div>
+      <div class="info-box" style="margin-top:8px;">
+        <span class="icon">ℹ️</span>
+        <span>Les banques retiennent 70% des loyers perçus dans le calcul de vos revenus — un avantage significatif pour votre dossier.</span>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:12px;">
+      <span class="icon">💡</span>
+      <span>Votre crédit actuel sera intégré dans le calcul de votre taux d'endettement global. Les banques imposent un maximum de 35% revenus/charges tous crédits confondus.</span>
+    </div>
+
+    <button class="btn-next" onclick="tryNextLogement()">Continuer →</button>
+    <button class="btn-back" onclick="goBack(8)">← Retour</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ÉCRAN 9 — Situation pro
+══════════════════════════════════════════ -->
+<div class="screen tunnel-screen" id="s9">
+  <div class="tunnel-inner">
+    <div class="tunnel-section-label">Votre situation</div>
+    <div class="tunnel-sentence">
+      Vous êtes
+      <span class="dyn placeholder" id="s9_dyn">votre statut</span>.
+    </div>
+    <div class="choices">
+      <button class="choice-btn" onclick="pick('s9','salarié(e) en CDI','cdi')">Salarié(e) en CDI <span class="arrow">→</span></button>
+      <button class="choice-btn" onclick="pick('s9','fonctionnaire','fonct')">Fonctionnaire <span class="arrow">→</span></button>
+      <button class="choice-btn" onclick="pick('s9','indépendant(e)','indep')">Indépendant(e) / chef d'entreprise <span class="arrow">→</span></button>
+      <button class="choice-btn" onclick="pick('s9','en CDD / intérim','cdd')">CDD / Intérim / Autre <span class="arrow">→</span></button>
+    </div>
+    <button class="btn-back" onclick="goBackLogement()">← Retour</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ÉCRAN LOADING
+══════════════════════════════════════════ -->
+<div class="screen loading-screen" id="sLoading">
+  <div class="loading-orbit">
+    <div class="orbit-center">🏠</div>
+    <div class="orbit-ring"><div class="orbit-dot"></div></div>
+  </div>
+  <div class="loading-steps" id="loadingSteps">
+    <div class="loading-step-item active" id="ls1"><div class="step-dot"></div>Analyse de votre projet…</div>
+    <div class="loading-step-item" id="ls2"><div class="step-dot"></div>Calcul de la capacité d'emprunt…</div>
+    <div class="loading-step-item" id="ls3"><div class="step-dot"></div>Évaluation du taux d'endettement…</div>
+    <div class="loading-step-item" id="ls4"><div class="step-dot"></div>Détection des signaux de risque…</div>
+    <div class="loading-step-item" id="ls5"><div class="step-dot"></div>Génération du rapport…</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ÉCRAN RAPPORT
+══════════════════════════════════════════ -->
+<div class="screen rapport-screen" id="sRapport">
+  <div class="rapport-hero">
+    <div class="rapport-date" id="rDate"></div>
+    <h1 class="rapport-title" id="rTitle">Votre analyse Marlo</h1>
+    <p class="rapport-subtitle" id="rSubtitle"></p>
+  </div>
+
+  <!-- Score global -->
+  <div class="score-band">
+    <div class="score-circle" id="rScoreCircle">
+      <div class="num" id="rScoreNum">—</div>
+      <div class="label">Score</div>
+    </div>
+    <div class="score-content">
+      <h3 id="rScoreTitle">—</h3>
+      <p id="rScoreDesc">—</p>
+    </div>
+  </div>
+
+  <!-- Finançabilité -->
+  <div class="financement-card">
+    <div class="financement-header" id="rFinHeader">
+      <h3 id="rFinTitle">—</h3>
+      <span class="financement-badge" id="rFinBadge">—</span>
+    </div>
+    <div class="financement-body">
+      <div id="rFinBody">—</div>
+      <div class="mensualite-row">
+        <div class="mensualite-val" id="rMensualite">— €</div>
+        <div class="mensualite-label">/mois estimé sur 20 ans</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prix du marché -->
+  <div class="rapport-section">
+    <div class="rapport-section-header">
+      <span class="section-icon">📊</span>
+      <span class="section-title">Analyse du prix</span>
+    </div>
+    <div class="rapport-section-body">
+      <div class="price-grid" id="rPriceGrid"></div>
+    </div>
+  </div>
+
+  <!-- Signaux -->
+  <div class="rapport-section">
+    <div class="rapport-section-header">
+      <span class="section-icon">🔍</span>
+      <span class="section-title">Signaux détectés</span>
+    </div>
+    <div class="rapport-section-body">
+      <div class="signal-list" id="rSignals"></div>
+    </div>
+  </div>
+
+  <!-- Questions -->
+  <div class="rapport-section">
+    <div class="rapport-section-header">
+      <span class="section-icon">💬</span>
+      <span class="section-title">Questions à poser au vendeur</span>
+    </div>
+    <div class="rapport-section-body">
+      <div class="q-list" id="rQuestions"></div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="rapport-cta">
+    <h3>Prêt à passer à l'étape crédit ?</h3>
+    <p>Marlo vous a donné la décision. Un courtier peut maintenant optimiser votre financement en 48h.</p>
+    <button class="btn-cta-white">Simuler mon crédit →</button>
+  </div>
+
+  <div class="rapport-restart">
+    <button class="btn-restart" onclick="restart()">Recommencer une simulation</button>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+const DATA = {
+  s1: null, s1val: null,   // type projet
+  s2: null, s2val: null,   // seul/duo
+  s3: null, s3val: null,   // type bien
+  s4: null,                // prix bien
+  s5: null,                // apport
+  s6: null,                // revenu mensuel net
+  s7: null,                // charges actuelles
+  s8: null, s8val: null,   // situation logement actuelle
+  s8b_mens: null,          // mensualité crédit existant
+  s8b_duree: null,         // durée restante crédit existant
+  s8b_loyers: null,        // loyers perçus
+  s9: null, s9val: null,   // statut pro
+};
+
+const TOTAL_STEPS = 9;
+let currentStep = 1;
+
+// ── NAV LABELS ──
+const stepLabels = {
+  1: 'Votre projet', 2: 'Votre projet', 3: 'Le bien',
+  4: 'Le bien', 5: 'Le financement', 6: 'Vos revenus',
+  7: 'Vos charges', 8: 'Votre situation', 9: 'Votre situation'
+};
+
+// ── UTILS ──
+function formatEur(val) {
+  const n = parseInt(val);
+  if (isNaN(n) || n <= 0) return null;
+  return n.toLocaleString('fr') + ' €';
+}
+
+function safeInt(val) {
+  const n = parseInt(val);
+  return isNaN(n) ? 0 : n;
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function updateProgress(step) {
+  const pct = ((step - 1) / TOTAL_STEPS) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('navStep').textContent = stepLabels[step] || 'Analyse';
+}
+
+// ── DYNAMIC SENTENCE UPDATE ──
+function updateDyn(screen, val) {
+  const el = document.getElementById(screen + '_dyn');
+  if (!el) return;
+  if (val) {
+    el.textContent = val;
+    el.classList.remove('placeholder');
+  } else {
+    el.classList.add('placeholder');
+  }
+}
+
+// ── CHOICE PICK ──
+function pick(screen, label, val) {
+  DATA[screen] = val;
+  DATA[screen + 'val'] = label;
+  updateDyn(screen, label);
+
+  const sNum = parseInt(screen.replace('s',''));
+  setTimeout(() => {
+    // s9 est le dernier écran → lancer loading
+    if (sNum >= 9) {
+      startLoading();
+    } else {
+      goTo(sNum + 1);
+    }
+  }, 180);
+}
+
+// ── NAVIGATION ──
+function goTo(step) {
+  currentStep = step;
+  updateProgress(step);
+
+  if (step <= 9) {
+    showScreen('s' + step);
+  } else {
+    startLoading();
+  }
+}
+
+function goBack(fromStep) {
+  if (fromStep === 9) {
+    // Retour depuis statut pro → selon situation logement
+    if (DATA.s8 === 'prop_credit') {
+      showScreen('s8b');
+    } else {
+      showScreen('s8');
+    }
+  } else {
+    goTo(fromStep - 1);
+  }
+}
+
+// ── LOGEMENT — PICK + NAVIGATION CONDITIONNELLE ──
+function pickLogement(label, val) {
+  DATA.s8 = val;
+  DATA.s8val = label;
+  updateDyn('s8', label);
+
+  setTimeout(() => {
+    if (val === 'prop_credit') {
+      // Afficher le bloc loyers si investisseur
+      document.getElementById('loyersBlock').style.display =
+        (DATA.s1 === 'loc') ? 'block' : 'none';
+      showScreen('s8b');
+    } else {
+      // Pas de crédit existant → aller directement à statut pro
+      DATA.s8b_mens = 0;
+      DATA.s8b_duree = 0;
+      DATA.s8b_loyers = 0;
+      goTo(9);
+    }
+  }, 180);
+}
+
+function tryNextLogement() {
+  const mens = parseInt(document.getElementById('s8b_mens_input').value) || 0;
+  const duree = parseInt(document.getElementById('s8b_duree_input').value) || 0;
+  const loyers = parseInt(document.getElementById('s8b_loyers_input').value) || 0;
+
+  if (mens <= 0) {
+    const inp = document.getElementById('s8b_mens_input');
+    inp.style.borderColor = 'var(--red)'; inp.focus();
+    setTimeout(() => { inp.style.borderColor = ''; }, 1500);
+    return;
+  }
+
+  DATA.s8b_mens = mens;
+  DATA.s8b_duree = duree;
+  DATA.s8b_loyers = loyers;
+
+  updateDyn('s8b_mens', mens.toLocaleString('fr') + ' €');
+  updateDyn('s8b_duree', duree + ' mois restants');
+
+  goTo(9);
+}
+
+function goBackLogement() {
+  // Depuis statut pro, retour conditionnel
+  if (DATA.s8 === 'prop_credit') {
+    showScreen('s8b');
+  } else {
+    showScreen('s8');
+  }
+}
+
+// ── VALIDATION BEFORE NEXT ──
+function tryNext(step) {
+  const input = document.getElementById('s' + step + '_input');
+  if (input) {
+    const val = safeInt(input.value);
+    if (val <= 0) {
+      input.style.borderColor = 'var(--red)';
+      input.focus();
+      setTimeout(() => { input.style.borderColor = ''; }, 1500);
+      return;
+    }
+    DATA['s' + step] = val;
+  }
+  goTo(step + 1);
+}
+
+// ── LOADING ──
+function startLoading() {
+  showScreen('sLoading');
+  document.getElementById('progressFill').style.width = '95%';
+  document.getElementById('navStep').textContent = 'Analyse en cours';
+
+  const steps = ['ls1','ls2','ls3','ls4','ls5'];
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i > 0) {
+      document.getElementById(steps[i-1]).classList.remove('active');
+      document.getElementById(steps[i-1]).classList.add('done');
+    }
+    if (i < steps.length) {
+      document.getElementById(steps[i]).classList.add('active');
+      i++;
+    } else {
+      clearInterval(interval);
+      setTimeout(showRapport, 600);
+    }
+  }, 700);
+}
+
+// ── CALCULS ──
+function calcRapport() {
+  const prixBien       = safeInt(DATA.s4) || 280000;
+  const apport         = safeInt(DATA.s5) || 0;
+  const revenuMensuel  = safeInt(DATA.s6) || 3500;
+  const charges        = safeInt(DATA.s7) || 0;
+  const creditExistant = safeInt(DATA.s8b_mens) || 0;  // mensualité crédit actuel
+  const loyersPercus   = safeInt(DATA.s8b_loyers) || 0; // loyers perçus
+  const typeProjet     = DATA.s1val || 'Votre résidence principale';
+  const typeBien       = DATA.s3val || 'un logement ancien';
+  const statut         = DATA.s9val || 'salarié(e) en CDI'; // s9 = statut pro
+  const achat          = DATA.s2val || 'seul(e)';
+  const situLogement   = DATA.s8 || 'loc';
+  const estProprietaire = situLogement === 'prop_credit' || situLogement === 'prop_libre';
+
+  // Revenus corrigés : banques acceptent 70% des loyers perçus
+  const loyersRetenus = Math.round(loyersPercus * 0.70);
+  const revenuCorrige = revenuMensuel + loyersRetenus;
+
+  // Frais notaire
+  const tauxNotaire    = (DATA.s3 === 'neuf') ? 0.03 : 0.08;
+  const fraisNotaire   = Math.round(prixBien * tauxNotaire);
+  const coutTotal      = prixBien + fraisNotaire;
+  const montantEmprunte = Math.max(0, coutTotal - apport);
+
+  // Mensualité future sur 20 ans à 3.8%
+  const tauxMensuel = 3.8 / 100 / 12;
+  const nMois = 240;
+  let mensualite = 0;
+  if (montantEmprunte > 0 && tauxMensuel > 0) {
+    mensualite = Math.round(montantEmprunte * tauxMensuel / (1 - Math.pow(1 + tauxMensuel, -nMois)));
+  }
+
+  // Taux d'endettement global (crédit existant + nouveau + charges hors loyer)
+  // Si propriétaire avec crédit : on retire le loyer actuel des charges (il n'en paie plus)
+  const chargesHorsLoyer = estProprietaire ? 0 : charges;
+  const totalCharges = chargesHorsLoyer + creditExistant + mensualite;
+  const tauxEndettement = revenuCorrige > 0 ? (totalCharges / revenuCorrige) : 1;
+
+  // Apport suffisant ?
+  const apportMinimum = Math.round(prixBien * (tauxNotaire + 0.02));
+  const apportOk = apport >= apportMinimum;
+
+  // Statut risque
+  const statutRisque = (DATA.s9 === 'indep' || DATA.s9 === 'cdd');
+
+  // Score global
+  let score = 75;
+  if (tauxEndettement > 0.45) score -= 30;
+  else if (tauxEndettement > 0.35) score -= 15;
+  if (!apportOk) score -= 15;
+  if (statutRisque) score -= 10;
+  if (DATA.s1 === 'rs') score -= 8;
+  if (DATA.s3 === 'ancien') score += 5;
+  if (estProprietaire && loyersPercus > 0) score += 5; // bonus patrimoine existant
+  score = Math.max(10, Math.min(95, score));
+
+  // Verdict finançabilité
+  let finVerdict, finClass;
+  if (tauxEndettement <= 0.33 && apportOk && !statutRisque) {
+    finVerdict = 'Finançable'; finClass = 'good';
+  } else if (tauxEndettement <= 0.42) {
+    finVerdict = 'À optimiser'; finClass = 'warn';
+  } else {
+    finVerdict = 'Dossier difficile'; finClass = 'bad';
+  }
+
+  // Prix marché simulé
+  const prixM2Bien    = Math.round(prixBien / 65);
+  const ecartMarche   = -8 + Math.round(((prixBien % 17) / 17) * 24);
+  const prixM2Marche  = Math.round(prixM2Bien / (1 + ecartMarche / 100));
+
+  // Signaux
+  const signaux = [];
+
+  // Signal taux endettement global
+  if (tauxEndettement > 0.35) {
+    const detail = creditExistant > 0
+      ? ` (nouvelle mensualité ${mensualite.toLocaleString('fr')} € + crédit existant ${creditExistant.toLocaleString('fr')} €)`
+      : '';
+    signaux.push({ icon: '🔴', text: `Taux d'endettement global estimé à ${Math.round(tauxEndettement*100)}%${detail} — au-dessus du seuil de 35% bancaire.` });
+  } else {
+    signaux.push({ icon: '🟢', text: `Taux d'endettement global estimé à ${Math.round(tauxEndettement*100)}% — dans la fourchette acceptable, crédit existant inclus.` });
+  }
+
+  // Signal loyers perçus
+  if (loyersPercus > 0) {
+    signaux.push({ icon: '🟢', text: `Loyers perçus de ${loyersPercus.toLocaleString('fr')} €/mois — les banques retiennent ${loyersRetenus.toLocaleString('fr')} € (70%) dans vos revenus, ce qui améliore votre dossier.` });
+  }
+
+  // Signal apport
+  if (!apportOk) {
+    signaux.push({ icon: '🟡', text: `Apport de ${apport.toLocaleString('fr')} € potentiellement insuffisant. Recommandé : ${apportMinimum.toLocaleString('fr')} € minimum.` });
+  } else {
+    signaux.push({ icon: '🟢', text: `Apport de ${apport.toLocaleString('fr')} € couvre les frais de notaire estimés à ${fraisNotaire.toLocaleString('fr')} €.` });
+  }
+
+  // Signal propriétaire
+  if (situLogement === 'prop_libre') {
+    signaux.push({ icon: '🟢', text: 'Propriétaire sans crédit en cours — dossier renforcé, pas de charge immobilière supplémentaire.' });
+  } else if (situLogement === 'prop_credit') {
+    signaux.push({ icon: '🟡', text: `Crédit existant de ${creditExistant.toLocaleString('fr')} €/mois pris en compte dans le calcul bancaire — factor limitant sur le nouveau crédit.` });
+  }
+
+  if (DATA.s1 === 'rs') {
+    signaux.push({ icon: '🟡', text: 'Résidence secondaire : les banques appliquent des critères plus stricts — apport plus élevé requis.' });
+  }
+  if (statutRisque) {
+    signaux.push({ icon: '🟡', text: `Statut "${statut}" : les banques étudieront vos 3 derniers bilans ou avis d'imposition.` });
+  }
+  if (ecartMarche > 8) {
+    signaux.push({ icon: '🔴', text: `Prix au m² estimé ${ecartMarche}% au-dessus de la moyenne du marché local — négociation recommandée.` });
+  }
+
+  // Questions
+  const questions = [
+    'Pourquoi ce bien est-il mis en vente ? Quelle est l\'urgence du vendeur ?',
+    'Y a-t-il des travaux à prévoir ? Un diagnostic énergétique (DPE) récent est-il disponible ?',
+    DATA.s1 !== 'loc' ? 'Quel est l\'historique des charges de copropriété sur les 3 dernières années ?' : 'Quel est le loyer actuel ? Le bail se termine-t-il avant votre acquisition ?',
+    'Le vendeur a-t-il déjà reçu des offres ? Si oui, pourquoi ont-elles été refusées ?',
+    DATA.s3 === 'ancien' ? 'Y a-t-il des travaux votés en AG de copropriété non encore réalisés ?' : 'Quelle est la date de livraison garantie et les pénalités en cas de retard ?',
+  ];
+
+  // Texte finançabilité
+  let finBody = '';
+  if (finClass === 'good') {
+    finBody = `Votre profil est solide. Taux d'endettement global à ${Math.round(tauxEndettement*100)}%${creditExistant > 0 ? ', crédit existant inclus' : ''}. Votre dossier a de bonnes chances d'être accepté.`;
+  } else if (finClass === 'warn') {
+    finBody = `Projet finançable mais à optimiser. Taux d'endettement global de ${Math.round(tauxEndettement*100)}%${creditExistant > 0 ? ' (crédit existant inclus)' : ''} — proche du seuil de 35%. Un courtier peut trouver des leviers.`;
+  } else {
+    finBody = `Dossier difficile à financer tel quel. Taux d'endettement global de ${Math.round(tauxEndettement*100)}%${creditExistant > 0 ? ' (crédit existant de ' + creditExistant.toLocaleString('fr') + ' €/mois inclus)' : ''} — dépasse le seuil bancaire. Réduction du prix, apport renforcé ou co-emprunteur nécessaires.`;
+  }
+
+  return { score, finVerdict, finClass, mensualite, prixM2Bien, prixM2Marche, ecartMarche, signaux, questions, finBody, typeProjet, typeBien, achat, statut, prixBien, montantEmprunte, tauxEndettement, creditExistant, loyersPercus };
+}
+
+// ── AFFICHER RAPPORT ──
+function showRapport() {
+  const R = calcRapport();
+
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('navStep').textContent = 'Votre rapport';
+
+  // Date
+  const now = new Date();
+  document.getElementById('rDate').textContent = 'Résultats au ' + now.toLocaleDateString('fr-FR');
+
+  // Title
+  document.getElementById('rTitle').textContent = 'Votre analyse Marlo';
+  document.getElementById('rSubtitle').textContent =
+    `Achat ${R.achat} · ${R.typeProjet} · ${R.typeBien} · ${R.prixBien.toLocaleString('fr')} €`;
+
+  // Score
+  const sc = document.getElementById('rScoreCircle');
+  sc.className = 'score-circle ' + (R.score >= 70 ? 'good' : R.score >= 50 ? 'warn' : 'bad');
+  document.getElementById('rScoreNum').textContent = R.score;
+  document.getElementById('rScoreTitle').textContent =
+    R.score >= 70 ? 'Dossier solide' : R.score >= 50 ? 'Dossier à optimiser' : 'Dossier risqué';
+  document.getElementById('rScoreDesc').textContent =
+    R.score >= 70 ? 'Votre projet présente de bonnes conditions pour obtenir un financement.' :
+    R.score >= 50 ? 'Quelques points de vigilance à adresser avant de déposer votre dossier.' :
+    'Des ajustements importants sont nécessaires pour maximiser vos chances.';
+
+  // Financement
+  const fh = document.getElementById('rFinHeader');
+  fh.className = 'financement-header ' + R.finClass;
+  document.getElementById('rFinTitle').textContent =
+    R.finClass === 'good' ? 'Projet finançable' : R.finClass === 'warn' ? 'Financement à optimiser' : 'Projet difficile à financer';
+  const fb = document.getElementById('rFinBadge');
+  fb.className = 'financement-badge ' + R.finClass;
+  fb.textContent = R.finVerdict;
+  document.getElementById('rFinBody').innerHTML = R.finBody;
+  document.getElementById('rMensualite').textContent =
+    R.mensualite > 0 ? R.mensualite.toLocaleString('fr') + ' €' : '— €';
+
+  // Prix
+  const ecartLabel = R.ecartMarche > 0 ? `+${R.ecartMarche}%` : `${R.ecartMarche}%`;
+  const ecartClass = R.ecartMarche > 8 ? 'bad' : R.ecartMarche > 3 ? 'accent' : 'good';
+  document.getElementById('rPriceGrid').innerHTML = `
+    <div class="price-cell">
+      <div class="p-label">Prix annonce / m²</div>
+      <div class="p-val">${R.prixM2Bien.toLocaleString('fr')} €</div>
+    </div>
+    <div class="price-cell">
+      <div class="p-label">Marché estimé / m²</div>
+      <div class="p-val">${R.prixM2Marche.toLocaleString('fr')} €</div>
+    </div>
+    <div class="price-cell ${ecartClass}">
+      <div class="p-label">Écart</div>
+      <div class="p-val">${ecartLabel}</div>
+    </div>
+  `;
+
+  // Signaux
+  document.getElementById('rSignals').innerHTML = R.signaux
+    .map(s => `<div class="signal-item"><span class="signal-icon">${s.icon}</span>${s.text}</div>`)
+    .join('');
+
+  // Questions
+  document.getElementById('rQuestions').innerHTML = R.questions
+    .map(q => `<div class="q-item"><span class="q-mark">?</span>${q}</div>`)
+    .join('');
+
+  showScreen('sRapport');
+  window.scrollTo(0, 0);
+}
+
+// ── RESTART ──
+function restart() {
+  Object.keys(DATA).forEach(k => DATA[k] = null);
+  // Reset loading steps
+  ['ls1','ls2','ls3','ls4','ls5'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.classList.remove('active', 'done');
+    if (i === 0) el.classList.add('active');
+  });
+  // Reset inputs
+  ['s4','s5','s6','s7','s8b'].forEach(id => {
+    ['_input','_mens_input','_duree_input','_loyers_input'].forEach(suffix => {
+      const inp = document.getElementById(id + suffix);
+      if (inp) inp.value = '';
+    });
+    const inp = document.getElementById(id + '_input');
+    if (inp) inp.value = '';
+    updateDyn(id, null);
+    const dyn = document.getElementById(id + '_dyn');
+    if (dyn) dyn.classList.add('placeholder');
+  });
+  // Reset choice dyns
+  ['s1','s2','s3','s8','s9'].forEach(id => {
+    const dyn = document.getElementById(id + '_dyn');
+    if (dyn) dyn.classList.add('placeholder');
+  });
+  currentStep = 1;
+  updateProgress(1);
+  showScreen('s1');
+}
+
+// Init
+updateProgress(1);
+</script>
+</body>
+</html>

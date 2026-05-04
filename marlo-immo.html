@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>Marlo — Analysez votre annonce en 30 secondes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink: #111110;
+  --ink-2: #3d3d3a;
+  --muted: #787774;
+  --subtle: #acaba8;
+  --border: #e8e8e4;
+  --bg: #ffffff;
+  --bg-off: #fafaf8;
+  --accent: #2020e8;
+  --accent-light: #eaeaff;
+  --green: #0f7b6c;
+  --green-bg: #edfaf6;
+  --red: #c7372f;
+  --red-bg: #fff5f5;
+  --amber: #b35309;
+  --amber-bg: #fef9ee;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06);
+}
+
+html { color-scheme: light only; background: #fff !important; }
+@media (prefers-color-scheme: dark) {
+  html, body { background: #ffffff !important; color: #111110 !important; }
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: #fff;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.003em;
+  line-height: 1.5;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+}
+.nav-logo { font-size: 17px; font-weight: 700; letter-spacing: -0.04em; color: var(--ink); }
+.nav-logo span { color: var(--accent); }
+.nav-pill {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.01em;
+  background: var(--accent-light); color: var(--accent);
+  padding: 4px 10px; border-radius: 99px;
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 140px 32px 80px;
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 5px 12px; border-radius: 99px;
+  margin-bottom: 28px;
+}
+.hero-badge::before { content: '●'; font-size: 8px; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hero-title {
+  font-size: clamp(36px, 6vw, 58px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+.hero-title em { font-style: normal; color: var(--accent); }
+
+.hero-sub {
+  font-size: 18px; color: var(--ink-2); line-height: 1.6;
+  max-width: 540px; margin: 0 auto 40px;
+}
+
+/* ── INPUT ZONE ── */
+.input-zone {
+  background: var(--bg-off);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 6px 6px 6px 16px;
+  display: flex; align-items: center; gap: 8px;
+  max-width: 580px; margin: 0 auto 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-zone:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(32,32,232,0.1);
+  background: #fff;
+}
+.input-zone input {
+  flex: 1; border: none; background: transparent;
+  font-family: 'Geist Mono', monospace; font-size: 13px; color: var(--ink);
+  outline: none; padding: 8px 0;
+}
+.input-zone input::placeholder { color: var(--subtle); }
+.btn-analyze {
+  background: var(--accent); color: #fff;
+  font-size: 14px; font-weight: 600;
+  padding: 10px 20px; border-radius: 6px;
+  border: none; cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s, transform 0.1s;
+  flex-shrink: 0;
+}
+.btn-analyze:hover { opacity: 0.88; }
+.btn-analyze:active { transform: scale(0.97); }
+.btn-analyze:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.hero-hint { font-size: 12px; color: var(--subtle); }
+.hero-hint span { color: var(--green); font-weight: 500; }
+
+/* ── RAPPORT MOCK / RÉSULTAT ── */
+.rapport-wrap {
+  max-width: 680px; margin: 48px auto 0;
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.4s, transform 0.4s;
+  display: none;
+}
+.rapport-wrap.visible { opacity: 1; transform: none; display: block; }
+
+.rapport-card {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: var(--shadow-lg);
+}
+
+.rapport-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.rapport-score-ring {
+  width: 56px; height: 56px; flex-shrink: 0;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Geist Mono', monospace;
+  font-size: 18px; font-weight: 500;
+}
+.rapport-score-ring.good { background: var(--green-bg); color: var(--green); border: 2px solid var(--green); }
+.rapport-score-ring.warn { background: var(--amber-bg); color: var(--amber); border: 2px solid var(--amber); }
+.rapport-score-ring.bad { background: var(--red-bg); color: var(--red); border: 2px solid var(--red); }
+
+.rapport-meta { flex: 1; }
+.rapport-meta h3 { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 2px; }
+.rapport-meta p { font-size: 13px; color: var(--muted); }
+.rapport-verdict {
+  font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 99px;
+}
+.rapport-verdict.good { background: var(--green-bg); color: var(--green); }
+.rapport-verdict.warn { background: var(--amber-bg); color: var(--amber); }
+.rapport-verdict.bad { background: var(--red-bg); color: var(--red); }
+
+.rapport-body { padding: 0; }
+
+.rapport-section {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.rapport-section:last-child { border-bottom: none; }
+
+.rapport-section-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 12px;
+}
+
+.signal-list { display: flex; flex-direction: column; gap: 8px; }
+.signal-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 13.5px; line-height: 1.5; color: var(--ink-2);
+}
+.signal-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+.price-compare {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+.price-box {
+  background: var(--bg-off);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  text-align: center;
+}
+.price-box .label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.price-box .val {
+  font-family: 'Geist Mono', monospace;
+  font-size: 16px; font-weight: 500; color: var(--ink);
+}
+.price-box.highlight { border-color: var(--accent); background: var(--accent-light); }
+.price-box.highlight .val { color: var(--accent); }
+
+.questions-list { display: flex; flex-direction: column; gap: 6px; }
+.question-item {
+  background: var(--bg-off); border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px; color: var(--ink-2);
+  display: flex; align-items: center; gap: 8px;
+}
+.question-item::before { content: '?'; font-weight: 700; color: var(--accent); font-size: 13px; flex-shrink: 0; }
+
+.rapport-cta {
+  padding: 20px 24px;
+  background: var(--bg-off);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.rapport-cta p { font-size: 13px; color: var(--muted); }
+.rapport-cta p strong { color: var(--ink); }
+
+/* ── LOADING STATE ── */
+.loading-wrap {
+  max-width: 680px; margin: 48px auto 0;
+  display: none; text-align: center;
+}
+.loading-wrap.visible { display: block; }
+.loading-bar {
+  height: 3px; background: var(--border); border-radius: 99px;
+  overflow: hidden; margin-bottom: 16px;
+}
+.loading-fill {
+  height: 100%; background: var(--accent); border-radius: 99px;
+  width: 0%; transition: width 0.4s ease;
+}
+.loading-step { font-size: 13px; color: var(--muted); font-family: 'Geist Mono', monospace; }
+
+/* ── SOCIAL PROOF ── */
+.proof-strip {
+  max-width: 680px; margin: 48px auto 0;
+  display: flex; align-items: center; justify-content: center; gap: 32px;
+  flex-wrap: wrap;
+}
+.proof-item { display: flex; align-items: center; gap: 8px; }
+.proof-item .num {
+  font-family: 'Geist Mono', monospace; font-size: 20px; font-weight: 500; color: var(--ink);
+}
+.proof-item .label { font-size: 13px; color: var(--muted); }
+.proof-divider { width: 1px; height: 32px; background: var(--border); }
+
+/* ── HOW IT WORKS ── */
+.how-section {
+  padding: 80px 32px;
+  max-width: 720px; margin: 0 auto;
+  border-top: 1px solid var(--border);
+}
+.section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 12px;
+}
+.section-title {
+  font-size: clamp(26px, 4vw, 36px); font-weight: 800;
+  letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 48px;
+}
+
+.steps { display: flex; flex-direction: column; gap: 0; }
+.step {
+  display: flex; gap: 24px; align-items: flex-start;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border);
+}
+.step:last-child { border-bottom: none; }
+.step-num {
+  font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 500;
+  color: var(--accent); background: var(--accent-light);
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+.step-content h4 { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; }
+.step-content p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+/* ── RAPPORT PREVIEW STATIC ── */
+.preview-section {
+  padding: 0 32px 80px;
+  max-width: 720px; margin: 0 auto;
+}
+.preview-label {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 8px;
+}
+.preview-label::before, .preview-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* ── CTA FOOTER ── */
+.cta-section {
+  background: var(--bg-off);
+  border-top: 1px solid var(--border);
+  padding: 80px 32px;
+  text-align: center;
+}
+.cta-title { font-size: clamp(28px, 4vw, 42px); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 16px; }
+.cta-sub { font-size: 16px; color: var(--muted); margin-bottom: 32px; }
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #fff;
+  font-size: 15px; font-weight: 600;
+  padding: 14px 28px; border-radius: var(--radius);
+  border: none; cursor: pointer; text-decoration: none;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.88; }
+
+footer {
+  padding: 24px 32px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+footer .logo { font-size: 14px; font-weight: 700; letter-spacing: -0.03em; }
+footer .logo span { color: var(--accent); }
+footer p { font-size: 12px; color: var(--subtle); }
+
+/* ── ERREUR ── */
+.error-msg {
+  font-size: 13px; color: var(--red);
+  max-width: 580px; margin: 8px auto 0;
+  display: none;
+}
+.error-msg.visible { display: block; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">mar<span>lo</span></div>
+  <div class="nav-pill">Bêta gratuite</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">Nouveau · Analyseur d'annonce IA</div>
+
+  <h1 class="hero-title">
+    Votre annonce vaut-elle<br>
+    <em>vraiment</em> ce prix ?
+  </h1>
+
+  <p class="hero-sub">
+    Collez l'URL d'une annonce SeLoger, Leboncoin ou PAP.
+    Marlo analyse le prix, les risques et vous donne les questions à poser au vendeur.
+  </p>
+
+  <div class="input-zone" id="inputZone">
+    <input
+      type="url"
+      id="urlInput"
+      placeholder="https://www.seloger.com/annonces/..."
+      autocomplete="off"
+      spellcheck="false"
+    >
+    <button class="btn-analyze" id="btnAnalyze" onclick="lancerAnalyse()">
+      Analyser →
+    </button>
+  </div>
+
+  <p class="error-msg" id="errorMsg">Veuillez coller une URL valide (seloger.com, leboncoin.fr, pap.fr…)</p>
+  <p class="hero-hint">Gratuit · Aucune inscription · <span>Résultat en 30 secondes</span></p>
+
+  <!-- Loading -->
+  <div class="loading-wrap" id="loadingWrap">
+    <div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div>
+    <p class="loading-step" id="loadingStep">Récupération de l'annonce…</p>
+  </div>
+
+  <!-- Rapport résultat IA -->
+  <div class="rapport-wrap" id="rapportWrap">
+    <div class="rapport-card">
+
+      <div class="rapport-header">
+        <div class="rapport-score-ring warn" id="scoreRing">74</div>
+        <div class="rapport-meta">
+          <h3 id="rapportTitre">—</h3>
+          <p id="rapportMeta">—</p>
+        </div>
+        <div class="rapport-verdict warn" id="rapportVerdict">À négocier</div>
+      </div>
+
+      <div class="rapport-body">
+
+        <div class="rapport-section">
+          <div class="rapport-section-title">Prix du marché</div>
+          <div class="price-compare" id="priceCompare">
+            <div class="price-box">
+              <div class="label">Prix annonce</div>
+              <div class="val" id="prixAnnonce">—</div>
+            </div>
+            <div class="price-box">
+              <div class="label">Marché quartier</div>
+              <div class="val" id="prixMarche">—</div>
+            </div>
+            <div class="price-box highlight">
+              <div class="label">Marge négociation</div>
+              <div class="val" id="marge">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rapport-section">
+          <div class="rapport-section-title">Signaux détectés</div>
+          <div class="signal-list" id="signalList"></div>
+        </div>
+
+        <div class="rapport-section">
+          <div class="rapport-section-title">Questions à poser au vendeur</div>
+          <div class="questions-list" id="questionsList"></div>
+        </div>
+
+      </div>
+
+      <div class="rapport-cta">
+        <p><strong>Rapport complet disponible.</strong><br>Inscrivez-vous pour sauvegarder et comparer plusieurs biens.</p>
+        <button class="btn-primary" onclick="scrollToCTA()">Accéder gratuitement →</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Social proof -->
+  <div class="proof-strip" id="proofStrip">
+    <div class="proof-item">
+      <div class="num">2 147</div>
+      <div class="label">annonces analysées</div>
+    </div>
+    <div class="proof-divider"></div>
+    <div class="proof-item">
+      <div class="num">18%</div>
+      <div class="label">de surestimation moyenne détectée</div>
+    </div>
+    <div class="proof-divider"></div>
+    <div class="proof-item">
+      <div class="num">8 400 €</div>
+      <div class="label">économisés en négociation en moyenne</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMENT ÇA MARCHE -->
+<section class="how-section">
+  <div class="section-label">Comment ça marche</div>
+  <h2 class="section-title">De l'annonce à la décision<br>en 30 secondes.</h2>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-content">
+        <h4>Collez l'URL de n'importe quelle annonce</h4>
+        <p>SeLoger, Leboncoin, PAP, Logic-Immo, BienIci. Marlo récupère automatiquement les informations du bien.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-content">
+        <h4>Marlo analyse le prix face au marché réel</h4>
+        <p>Comparaison avec les transactions récentes du quartier. Détection de surestimation ou de bonne affaire. Score de négociation estimé.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-content">
+        <h4>Recevez les signaux et les questions clés</h4>
+        <p>Points de vigilance détectés dans l'annonce. Liste de questions à poser au vendeur. Estimation des travaux potentiels.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-content">
+        <h4>Comparez et décidez avec confiance</h4>
+        <p>Sauvegardez plusieurs biens. Comparez côte à côte. Partagez l'analyse avec votre courtier ou vos proches.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXEMPLE RAPPORT STATIQUE -->
+<section class="preview-section">
+  <div class="preview-label">Exemple de rapport Marlo</div>
+  <div class="rapport-card">
+    <div class="rapport-header">
+      <div class="rapport-score-ring bad">41</div>
+      <div class="rapport-meta">
+        <h3>3 pièces · 68m² · Paris 11e</h3>
+        <p>Annoncé 695 000 € · Rue de la Roquette</p>
+      </div>
+      <div class="rapport-verdict bad">Surestimé</div>
+    </div>
+    <div class="rapport-body">
+      <div class="rapport-section">
+        <div class="rapport-section-title">Prix du marché</div>
+        <div class="price-compare">
+          <div class="price-box"><div class="label">Prix annonce</div><div class="val">10 220 €/m²</div></div>
+          <div class="price-box"><div class="label">Marché Paris 11e</div><div class="val">8 900 €/m²</div></div>
+          <div class="price-box highlight"><div class="label">Surestimation</div><div class="val">+14,8%</div></div>
+        </div>
+      </div>
+      <div class="rapport-section">
+        <div class="rapport-section-title">Signaux détectés</div>
+        <div class="signal-list">
+          <div class="signal-item"><span class="signal-icon">🔴</span>Prix au m² supérieur de 14,8% à la moyenne des transactions récentes dans la rue.</div>
+          <div class="signal-item"><span class="signal-icon">🟡</span>DPE classé E — coût de rénovation énergétique estimé entre 18 000 et 35 000 €.</div>
+          <div class="signal-item"><span class="signal-icon">🟡</span>Annonce publiée depuis 47 jours — signe possible de difficulté de vente au prix affiché.</div>
+          <div class="signal-item"><span class="signal-icon">🟢</span>Localisation prime : à 4 minutes de la station Voltaire, forte liquidité à la revente.</div>
+        </div>
+      </div>
+      <div class="rapport-section">
+        <div class="rapport-section-title">Questions à poser au vendeur</div>
+        <div class="questions-list">
+          <div class="question-item">Pourquoi le bien est-il en vente depuis plus de 6 semaines ?</div>
+          <div class="question-item">Y a-t-il des travaux de copropriété votés ou à venir ?</div>
+          <div class="question-item">Quelle est l'origine du classement DPE E — isolation ou chauffage ?</div>
+          <div class="question-item">Le vendeur a-t-il déjà refusé une offre ? Si oui, à quel prix ?</div>
+        </div>
+      </div>
+    </div>
+    <div class="rapport-cta">
+      <p><strong>Marge de négociation estimée : 45 000 à 65 000 €</strong><br>Basé sur les transactions comparables des 6 derniers mois.</p>
+      <button class="btn-primary" onclick="scrollToCTA()">Analyser mon annonce →</button>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-section" id="ctaSection">
+  <h2 class="cta-title">Arrêtez de visiter des biens<br>surestimés.</h2>
+  <p class="cta-sub">Marlo analyse votre annonce gratuitement.<br>Aucune inscription requise pour le premier rapport.</p>
+  <button class="btn-primary" onclick="scrollToInput()">Analyser une annonce →</button>
+  <p style="font-size:12px;color:var(--subtle);margin-top:16px;">Gratuit · Pas de carte bancaire · Résultat en 30 secondes</p>
+</section>
+
+<footer>
+  <div class="logo">mar<span>lo</span></div>
+  <p>© 2026 Marlo · Outil d'aide à la décision immobilière</p>
+  <p style="font-size:11px;color:var(--subtle);">Les estimations sont indicatives et ne constituent pas un conseil financier ou juridique.</p>
+</footer>
+
+<script>
+// ── UTILS ──
+function isValidURL(str) {
+  try {
+    const u = new URL(str);
+    return ['seloger.com','leboncoin.fr','pap.fr','logic-immo.com','bienici.com','meilleursagents.com']
+      .some(d => u.hostname.includes(d));
+  } catch { return false; }
+}
+
+function scrollToInput() {
+  document.getElementById('urlInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(() => document.getElementById('urlInput').focus(), 400);
+}
+function scrollToCTA() {
+  document.getElementById('ctaSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── LOADING ANIMATION ──
+const loadingSteps = [
+  'Récupération de l\'annonce…',
+  'Analyse du prix au m²…',
+  'Comparaison avec les transactions récentes…',
+  'Détection des signaux de risque…',
+  'Génération du rapport…'
+];
+
+function animateLoading(onComplete) {
+  const fill = document.getElementById('loadingFill');
+  const stepEl = document.getElementById('loadingStep');
+  let step = 0;
+  const total = loadingSteps.length;
+  const interval = setInterval(() => {
+    if (step >= total) {
+      clearInterval(interval);
+      onComplete();
+      return;
+    }
+    stepEl.textContent = loadingSteps[step];
+    fill.style.width = ((step + 1) / total * 100) + '%';
+    step++;
+  }, 600);
+}
+
+// ── FAUX RAPPORT (demo MVP sans backend) ──
+function genererRapportDemo(url) {
+  // Simuler des variations selon l'URL pour rendre crédible
+  const hash = url.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  const score = 35 + (hash % 55); // 35-89
+  const prixAnnonce = 6500 + (hash % 7000); // €/m²
+  const ecart = -18 + (hash % 30); // -18% à +12%
+  const prixMarche = Math.round(prixAnnonce / (1 + ecart/100));
+  const jours = 12 + (hash % 80);
+
+  const scoreClass = score >= 70 ? 'good' : score >= 50 ? 'warn' : 'bad';
+  const verdictLabel = score >= 70 ? 'Prix cohérent' : score >= 50 ? 'À négocier' : 'Surestimé';
+  const margeLabel = ecart > 5 ? `+${ecart.toFixed(1)}%` : ecart < -3 ? `${ecart.toFixed(1)}%` : '~Juste prix';
+
+  // Mise à jour header
+  document.getElementById('scoreRing').textContent = score;
+  document.getElementById('scoreRing').className = `rapport-score-ring ${scoreClass}`;
+  document.getElementById('rapportVerdict').textContent = verdictLabel;
+  document.getElementById('rapportVerdict').className = `rapport-verdict ${scoreClass}`;
+
+  // Titre fictif cohérent
+  const types = ['3 pièces · 65m²', '4 pièces · 88m²', '2 pièces · 42m²', 'Studio · 28m²'];
+  const quartiers = ['Paris 11e', 'Paris 15e', 'Lyon 6e', 'Bordeaux Centre', 'Nantes Sud'];
+  const ti = hash % types.length;
+  const qi = (hash >> 2) % quartiers.length;
+  document.getElementById('rapportTitre').textContent = `${types[ti]} · ${quartiers[qi]}`;
+  document.getElementById('rapportMeta').textContent = `Annoncé ${(prixAnnonce * 65).toLocaleString('fr')} € · Publié il y a ${jours} jours`;
+
+  // Prix
+  document.getElementById('prixAnnonce').textContent = `${prixAnnonce.toLocaleString('fr')} €/m²`;
+  document.getElementById('prixMarche').textContent = `${prixMarche.toLocaleString('fr')} €/m²`;
+  document.getElementById('marge').textContent = margeLabel;
+
+  // Signaux
+  const signaux = [
+    ecart > 8 ? { icon: '🔴', text: `Prix au m² supérieur de ${ecart.toFixed(1)}% à la moyenne des transactions récentes.` } : null,
+    jours > 40 ? { icon: '🟡', text: `Annonce publiée depuis ${jours} jours — signe possible de difficulté à vendre au prix affiché.` } : null,
+    score < 60 ? { icon: '🟡', text: 'DPE potentiellement dégradé — vérifier le diagnostic énergétique avant visite.' } : null,
+    { icon: '🟢', text: 'Localisation bien desservie — forte liquidité à la revente selon les données de transaction.' },
+    ecart < 0 ? { icon: '🟢', text: `Prix ${Math.abs(ecart).toFixed(1)}% sous la moyenne du marché — opportunité à étudier rapidement.` } : null,
+  ].filter(Boolean).slice(0, 4);
+
+  const signalList = document.getElementById('signalList');
+  signalList.innerHTML = signaux.map(s =>
+    `<div class="signal-item"><span class="signal-icon">${s.icon}</span>${s.text}</div>`
+  ).join('');
+
+  // Questions
+  const questions = [
+    'Pourquoi le bien est-il mis en vente maintenant ?',
+    jours > 30 ? 'Des offres ont-elles déjà été refusées ? Si oui, à quel prix ?' : 'Y a-t-il une date limite pour la vente ?',
+    'Y a-t-il des travaux de copropriété votés ou prévisibles dans les 2 ans ?',
+    'Quel est le montant des charges de copropriété mensuelles ?',
+  ];
+
+  document.getElementById('questionsList').innerHTML = questions.map(q =>
+    `<div class="question-item">${q}</div>`
+  ).join('');
+}
+
+// ── URL DU PROXY — à remplacer par ton URL Vercel après déploiement ──
+const PROXY_URL = 'https://marlo-api.vercel.app/api/analyse';
+
+// ── AFFICHER RAPPORT DEPUIS RÉPONSE CLAUDE ──
+function afficherRapportIA(rapport) {
+  const score = Math.max(10, Math.min(95, rapport.score || 50));
+  const scoreClass = score >= 70 ? 'good' : score >= 50 ? 'warn' : 'bad';
+  const verdictLabel = rapport.verdict || 'À analyser';
+
+  document.getElementById('scoreRing').textContent = score;
+  document.getElementById('scoreRing').className = `rapport-score-ring ${scoreClass}`;
+  document.getElementById('rapportVerdict').textContent = verdictLabel;
+  document.getElementById('rapportVerdict').className = `rapport-verdict ${scoreClass}`;
+  document.getElementById('rapportTitre').textContent = rapport.titre || '—';
+
+  const prix = rapport.prix_affiche || 0;
+  const jours = rapport.jours_marche || 0;
+  document.getElementById('rapportMeta').textContent =
+    `Annoncé ${prix > 0 ? prix.toLocaleString('fr') + ' €' : '—'} · Publié il y a ${jours} jours`;
+
+  // Prix
+  const pm2 = rapport.prix_m2_annonce || 0;
+  const pm2m = rapport.prix_m2_marche || 0;
+  const ecart = rapport.ecart_pct || 0;
+  document.getElementById('prixAnnonce').textContent = pm2 > 0 ? `${pm2.toLocaleString('fr')} €/m²` : '—';
+  document.getElementById('prixMarche').textContent = pm2m > 0 ? `${pm2m.toLocaleString('fr')} €/m²` : '—';
+  const margeMin = rapport.marge_nego_min || 0;
+  const margeMax = rapport.marge_nego_max || 0;
+  document.getElementById('marge').textContent =
+    margeMin > 0 ? `${margeMin.toLocaleString('fr')}–${margeMax.toLocaleString('fr')} €` : '~Juste prix';
+
+  // Signaux
+  const signaux = Array.isArray(rapport.signaux) ? rapport.signaux : [];
+  document.getElementById('signalList').innerHTML = signaux.map(s =>
+    `<div class="signal-item"><span class="signal-icon">${s.icon || '🟡'}</span>${s.texte || ''}</div>`
+  ).join('') || '<div class="signal-item"><span class="signal-icon">🟡</span>Analyse en cours de consolidation.</div>';
+
+  // Questions
+  const questions = Array.isArray(rapport.questions) ? rapport.questions : [];
+  document.getElementById('questionsList').innerHTML = questions.map(q =>
+    `<div class="question-item">${q}</div>`
+  ).join('') || '<div class="question-item">Demandez les diagnostics complets au vendeur.</div>';
+
+  // Analyse texte (si présente)
+  if (rapport.analyse_texto) {
+    const existing = document.getElementById('analyseTexto');
+    if (existing) {
+      existing.textContent = rapport.analyse_texto;
+    }
+  }
+}
+
+// ── LANCER ANALYSE ──
+async function lancerAnalyse() {
+  const url = document.getElementById('urlInput').value.trim();
+  const errorMsg = document.getElementById('errorMsg');
+  const btn = document.getElementById('btnAnalyze');
+
+  // Validation
+  if (!url || !isValidURL(url)) {
+    errorMsg.classList.add('visible');
+    document.getElementById('inputZone').style.borderColor = 'var(--red)';
+    return;
+  }
+
+  errorMsg.classList.remove('visible');
+  document.getElementById('inputZone').style.borderColor = '';
+
+  // Cacher proof strip
+  document.getElementById('proofStrip').style.display = 'none';
+
+  // Cacher rapport précédent
+  const rapportWrap = document.getElementById('rapportWrap');
+  rapportWrap.classList.remove('visible');
+  rapportWrap.style.display = 'none';
+
+  // Afficher loading
+  const loadingWrap = document.getElementById('loadingWrap');
+  loadingWrap.classList.add('visible');
+  document.getElementById('loadingFill').style.width = '0%';
+  btn.disabled = true;
+
+  // Lancer animation loading en parallèle de l'appel API
+  let loadingDone = false;
+  let rapportData = null;
+  let rapportError = null;
+
+  // Animation loading
+  const fill = document.getElementById('loadingFill');
+  const stepEl = document.getElementById('loadingStep');
+  let stepIdx = 0;
+  const loadingInterval = setInterval(() => {
+    if (stepIdx < loadingSteps.length) {
+      stepEl.textContent = loadingSteps[stepIdx];
+      fill.style.width = ((stepIdx + 1) / loadingSteps.length * 85) + '%';
+      stepIdx++;
+    }
+  }, 700);
+
+  // Appel API réel
+  try {
+    const res = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+    const data = await res.json();
+    if (data.success && data.rapport) {
+      rapportData = data.rapport;
+    } else {
+      rapportError = data.error || 'Erreur inconnue';
+    }
+  } catch (err) {
+    rapportError = 'Impossible de joindre le serveur. Vérifiez votre connexion.';
+  }
+
+  // Finir l'animation
+  clearInterval(loadingInterval);
+  fill.style.width = '100%';
+  stepEl.textContent = rapportError ? 'Une erreur est survenue.' : 'Rapport généré !';
+
+  await new Promise(r => setTimeout(r, 400));
+
+  // Cacher loading
+  loadingWrap.classList.remove('visible');
+  btn.disabled = false;
+
+  if (rapportError) {
+    errorMsg.textContent = rapportError;
+    errorMsg.classList.add('visible');
+    document.getElementById('proofStrip').style.display = 'flex';
+    return;
+  }
+
+  // Afficher rapport
+  afficherRapportIA(rapportData);
+  rapportWrap.style.display = 'block';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      rapportWrap.classList.add('visible');
+    });
+  });
+
+  setTimeout(() => {
+    rapportWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 200);
+}
+
+// Enter key
+document.getElementById('urlInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') lancerAnalyse();
+});
+
+// Reset border on input
+document.getElementById('urlInput').addEventListener('input', () => {
+  document.getElementById('inputZone').style.borderColor = '';
+  document.getElementById('errorMsg').classList.remove('visible');
+});
+</script>
+</body>
+</html>

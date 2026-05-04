@@ -1,0 +1,8 @@
+{
+  "name": "marlo-api",
+  "version": "1.0.0",
+  "description": "Marlo — Proxy API Claude sécurisé",
+  "engines": {
+    "node": ">=18"
+  }
+}

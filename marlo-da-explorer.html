@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>Marlo — Exploration DA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,700;0,800;1,700;1,800&family=Cabinet+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { color-scheme: light only; background: #f5f5f3; }
+@media (prefers-color-scheme: dark) { html, body { background: #f5f5f3 !important; color: #111 !important; } }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f5f5f3;
+  color: #111;
+  -webkit-font-smoothing: antialiased;
+  padding: 40px 20px 80px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+/* ── HEADER ── */
+.page-header { margin-bottom: 48px; }
+.page-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #999; margin-bottom: 12px;
+}
+.page-title {
+  font-size: 28px; font-weight: 800; letter-spacing: -0.03em;
+  color: #111; margin-bottom: 8px;
+}
+.page-sub { font-size: 15px; color: #666; line-height: 1.6; }
+
+/* ── SECTION ── */
+.section { margin-bottom: 56px; }
+.section-title {
+  font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: #999; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.section-title::after { content: ''; flex: 1; height: 1px; background: #e0e0e0; }
+
+/* ── RÉFÉRENCES ── */
+.refs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ref-card {
+  background: #fff; border-radius: 12px; padding: 20px;
+  border: 1px solid #e8e8e8;
+}
+.ref-name {
+  font-size: 15px; font-weight: 800; letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.ref-lesson { font-size: 13px; color: #666; line-height: 1.55; margin-bottom: 12px; }
+.ref-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.ref-tag {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 4px;
+  background: #f0f0f0; color: #666;
+}
+
+/* ── DIRECTIONS DA ── */
+.directions { display: flex; flex-direction: column; gap: 20px; }
+
+.direction-card {
+  border-radius: 16px; overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+  position: relative;
+}
+.direction-card:active { transform: scale(0.99); }
+.direction-card.selected { border-color: currentColor; }
+
+/* ── DIRECTION A : CLARITY ── */
+.dir-a {
+  background: #ffffff;
+  --color: #1a1a2e;
+  color: var(--color);
+}
+.dir-a.selected { border-color: #1a1a2e; }
+
+.dir-a .dir-header {
+  background: #ffffff;
+  padding: 28px 28px 0;
+}
+.dir-a .dir-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #999; margin-bottom: 16px;
+}
+.dir-a .dir-logo {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 32px; font-weight: 800; letter-spacing: -0.04em;
+  color: #1a1a2e;
+  margin-bottom: 20px;
+}
+.dir-a .dir-logo span { color: #4361ee; }
+.dir-a .dir-headline {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 22px; font-weight: 800; letter-spacing: -0.03em;
+  color: #1a1a2e; line-height: 1.2; margin-bottom: 8px;
+}
+.dir-a .dir-sub { font-size: 13px; color: #888; line-height: 1.5; margin-bottom: 24px; }
+
+.dir-a .palette {
+  display: flex; gap: 8px; margin-bottom: 24px; padding: 0 28px;
+}
+.palette-swatch {
+  flex: 1; height: 40px; border-radius: 8px;
+  display: flex; align-items: flex-end; padding: 4px 6px;
+  font-family: 'Geist Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.8);
+}
+.palette-swatch.dark { color: rgba(0,0,0,0.5); }
+
+.dir-a .dir-footer {
+  background: #f8f8ff; border-top: 1px solid #eef;
+  padding: 16px 28px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.dir-footer-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #aaa; }
+.dir-footer-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.dir-tag {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 4px;
+}
+
+/* ── DIRECTION B : WARMTH ── */
+.dir-b {
+  background: #fffbf5;
+  --color: #1c1917;
+  color: var(--color);
+}
+.dir-b.selected { border-color: #1c1917; }
+
+.dir-b .dir-header { background: #fffbf5; padding: 28px 28px 0; }
+.dir-b .dir-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #c4a882; margin-bottom: 16px;
+}
+.dir-b .dir-logo {
+  font-family: 'Fraunces', serif;
+  font-size: 32px; font-weight: 800; letter-spacing: -0.02em;
+  color: #1c1917; margin-bottom: 20px;
+}
+.dir-b .dir-logo span { color: #c9622a; font-style: italic; }
+.dir-b .dir-headline {
+  font-family: 'Fraunces', serif;
+  font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
+  color: #1c1917; line-height: 1.25; margin-bottom: 8px;
+}
+.dir-b .dir-sub { font-size: 13px; color: #a09080; line-height: 1.55; margin-bottom: 24px; }
+
+.dir-b .dir-footer {
+  background: #f5ede0; border-top: 1px solid #e8d8c4;
+  padding: 16px 28px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+/* ── DIRECTION C : PRECISION ── */
+.dir-c {
+  background: #0d0d0d;
+  --color: #ffffff;
+  color: var(--color);
+}
+.dir-c.selected { border-color: #4fffb0; }
+
+.dir-c .dir-header { background: #0d0d0d; padding: 28px 28px 0; }
+.dir-c .dir-name {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #4fffb0; margin-bottom: 16px;
+}
+.dir-c .dir-logo {
+  font-family: 'Inter', sans-serif;
+  font-size: 32px; font-weight: 900; letter-spacing: -0.05em;
+  color: #ffffff; margin-bottom: 20px;
+}
+.dir-c .dir-logo span { color: #4fffb0; }
+.dir-c .dir-headline {
+  font-family: 'Inter', sans-serif;
+  font-size: 22px; font-weight: 900; letter-spacing: -0.04em;
+  color: #ffffff; line-height: 1.15; margin-bottom: 8px;
+}
+.dir-c .dir-sub { font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 24px; }
+
+.dir-c .palette { padding: 0 28px; }
+
+.dir-c .dir-footer {
+  background: #1a1a1a; border-top: 1px solid #2a2a2a;
+  padding: 16px 28px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.dir-c .dir-footer-label { color: #444; }
+
+/* Bouton sélection */
+.select-btn {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+  padding: 8px 16px; border-radius: 8px;
+  border: none; cursor: pointer;
+  transition: opacity 0.15s;
+}
+.dir-a .select-btn { background: #1a1a2e; color: #fff; }
+.dir-b .select-btn { background: #1c1917; color: #fff; }
+.dir-c .select-btn { background: #4fffb0; color: #0d0d0d; }
+.select-btn:hover { opacity: 0.8; }
+.select-btn.chosen::before { content: '✓ '; }
+
+/* ── MINI PREVIEW MOCKUP ── */
+.mockup {
+  margin: 0 28px 24px;
+  border-radius: 10px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.dir-a .mockup { border-color: #eee; }
+.dir-b .mockup { border-color: #e8d8c4; }
+
+.mockup-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-size: 11px; font-weight: 700;
+}
+.dir-a .mockup-nav { background: #f8f8ff; border-color: #eee; color: #1a1a2e; }
+.dir-b .mockup-nav { background: #f0e8d8; border-color: #e0d0b8; color: #1c1917; }
+.dir-c .mockup-nav { background: #111; border-color: #222; color: #fff; }
+
+.mockup-body { padding: 16px; }
+.dir-a .mockup-body { background: #fff; }
+.dir-b .mockup-body { background: #fffbf5; }
+.dir-c .mockup-body { background: #161616; }
+
+.mockup-input {
+  display: flex; gap: 0;
+  border-radius: 8px; overflow: hidden;
+  margin-bottom: 12px;
+}
+.dir-a .mockup-input { border: 1.5px solid #1a1a2e; }
+.dir-b .mockup-input { border: 1.5px solid #1c1917; }
+.dir-c .mockup-input { border: 1px solid #333; }
+
+.mockup-input-text {
+  flex: 1; padding: 8px 12px;
+  font-family: 'Geist Mono', monospace; font-size: 10px;
+}
+.dir-a .mockup-input-text { background: #fff; color: #aaa; }
+.dir-b .mockup-input-text { background: #fffbf5; color: #bbb; }
+.dir-c .mockup-input-text { background: #1a1a1a; color: #555; }
+
+.mockup-btn {
+  padding: 8px 14px; font-size: 10px; font-weight: 700; border: none;
+}
+.dir-a .mockup-btn { background: #1a1a2e; color: #fff; }
+.dir-b .mockup-btn { background: #c9622a; color: #fff; }
+.dir-c .mockup-btn { background: #4fffb0; color: #0d0d0d; }
+
+.mockup-card {
+  border-radius: 8px; overflow: hidden;
+}
+.dir-a .mockup-card { border: 1px solid #eee; }
+.dir-b .mockup-card { border: 1px solid #e0d0b8; }
+.dir-c .mockup-card { border: 1px solid #2a2a2a; }
+
+.mockup-card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; border-bottom: 1px solid rgba(0,0,0,0.06);
+  font-size: 11px; font-weight: 600;
+}
+.dir-a .mockup-card-header { background: #f8f8ff; color: #1a1a2e; border-color: #eee; }
+.dir-b .mockup-card-header { background: #f0e8d8; color: #1c1917; border-color: #e0d0b8; }
+.dir-c .mockup-card-header { background: #1e1e1e; color: #fff; border-color: #2a2a2a; }
+
+.mockup-score {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 500;
+}
+.dir-a .mockup-score { background: #fff3e0; color: #e65100; border: 1.5px solid #e65100; }
+.dir-b .mockup-score { background: #fff3e0; color: #c9622a; border: 1.5px solid #c9622a; }
+.dir-c .mockup-score { background: #0a2a1a; color: #4fffb0; border: 1.5px solid #4fffb0; }
+
+.mockup-pill {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 99px;
+}
+.dir-a .mockup-pill { background: #fff3e0; color: #e65100; }
+.dir-b .mockup-pill { background: #fde8d8; color: #c9622a; }
+.dir-c .mockup-pill { background: #0a2a1a; color: #4fffb0; }
+
+.mockup-card-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+.mockup-signal { font-size: 10px; display: flex; gap: 6px; }
+.dir-a .mockup-signal { color: #444; }
+.dir-b .mockup-signal { color: #5a4030; }
+.dir-c .mockup-signal { color: #aaa; }
+
+/* ── VOTE FINAL ── */
+.vote-section {
+  background: #fff; border-radius: 16px; padding: 28px;
+  border: 1px solid #e8e8e8; margin-top: 8px;
+}
+.vote-title { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+.vote-sub { font-size: 14px; color: #666; margin-bottom: 24px; line-height: 1.5; }
+.vote-buttons { display: flex; flex-direction: column; gap: 10px; }
+.vote-btn {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-radius: 12px;
+  border: 2px solid #e8e8e8;
+  background: #fff; cursor: pointer;
+  transition: all 0.2s; text-align: left;
+  width: 100%;
+}
+.vote-btn:hover { border-color: #111; }
+.vote-btn.active { border-color: #111; background: #111; color: #fff; }
+.vote-btn-label { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+.vote-btn-sub { font-size: 12px; color: #999; margin-top: 2px; }
+.vote-btn.active .vote-btn-sub { color: #aaa; }
+.vote-btn-arrow { font-size: 18px; opacity: 0.4; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-label">Marlo · Exploration DA</div>
+  <h1 class="page-title">Quelle identité pour Marlo ?</h1>
+  <p class="page-sub">3 directions distinctes. Chacune raconte une histoire différente sur ce qu'est Marlo. Lis, ressens, choisis.</p>
+</div>
+
+<!-- ══ RÉFÉRENCES ══ -->
+<div class="section">
+  <div class="section-title">Ce qu'on apprend de tes références</div>
+  <div class="refs">
+
+    <div class="ref-card">
+      <div class="ref-name" style="color:#000;">Notion</div>
+      <div class="ref-lesson">Blanc cassé, typographie neutre mais soignée. L'outil s'efface — l'utilisateur est au centre. Zéro couleur forte.</div>
+      <div class="ref-tags">
+        <span class="ref-tag">Minimalisme</span>
+        <span class="ref-tag">Neutre</span>
+        <span class="ref-tag">Fonctionnel</span>
+      </div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-name" style="color:#EA6025;">Qonto</div>
+      <div class="ref-lesson">Noir + orange vif. Très B2B sérieux. Screenshots produit en avant. Aucune émotion — juste de l'efficacité.</div>
+      <div class="ref-tags">
+        <span class="ref-tag">Pro</span>
+        <span class="ref-tag">Direct</span>
+        <span class="ref-tag">Confiance</span>
+      </div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-name" style="color:#00A1F1;">Alan</div>
+      <div class="ref-lesson">Bleu doux, très humain, rassurant. Illustrations légères. Le message : "on prend soin de toi." Émotionnel et bienveillant.</div>
+      <div class="ref-tags">
+        <span class="ref-tag">Humain</span>
+        <span class="ref-tag">Rassurant</span>
+        <span class="ref-tag">Doux</span>
+      </div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-name" style="color:#FF385C;">Airbnb</div>
+      <div class="ref-lesson">Rose corail + photos humaines. Chaleur et appartenance. Le design parle d'émotions, pas de features. Très lifestyle.</div>
+      <div class="ref-tags">
+        <span class="ref-tag">Chaleur</span>
+        <span class="ref-tag">Émotionnel</span>
+        <span class="ref-tag">Lifestyle</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ SYNTHÈSE ══ -->
+<div class="section">
+  <div class="section-title">Le brief DA Marlo</div>
+  <div style="background:#fff;border-radius:12px;padding:20px;border:1px solid #e8e8e8;">
+    <p style="font-size:14px;color:#444;line-height:1.7;">
+      Tes références partagent un fil rouge : <strong>la clarté au service de la confiance.</strong> Aucune n'est tape-à-l'œil. Toutes inspirent confiance immédiatement. Marlo doit s'inscrire dans ce registre — un outil qui disparaît derrière la valeur qu'il crée, sur un sujet émotionnellement fort (l'achat de sa vie).
+      <br><br>
+      Le challenge : trouver le point d'équilibre entre <strong>sérieux financier</strong> (Qonto) et <strong>chaleur humaine</strong> (Airbnb/Alan), avec la <strong>sobriété fonctionnelle</strong> de Notion.
+    </p>
+  </div>
+</div>
+
+<!-- ══ DIRECTIONS ══ -->
+<div class="section">
+  <div class="section-title">3 directions à explorer</div>
+  <div class="directions">
+
+    <!-- ── DIRECTION A : CLARITY ── -->
+    <div class="direction-card dir-a" id="cardA">
+      <div class="dir-header">
+        <div class="dir-name">Direction A — CLARITY</div>
+        <div class="dir-logo">mar<span>lo</span></div>
+        <div class="dir-headline">L'outil qui vous donne<br>le vrai prix.</div>
+        <div class="dir-sub">Bleu marine profond + accent électrique. Notion rencontre Linear. Sérieux, moderne, sans serif propre. Le feeling "outil pro indispensable".</div>
+      </div>
+
+      <div class="palette">
+        <div class="palette-swatch" style="background:#1a1a2e;">#1A1A2E</div>
+        <div class="palette-swatch" style="background:#4361ee;">#4361EE</div>
+        <div class="palette-swatch" style="background:#e8eaff;" class="dark"><span style="color:#666">#E8EAFF</span></div>
+        <div class="palette-swatch" style="background:#f8f8ff;" class="dark"><span style="color:#aaa">#F8F8FF</span></div>
+      </div>
+
+      <div class="mockup">
+        <div class="mockup-nav">
+          <span>marlo</span>
+          <span style="font-size:10px;background:#e8eaff;color:#4361ee;padding:3px 8px;border-radius:4px;">Bêta</span>
+        </div>
+        <div class="mockup-body">
+          <div class="mockup-input">
+            <div class="mockup-input-text">seloger.com/annonces/...</div>
+            <button class="mockup-btn">Analyser →</button>
+          </div>
+          <div class="mockup-card">
+            <div class="mockup-card-header">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="mockup-score">72</div>
+                <span>3 pièces · 68m² · Paris 11e</span>
+              </div>
+              <div class="mockup-pill">À négocier</div>
+            </div>
+            <div class="mockup-card-body">
+              <div class="mockup-signal">🔴 <span>Prix 14% au-dessus du marché</span></div>
+              <div class="mockup-signal">🟡 <span>47 jours en ligne — vendeur pressable</span></div>
+              <div class="mockup-signal">🟢 <span>Localisation prime, forte liquidité</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dir-footer">
+        <div>
+          <div class="dir-footer-label">Inspirations</div>
+          <div class="dir-footer-tags">
+            <span class="dir-tag" style="background:#e8eaff;color:#4361ee;">Notion</span>
+            <span class="dir-tag" style="background:#e8eaff;color:#4361ee;">Linear</span>
+            <span class="dir-tag" style="background:#e8eaff;color:#4361ee;">Qonto</span>
+          </div>
+        </div>
+        <button class="select-btn" id="btnA" onclick="select('A')">Choisir →</button>
+      </div>
+    </div>
+
+    <!-- ── DIRECTION B : WARMTH ── -->
+    <div class="direction-card dir-b" id="cardB">
+      <div class="dir-header">
+        <div class="dir-name">Direction B — WARMTH</div>
+        <div class="dir-logo">mar<span>lo</span></div>
+        <div class="dir-headline">L'achat de votre vie<br>mérite les bons conseils.</div>
+        <div class="dir-sub">Crème + terre de Sienne. Airbnb rencontre Alan. Serif élégant, chaleureux, humain. Le feeling "quelqu'un de confiance à vos côtés".</div>
+      </div>
+
+      <div class="palette">
+        <div class="palette-swatch" style="background:#1c1917;">#1C1917</div>
+        <div class="palette-swatch" style="background:#c9622a;">#C9622A</div>
+        <div class="palette-swatch" style="background:#f0e8d8;"><span style="color:#aaa">#F0E8D8</span></div>
+        <div class="palette-swatch" style="background:#fffbf5;"><span style="color:#ccc">#FFFBF5</span></div>
+      </div>
+
+      <div class="mockup">
+        <div class="mockup-nav">
+          <span style="font-family:'Fraunces',serif;font-style:italic;">marlo</span>
+          <span style="font-size:10px;background:#f0e8d8;color:#c9622a;padding:3px 8px;border-radius:4px;">Bêta</span>
+        </div>
+        <div class="mockup-body">
+          <div class="mockup-input">
+            <div class="mockup-input-text">seloger.com/annonces/...</div>
+            <button class="mockup-btn">Analyser →</button>
+          </div>
+          <div class="mockup-card">
+            <div class="mockup-card-header">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="mockup-score">72</div>
+                <span style="font-family:'Fraunces',serif;">3 pièces · 68m² · Paris 11e</span>
+              </div>
+              <div class="mockup-pill">À négocier</div>
+            </div>
+            <div class="mockup-card-body">
+              <div class="mockup-signal">🔴 <span>Prix 14% au-dessus du marché</span></div>
+              <div class="mockup-signal">🟡 <span>47 jours en ligne — vendeur pressable</span></div>
+              <div class="mockup-signal">🟢 <span>Localisation prime, forte liquidité</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dir-footer">
+        <div>
+          <div class="dir-footer-label" style="color:#a09080;">Inspirations</div>
+          <div class="dir-footer-tags">
+            <span class="dir-tag" style="background:#f0e8d8;color:#c9622a;">Airbnb</span>
+            <span class="dir-tag" style="background:#f0e8d8;color:#c9622a;">Alan</span>
+            <span class="dir-tag" style="background:#f0e8d8;color:#c9622a;">Doctolib</span>
+          </div>
+        </div>
+        <button class="select-btn" id="btnB" onclick="select('B')">Choisir →</button>
+      </div>
+    </div>
+
+    <!-- ── DIRECTION C : PRECISION ── -->
+    <div class="direction-card dir-c" id="cardC">
+      <div class="dir-header">
+        <div class="dir-name">Direction C — PRECISION</div>
+        <div class="dir-logo">MARL<span>O</span></div>
+        <div class="dir-headline">ARRÊTEZ DE PAYER<br>TROP CHER.</div>
+        <div class="dir-sub">Noir intense + vert néon. Revolut rencontre Vercel. Très tech, très data, très direct. Le feeling "outil de pros qui ne se laissent pas avoir".</div>
+      </div>
+
+      <div class="palette">
+        <div class="palette-swatch" style="background:#0d0d0d;">#0D0D0D</div>
+        <div class="palette-swatch" style="background:#4fffb0;"><span style="color:#0d0d0d">#4FFFB0</span></div>
+        <div class="palette-swatch" style="background:#1a1a1a;">#1A1A1A</div>
+        <div class="palette-swatch" style="background:#2a2a2a;">#2A2A2A</div>
+      </div>
+
+      <div class="mockup">
+        <div class="mockup-nav">
+          <span style="letter-spacing:0.05em;font-weight:900;">MARLO</span>
+          <span style="font-size:10px;background:#0a2a1a;color:#4fffb0;padding:3px 8px;border-radius:4px;font-family:'Geist Mono',monospace;">BÊTA</span>
+        </div>
+        <div class="mockup-body">
+          <div class="mockup-input">
+            <div class="mockup-input-text">seloger.com/annonces/...</div>
+            <button class="mockup-btn">Analyser →</button>
+          </div>
+          <div class="mockup-card">
+            <div class="mockup-card-header">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="mockup-score">72</div>
+                <span style="font-family:'Geist Mono',monospace;font-size:10px;">3P · 68M² · PARIS 11</span>
+              </div>
+              <div class="mockup-pill">NÉGO</div>
+            </div>
+            <div class="mockup-card-body">
+              <div class="mockup-signal">🔴 <span>+14% vs marché · négocier fort</span></div>
+              <div class="mockup-signal">🟡 <span>J+47 · vendeur sous pression</span></div>
+              <div class="mockup-signal">🟢 <span>Liquidité élevée · bon actif</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dir-footer">
+        <div>
+          <div class="dir-footer-label">Inspirations</div>
+          <div class="dir-footer-tags">
+            <span class="dir-tag" style="background:#1a1a1a;color:#4fffb0;">Revolut</span>
+            <span class="dir-tag" style="background:#1a1a1a;color:#4fffb0;">Vercel</span>
+            <span class="dir-tag" style="background:#1a1a1a;color:#4fffb0;">Linear</span>
+          </div>
+        </div>
+        <button class="select-btn" id="btnC" onclick="select('C')">Choisir →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ VOTE ══ -->
+<div class="vote-section" id="voteSection">
+  <div class="vote-title">Quelle direction te parle ?</div>
+  <div class="vote-sub">Pas besoin de justifier rationnellement. Quelle est ta réaction instinctive ? C'est souvent la bonne.</div>
+  <div class="vote-buttons">
+    <button class="vote-btn" id="voteA" onclick="vote('A')">
+      <div>
+        <div class="vote-btn-label">A — Clarity · Bleu marine + accent électrique</div>
+        <div class="vote-btn-sub">Notion / Qonto / Linear</div>
+      </div>
+      <div class="vote-btn-arrow">→</div>
+    </button>
+    <button class="vote-btn" id="voteB" onclick="vote('B')">
+      <div>
+        <div class="vote-btn-label">B — Warmth · Crème + terre de Sienne</div>
+        <div class="vote-btn-sub">Airbnb / Alan / Doctolib</div>
+      </div>
+      <div class="vote-btn-arrow">→</div>
+    </button>
+    <button class="vote-btn" id="voteC" onclick="vote('C')">
+      <div>
+        <div class="vote-btn-label">C — Precision · Noir + vert néon</div>
+        <div class="vote-btn-sub">Revolut / Vercel / Linear</div>
+      </div>
+      <div class="vote-btn-arrow">→</div>
+    </button>
+  </div>
+</div>
+
+<script>
+let chosen = null;
+
+function select(dir) {
+  chosen = dir;
+  ['A','B','C'].forEach(d => {
+    document.getElementById('card' + d).classList.remove('selected');
+    document.getElementById('btn' + d).classList.remove('chosen');
+    document.getElementById('btn' + d).textContent = 'Choisir →';
+  });
+  document.getElementById('card' + dir).classList.add('selected');
+  document.getElementById('btn' + dir).classList.add('chosen');
+  document.getElementById('btn' + dir).textContent = '✓ Sélectionné';
+
+  // Scroll vers vote
+  setTimeout(() => {
+    document.getElementById('voteSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    vote(dir);
+  }, 300);
+}
+
+function vote(dir) {
+  ['A','B','C'].forEach(d => document.getElementById('vote' + d).classList.remove('active'));
+  document.getElementById('vote' + dir).classList.add('active');
+  chosen = dir;
+}
+</script>
+</body>
+</html>

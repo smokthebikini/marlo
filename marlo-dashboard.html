@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>Marlo — Tableau de bord</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:          #1a1a2e;
+  --ink-2:        #2d2d44;
+  --muted:        #6b6b80;
+  --subtle:       #a8a8b8;
+  --border:       #e4e4ec;
+  --bg:           #ffffff;
+  --bg-off:       #f8f8ff;
+  --bg-warm:      #f2f2f8;
+  --accent:       #4361ee;
+  --accent-2:     #3451d1;
+  --accent-light: #e8eaff;
+  --green:        #16a34a;
+  --green-bg:     #dcfce7;
+  --green-light:  #f0fdf4;
+  --red:          #d63031;
+  --red-bg:       #fee2e2;
+  --amber:        #c0640a;
+  --amber-bg:     #fff4e6;
+  --radius:       10px;
+  --radius-lg:    14px;
+  --sidebar-w:    220px;
+}
+
+html { color-scheme: light only; background: var(--bg-warm) !important; }
+@media (prefers-color-scheme: dark) {
+  html, body { background: #f2f2f8 !important; color: #1a1a2e !important; }
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg-warm);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ── LAYOUT ── */
+.app {
+  display: flex; min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--ink);
+  display: flex; flex-direction: column;
+  position: fixed; top: 0; left: 0; bottom: 0;
+  z-index: 50;
+  padding: 0 0 24px;
+}
+
+.sidebar-logo {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 8px;
+}
+.sidebar-logo a {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 20px; font-weight: 800; letter-spacing: -0.04em;
+  color: #fff; text-decoration: none;
+}
+.sidebar-logo a span { color: var(--accent); }
+
+.sidebar-user {
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px;
+  margin: 0 8px 16px;
+  background: rgba(255,255,255,0.06);
+  border-radius: var(--radius);
+}
+.sidebar-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.sidebar-user-name { font-size: 13px; font-weight: 600; color: #fff; }
+.sidebar-user-mode {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+
+.sidebar-nav { flex: 1; padding: 0 8px; }
+.nav-section-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.25); padding: 0 12px; margin-bottom: 6px; margin-top: 16px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.6);
+  cursor: pointer; transition: all 0.15s;
+  margin-bottom: 2px; border: none; background: none; width: 100%; text-align: left;
+}
+.nav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.nav-item.active { background: var(--accent); color: #fff; font-weight: 600; }
+.nav-item .nav-icon { font-size: 15px; flex-shrink: 0; }
+.nav-item .nav-badge {
+  margin-left: auto; font-size: 10px; font-weight: 700;
+  background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8);
+  padding: 2px 6px; border-radius: 99px;
+}
+.nav-item.active .nav-badge { background: rgba(255,255,255,0.25); }
+
+.sidebar-mode-toggle {
+  margin: 0 8px;
+  background: rgba(255,255,255,0.06);
+  border-radius: var(--radius); padding: 4px;
+  display: flex; gap: 2px;
+}
+.mode-pill {
+  flex: 1; padding: 7px; border-radius: 7px;
+  font-size: 11px; font-weight: 700; text-align: center;
+  cursor: pointer; border: none; transition: all 0.2s;
+  background: transparent; color: rgba(255,255,255,0.4);
+}
+.mode-pill.active { background: #fff; color: var(--ink); }
+.mode-pill.active.invest { background: var(--green); color: #fff; }
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1; display: flex; flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  padding: 0 24px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 40;
+}
+.topbar-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px; font-weight: 700; letter-spacing: -0.02em;
+}
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
+.btn-new {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--accent); color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px; font-weight: 700;
+  padding: 8px 16px; border-radius: 8px;
+  border: none; cursor: pointer;
+  transition: background 0.15s;
+  text-decoration: none;
+}
+.btn-new:hover { background: var(--accent-2); }
+
+/* ── CONTENT ── */
+.content { padding: 24px; flex: 1; }
+
+/* ── VIEWS ── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ── STATS HEADER ── */
+.stats-header {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 18px 20px;
+}
+.stat-card-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--subtle); margin-bottom: 6px; }
+.stat-card-val {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 26px; font-weight: 800; letter-spacing: -0.04em;
+  color: var(--ink); line-height: 1;
+}
+.stat-card-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+.stat-card.accent-card { background: var(--accent); border-color: var(--accent); }
+.stat-card.accent-card .stat-card-label { color: rgba(255,255,255,0.6); }
+.stat-card.accent-card .stat-card-val { color: #fff; }
+.stat-card.accent-card .stat-card-sub { color: rgba(255,255,255,0.6); }
+
+/* ── SECTION TITLE ── */
+.section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px; font-weight: 700; letter-spacing: -0.02em;
+}
+.section-action {
+  font-size: 12px; font-weight: 600; color: var(--accent);
+  background: none; border: none; cursor: pointer; padding: 0;
+}
+
+/* ── BIEN CARD ── */
+.biens-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+
+.bien-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  cursor: pointer;
+}
+.bien-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(67,97,238,0.1); }
+.bien-card.selected { border-color: var(--accent); border-width: 2px; }
+
+.bien-card-header {
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.bien-score {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Geist Mono', monospace; font-size: 15px; font-weight: 500;
+  flex-shrink: 0; border: 2px solid;
+}
+.bien-score.good { background: #dcfce7; color: #15803d; border-color: #16a34a; }
+.bien-score.warn { background: var(--amber-bg); color: var(--amber); border-color: var(--amber); }
+.bien-score.bad  { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+
+.bien-info { flex: 1; min-width: 0; }
+.bien-titre {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 700; letter-spacing: -0.02em;
+  color: var(--ink); margin-bottom: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.bien-meta { font-size: 11px; color: var(--muted); }
+
+.bien-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.bien-verdict {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 99px;
+}
+.bien-verdict.good { background: #dcfce7; color: #15803d; }
+.bien-verdict.warn { background: var(--amber-bg); color: var(--amber); }
+.bien-verdict.bad  { background: var(--red-bg); color: var(--red); }
+.bien-price {
+  font-family: 'Geist Mono', monospace;
+  font-size: 13px; font-weight: 500; color: var(--ink);
+}
+
+.bien-metrics {
+  padding: 0 16px 14px;
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.bien-metric { }
+.bien-metric-label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--subtle); margin-bottom: 2px; }
+.bien-metric-val { font-family: 'Geist Mono', monospace; font-size: 13px; color: var(--ink-2); }
+
+.bien-actions {
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 8px;
+  background: var(--bg-off);
+}
+.btn-action {
+  font-size: 12px; font-weight: 600; color: var(--muted);
+  background: none; border: 1px solid var(--border);
+  padding: 6px 12px; border-radius: 6px; cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-action:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.btn-action.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-action.primary:hover { background: var(--accent-2); }
+.btn-action.danger:hover { border-color: var(--red); color: var(--red); background: var(--red-bg); }
+
+/* CHECKBOX sélection comparaison */
+.bien-select {
+  width: 18px; height: 18px; border-radius: 4px;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+  background: #fff;
+}
+.bien-select.checked { background: var(--accent); border-color: var(--accent); }
+.bien-select.checked::after { content: '✓'; font-size: 11px; color: #fff; font-weight: 700; }
+
+/* ── ÉTAT VIDE ── */
+.empty-state {
+  background: var(--bg); border: 1.5px dashed var(--border);
+  border-radius: var(--radius-lg); padding: 48px 24px;
+  text-align: center; margin-bottom: 28px;
+}
+.empty-icon { font-size: 32px; margin-bottom: 12px; }
+.empty-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px; font-weight: 700; letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+.empty-sub { font-size: 14px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+
+/* ── COMPARAISON ── */
+.compare-bar {
+  position: sticky; bottom: 16px;
+  background: var(--ink); color: #fff;
+  border-radius: var(--radius-lg); padding: 14px 18px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  box-shadow: 0 8px 32px rgba(26,26,46,0.3);
+  margin-top: 16px;
+  transform: translateY(20px); opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+.compare-bar.visible { transform: none; opacity: 1; pointer-events: all; }
+.compare-bar-info { font-size: 13px; color: rgba(255,255,255,0.7); }
+.compare-bar-info strong { color: #fff; }
+.compare-bar-actions { display: flex; gap: 8px; }
+.btn-compare {
+  background: var(--accent); color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px; font-weight: 700;
+  padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-compare:hover { background: var(--accent-2); }
+.btn-compare-cancel {
+  background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);
+  font-size: 13px; font-weight: 600;
+  padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer;
+}
+
+/* ── VUE COMPARAISON ── */
+.compare-grid {
+  display: grid;
+  gap: 12px;
+}
+.compare-grid.cols-2 { grid-template-columns: 200px 1fr 1fr; }
+.compare-grid.cols-3 { grid-template-columns: 200px 1fr 1fr 1fr; }
+
+.compare-label-col { }
+.compare-bien-col {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.compare-bien-col.winner { border-color: var(--accent); border-width: 2px; }
+
+.compare-bien-header {
+  padding: 14px 16px; border-bottom: 1px solid var(--border);
+  background: var(--bg-off);
+}
+.compare-bien-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px; font-weight: 700; letter-spacing: -0.02em;
+  color: var(--ink); margin-bottom: 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.compare-bien-score-row { display: flex; align-items: center; gap: 8px; }
+.compare-score-badge {
+  font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 500;
+  padding: 2px 8px; border-radius: 99px; border: 1.5px solid;
+}
+.compare-score-badge.good { background: #dcfce7; color: #15803d; border-color: #16a34a; }
+.compare-score-badge.warn { background: var(--amber-bg); color: var(--amber); border-color: var(--amber); }
+.compare-score-badge.bad  { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+
+.compare-row {
+  display: contents;
+}
+.compare-row-label {
+  display: flex; align-items: center;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--subtle); padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.compare-row-label:last-child { border-bottom: none; }
+.compare-cell {
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  font-family: 'Geist Mono', monospace; font-size: 14px; color: var(--ink);
+}
+.compare-cell:last-child { border-bottom: none; }
+.compare-cell.best { color: var(--green); font-weight: 500; background: var(--green-light); }
+.compare-cell.worst { color: var(--red); }
+
+/* ── PROFIL ── */
+.profil-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px;
+  margin-bottom: 12px;
+}
+.profil-card h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 700; letter-spacing: -0.02em;
+  margin-bottom: 16px; color: var(--ink);
+}
+.profil-fields { display: flex; flex-direction: column; gap: 12px; }
+.profil-field label {
+  display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--subtle); margin-bottom: 4px;
+}
+.profil-field input, .profil-field select {
+  width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius);
+  padding: 10px 12px; font-size: 14px; color: var(--ink); background: #fff;
+  outline: none; transition: border-color 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+.profil-field input:focus, .profil-field select:focus { border-color: var(--accent); }
+.btn-save {
+  width: 100%; background: var(--accent); color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 700;
+  padding: 12px; border-radius: var(--radius);
+  border: none; cursor: pointer; margin-top: 16px;
+  transition: background 0.15s;
+}
+.btn-save:hover { background: var(--accent-2); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px);
+  background: var(--ink); color: #fff;
+  font-size: 13px; font-weight: 600; padding: 12px 20px;
+  border-radius: 99px; z-index: 200;
+  transition: transform 0.3s ease; white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── MOBILE NAV ── */
+@media (max-width: 640px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .mobile-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--bg); border-top: 1px solid var(--border);
+    display: flex; z-index: 50; padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+  }
+  .mobile-nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    font-size: 10px; font-weight: 600; color: var(--subtle);
+    cursor: pointer; padding: 4px; border: none; background: none;
+    transition: color 0.15s;
+  }
+  .mobile-nav-item.active { color: var(--accent); }
+  .mobile-nav-icon { font-size: 20px; }
+  .content { padding: 16px 16px 80px; }
+  .stats-header { grid-template-columns: 1fr 1fr; }
+  .compare-grid.cols-2, .compare-grid.cols-3 { grid-template-columns: 1fr; }
+  .compare-label-col { display: none; }
+  .topbar { padding: 0 16px; }
+}
+@media (min-width: 641px) {
+  .mobile-nav { display: none; }
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.bien-card { animation: fadeUp 0.3s ease both; }
+.bien-card:nth-child(2) { animation-delay: 0.05s; }
+.bien-card:nth-child(3) { animation-delay: 0.1s; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <a href="marlo-v5.html">mar<span>lo</span></a>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" id="sidebarAvatar">C</div>
+      <div>
+        <div class="sidebar-user-name" id="sidebarName">Caio</div>
+        <div class="sidebar-user-mode" id="sidebarMode">Mode Acheteur</div>
+      </div>
+    </div>
+
+    <!-- Toggle mode -->
+    <div class="sidebar-mode-toggle" style="margin-bottom:16px;">
+      <button class="mode-pill active" id="pillAcheteur" onclick="setMode('acheteur')">🏠 Acheteur</button>
+      <button class="mode-pill invest" id="pillInvestisseur" onclick="setMode('investisseur')">📈 Investisseur</button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <button class="nav-item active" onclick="showView('biens')">
+        <span class="nav-icon">🏘️</span> Mes biens
+        <span class="nav-badge" id="navBadgeBiens">0</span>
+      </button>
+      <button class="nav-item" onclick="showView('comparer')">
+        <span class="nav-icon">⚖️</span> Comparer
+      </button>
+
+      <div class="nav-section-label">Compte</div>
+      <button class="nav-item" onclick="showView('profil')">
+        <span class="nav-icon">👤</span> Mon profil
+      </button>
+      <button class="nav-item" onclick="window.location.href='marlo-v5.html'">
+        <span class="nav-icon">🔍</span> Analyser un bien
+      </button>
+    </nav>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">Mes biens analysés</div>
+      <div class="topbar-actions">
+        <a href="marlo-v5.html" class="btn-new">+ Analyser un bien</a>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ════ VUE BIENS ════ -->
+      <div class="view active" id="viewBiens">
+
+        <!-- Stats header -->
+        <div class="stats-header" id="statsHeader"></div>
+
+        <!-- Liste biens -->
+        <div class="section-head">
+          <div class="section-title" id="listeSectionTitle">Tous mes biens</div>
+          <button class="section-action" onclick="activerComparaison()" id="btnActiverCompare">
+            ⚖️ Comparer
+          </button>
+        </div>
+
+        <div class="biens-list" id="biensList"></div>
+
+        <!-- Barre comparaison sticky -->
+        <div class="compare-bar" id="compareBar">
+          <div class="compare-bar-info">
+            <strong id="compareCount">0</strong> biens sélectionnés
+          </div>
+          <div class="compare-bar-actions">
+            <button class="btn-compare-cancel" onclick="annulerComparaison()">Annuler</button>
+            <button class="btn-compare" onclick="lancerComparaison()">Voir la comparaison →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ VUE COMPARER ════ -->
+      <div class="view" id="viewComparer">
+        <div id="compareContent"></div>
+      </div>
+
+      <!-- ════ VUE PROFIL ════ -->
+      <div class="view" id="viewProfil">
+        <div class="profil-card">
+          <h3>Mon profil</h3>
+          <div class="profil-fields">
+            <div class="profil-field">
+              <label>Prénom</label>
+              <input type="text" id="profilPrenom" placeholder="Votre prénom">
+            </div>
+            <div class="profil-field">
+              <label>Email</label>
+              <input type="email" id="profilEmail" placeholder="Votre email">
+            </div>
+            <div class="profil-field">
+              <label>Mode principal</label>
+              <select id="profilMode">
+                <option value="acheteur">🏠 Acheteur — résidence principale</option>
+                <option value="investisseur">📈 Investisseur — locatif</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn-save" onclick="sauvegarderProfil()">Sauvegarder</button>
+        </div>
+
+        <div class="profil-card">
+          <h3>Mes préférences de recherche</h3>
+          <div class="profil-fields">
+            <div class="profil-field">
+              <label>Budget maximum</label>
+              <input type="number" id="profilBudget" placeholder="350 000">
+            </div>
+            <div class="profil-field">
+              <label>Zone cible</label>
+              <input type="text" id="profilZone" placeholder="Paris, Lyon, Bordeaux…">
+            </div>
+            <div class="profil-field">
+              <label>Surface minimum (m²)</label>
+              <input type="number" id="profilSurface" placeholder="40">
+            </div>
+            <div id="profilInvestFields">
+              <div class="profil-field" style="margin-top:12px;">
+                <label>Rendement minimum visé</label>
+                <input type="number" id="profilRendement" placeholder="6" step="0.5">
+              </div>
+            </div>
+          </div>
+          <button class="btn-save" onclick="sauvegarderProfil()">Sauvegarder</button>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<!-- Mobile nav -->
+<nav class="mobile-nav">
+  <button class="mobile-nav-item active" onclick="showView('biens')" id="mnavBiens">
+    <span class="mobile-nav-icon">🏘️</span>Mes biens
+  </button>
+  <button class="mobile-nav-item" onclick="showView('comparer')" id="mnavComparer">
+    <span class="mobile-nav-icon">⚖️</span>Comparer
+  </button>
+  <button class="mobile-nav-item" onclick="window.location.href='marlo-v5.html'" id="mnavAnalyser">
+    <span class="mobile-nav-icon">🔍</span>Analyser
+  </button>
+  <button class="mobile-nav-item" onclick="showView('profil')" id="mnavProfil">
+    <span class="mobile-nav-icon">👤</span>Profil
+  </button>
+</nav>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+let MODE = 'acheteur';
+let BIENS = [];
+let SELECTED = new Set();
+let COMPARE_MODE = false;
+let USER = { prenom: 'Caio', email: '' };
+
+// ── INIT ──
+function init() {
+  chargerDonnees();
+  chargerProfil();
+  renderStats();
+  renderBiens();
+}
+
+// ── DONNÉES (localStorage) ──
+function chargerDonnees() {
+  try {
+    const raw = localStorage.getItem('marlo_biens');
+    if (raw) BIENS = JSON.parse(raw);
+    else BIENS = getDemoData();
+
+    const userRaw = localStorage.getItem('marlo_users');
+    if (userRaw) {
+      const users = JSON.parse(userRaw);
+      if (users.length > 0) {
+        USER = users[users.length - 1];
+        if (USER.mode) MODE = USER.mode;
+      }
+    }
+  } catch(_) {
+    BIENS = getDemoData();
+  }
+  if (!BIENS.length) BIENS = getDemoData();
+  saveBiens();
+}
+
+function saveBiens() {
+  try { localStorage.setItem('marlo_biens', JSON.stringify(BIENS)); } catch(_) {}
+}
+
+function getDemoData() {
+  return [
+    {
+      id: 'b1', mode: 'acheteur',
+      titre: '3 pièces · 68m² · Paris 11e',
+      meta: '695 000 € · Rue de la Roquette · 47 jours',
+      score: 41, verdictCls: 'bad', verdict: 'Surestimé',
+      prix: 695000, pm2: 10220, pm2m: 8900,
+      margeMin: 45000, margeMax: 65000,
+      date: '2026-05-03',
+      signaux: ['🔴 Prix +14,8% vs marché', '🟡 47 jours en ligne', '🟢 Localisation prime'],
+      questions: ['Pourquoi en vente depuis 6 semaines ?', 'Travaux copro votés ?'],
+    },
+    {
+      id: 'b2', mode: 'acheteur',
+      titre: '2 pièces · 45m² · Lyon 6e',
+      meta: '320 000 € · Cours Vitton · 12 jours',
+      score: 74, verdictCls: 'good', verdict: 'Prix cohérent',
+      prix: 320000, pm2: 7111, pm2m: 7200,
+      margeMin: 5000, margeMax: 15000,
+      date: '2026-05-02',
+      signaux: ['🟢 Prix légèrement sous le marché', '🟢 Annonce récente', '🟡 DPE à vérifier'],
+      questions: ['Charges de copro mensuelles ?', 'Travaux récents ?'],
+    },
+    {
+      id: 'b3', mode: 'investisseur',
+      titre: 'Studio · 28m² · Bordeaux Bacalan',
+      meta: '148 000 € · Rue Achard · 23 jours',
+      score: 68, verdictCls: 'warn', verdict: 'Passable',
+      prix: 148000, pm2: 5286, pm2m: 5100,
+      margeMin: 8000, margeMax: 18000,
+      rendBrut: 6.1, rendNet: 4.4,
+      loyer: 435, loyerNet: 370,
+      cashflow: 75, tension: 'Forte 🔥',
+      verdictInvest: 'Passable',
+      date: '2026-05-01',
+      signaux: ['🟡 Rendement 6.1% — correct', '🟢 Cashflow +75€/mois', '🔴 DPE E — travaux à prévoir'],
+      questions: ['DPE E : isolation ou chauffage ?', 'Loyer actuel si occupé ?'],
+    },
+  ];
+}
+
+// ── MODE ──
+function setMode(mode) {
+  MODE = mode;
+  const isInvest = mode === 'investisseur';
+  document.getElementById('pillAcheteur').classList.toggle('active', !isInvest);
+  document.getElementById('pillInvestisseur').classList.toggle('active', isInvest);
+  document.getElementById('sidebarMode').textContent = isInvest ? 'Mode Investisseur' : 'Mode Acheteur';
+  renderStats();
+  renderBiens();
+}
+
+// ── VIEWS ──
+function showView(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view' + view.charAt(0).toUpperCase() + view.slice(1)).classList.add('active');
+
+  // Nav active
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.mobile-nav-item').forEach(n => n.classList.remove('active'));
+
+  const titres = { biens: 'Mes biens analysés', comparer: 'Comparaison', profil: 'Mon profil' };
+  document.getElementById('topbarTitle').textContent = titres[view] || '';
+
+  if (view === 'comparer') renderComparaison();
+}
+
+// ── STATS ──
+function renderStats() {
+  const filtered = BIENS.filter(b => b.mode === MODE);
+  const scores = filtered.map(b => b.score || 0).filter(s => s > 0);
+  const scoreMoyen = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0;
+
+  let statsHtml = '';
+  if (MODE === 'acheteur') {
+    const economies = filtered.reduce((a,b) => a + (b.margeMin || 0), 0);
+    statsHtml = `
+      <div class="stat-card accent-card">
+        <div class="stat-card-label">Biens analysés</div>
+        <div class="stat-card-val">${filtered.length}</div>
+        <div class="stat-card-sub">en mode acheteur</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Score moyen</div>
+        <div class="stat-card-val">${scoreMoyen || '—'}</div>
+        <div class="stat-card-sub">sur 100</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Marge détectée</div>
+        <div class="stat-card-val">${economies > 0 ? (economies/1000).toFixed(0)+'k€' : '—'}</div>
+        <div class="stat-card-sub">négociable total</div>
+      </div>
+    `;
+  } else {
+    const rendements = filtered.filter(b=>b.rendBrut).map(b=>b.rendBrut);
+    const rendMoyen = rendements.length ? (rendements.reduce((a,b)=>a+b,0)/rendements.length).toFixed(1) : 0;
+    const cashflows = filtered.filter(b=>b.cashflow !== undefined).map(b=>b.cashflow);
+    const cfTotal = cashflows.reduce((a,b)=>a+b, 0);
+    statsHtml = `
+      <div class="stat-card accent-card" style="background:#16a34a;border-color:#16a34a;">
+        <div class="stat-card-label">Biens analysés</div>
+        <div class="stat-card-val">${filtered.length}</div>
+        <div class="stat-card-sub">en mode investisseur</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Rendement moyen</div>
+        <div class="stat-card-val">${rendMoyen ? rendMoyen+'%' : '—'}</div>
+        <div class="stat-card-sub">brut sur le portefeuille</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Cashflow total</div>
+        <div class="stat-card-val">${cfTotal ? (cfTotal > 0 ? '+' : '') + cfTotal+'€' : '—'}</div>
+        <div class="stat-card-sub">mensuel estimé</div>
+      </div>
+    `;
+  }
+  document.getElementById('statsHeader').innerHTML = statsHtml;
+}
+
+// ── BIENS LIST ──
+function renderBiens() {
+  const filtered = BIENS.filter(b => b.mode === MODE);
+  const container = document.getElementById('biensList');
+  document.getElementById('navBadgeBiens').textContent = filtered.length;
+  document.getElementById('listeSectionTitle').textContent =
+    MODE === 'investisseur' ? 'Mes opportunités locatives' : 'Mes biens suivis';
+
+  if (!filtered.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">${MODE === 'investisseur' ? '📈' : '🏠'}</div>
+        <div class="empty-title">Aucun bien analysé en mode ${MODE}</div>
+        <div class="empty-sub">Analysez votre première annonce pour voir apparaître<br>votre rapport ici.</div>
+        <a href="marlo-v5.html" class="btn-new" style="display:inline-flex;">+ Analyser une annonce</a>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(bien => {
+    const isSelected = SELECTED.has(bien.id);
+    const metricsHtml = MODE === 'investisseur' && bien.rendBrut ? `
+      <div class="bien-metrics">
+        <div class="bien-metric">
+          <div class="bien-metric-label">Rend. brut</div>
+          <div class="bien-metric-val">${bien.rendBrut}%</div>
+        </div>
+        <div class="bien-metric">
+          <div class="bien-metric-label">Cashflow</div>
+          <div class="bien-metric-val">${bien.cashflow >= 0 ? '+' : ''}${bien.cashflow}€/m</div>
+        </div>
+        <div class="bien-metric">
+          <div class="bien-metric-label">Loyer est.</div>
+          <div class="bien-metric-val">${bien.loyer}€</div>
+        </div>
+        <div class="bien-metric">
+          <div class="bien-metric-label">Tension</div>
+          <div class="bien-metric-val">${bien.tension || '—'}</div>
+        </div>
+      </div>
+    ` : `
+      <div class="bien-metrics">
+        <div class="bien-metric">
+          <div class="bien-metric-label">Prix / m²</div>
+          <div class="bien-metric-val">${(bien.pm2||0).toLocaleString('fr')} €</div>
+        </div>
+        <div class="bien-metric">
+          <div class="bien-metric-label">Marché</div>
+          <div class="bien-metric-val">${(bien.pm2m||0).toLocaleString('fr')} €</div>
+        </div>
+        <div class="bien-metric">
+          <div class="bien-metric-label">Marge</div>
+          <div class="bien-metric-val">${bien.margeMin > 0 ? bien.margeMin.toLocaleString('fr')+'€' : '~Juste'}</div>
+        </div>
+      </div>
+    `;
+
+    return `
+      <div class="bien-card${isSelected ? ' selected' : ''}" id="card-${bien.id}">
+        <div class="bien-card-header">
+          ${COMPARE_MODE ? `<div class="bien-select${isSelected ? ' checked' : ''}" onclick="toggleSelect('${bien.id}')"></div>` : ''}
+          <div class="bien-score ${bien.verdictCls}">${bien.score}</div>
+          <div class="bien-info">
+            <div class="bien-titre">${bien.titre}</div>
+            <div class="bien-meta">${bien.meta}</div>
+          </div>
+          <div class="bien-right">
+            <span class="bien-verdict ${bien.verdictCls}">${bien.verdict}</span>
+            <span class="bien-price">${(bien.prix||0).toLocaleString('fr')} €</span>
+          </div>
+        </div>
+        ${metricsHtml}
+        <div class="bien-actions">
+          <button class="btn-action primary" onclick="voirRapport('${bien.id}')">Voir rapport</button>
+          <button class="btn-action" onclick="partagerRapport('${bien.id}')">Partager</button>
+          <button class="btn-action danger" onclick="supprimerBien('${bien.id}')">Supprimer</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── COMPARAISON ──
+function activerComparaison() {
+  COMPARE_MODE = true;
+  SELECTED.clear();
+  renderBiens();
+  showToast('Sélectionnez 2 ou 3 biens à comparer');
+}
+
+function annulerComparaison() {
+  COMPARE_MODE = false;
+  SELECTED.clear();
+  document.getElementById('compareBar').classList.remove('visible');
+  renderBiens();
+}
+
+function toggleSelect(id) {
+  if (SELECTED.has(id)) {
+    SELECTED.delete(id);
+  } else {
+    if (SELECTED.size >= 3) { showToast('Maximum 3 biens à la fois'); return; }
+    SELECTED.add(id);
+  }
+  const count = SELECTED.size;
+  document.getElementById('compareCount').textContent = count;
+  document.getElementById('compareBar').classList.toggle('visible', count >= 2);
+  renderBiens();
+}
+
+function lancerComparaison() {
+  if (SELECTED.size < 2) { showToast('Sélectionnez au moins 2 biens'); return; }
+  showView('comparer');
+}
+
+function renderComparaison() {
+  const ids = Array.from(SELECTED);
+  if (!ids.length) {
+    // Prendre les 2 premiers du mode actuel si pas de sélection
+    const filtered = BIENS.filter(b => b.mode === MODE).slice(0, 2);
+    filtered.forEach(b => ids.push(b.id));
+  }
+  const biens = ids.map(id => BIENS.find(b => b.id === id)).filter(Boolean);
+  if (biens.length < 2) {
+    document.getElementById('compareContent').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">⚖️</div>
+        <div class="empty-title">Pas encore de comparaison</div>
+        <div class="empty-sub">Allez dans "Mes biens", activez la comparaison et sélectionnez 2 ou 3 biens.</div>
+        <button class="btn-new" onclick="showView('biens')">← Retour à mes biens</button>
+      </div>
+    `;
+    return;
+  }
+
+  // Trouver le meilleur score
+  const bestScore = Math.max(...biens.map(b => b.score || 0));
+  const cols = biens.length === 3 ? 'cols-3' : 'cols-2';
+
+  const isInvest = MODE === 'investisseur';
+
+  const rowsAcheteur = [
+    { label: 'Score', key: b => b.score || 0, fmt: v => v + '/100', higher: true },
+    { label: 'Prix', key: b => b.prix || 0, fmt: v => v.toLocaleString('fr') + ' €', higher: false },
+    { label: 'Prix / m²', key: b => b.pm2 || 0, fmt: v => v.toLocaleString('fr') + ' €', higher: false },
+    { label: 'Marché / m²', key: b => b.pm2m || 0, fmt: v => v.toLocaleString('fr') + ' €', higher: true },
+    { label: 'Marge négo', key: b => b.margeMin || 0, fmt: v => v > 0 ? v.toLocaleString('fr') + ' €' : '~Juste prix', higher: true },
+    { label: 'Verdict', key: b => b.verdict || '—', fmt: v => v, higher: null },
+  ];
+
+  const rowsInvest = [
+    { label: 'Score', key: b => b.score || 0, fmt: v => v + '/100', higher: true },
+    { label: 'Rend. brut', key: b => b.rendBrut || 0, fmt: v => v + '%', higher: true },
+    { label: 'Rend. net', key: b => b.rendNet || 0, fmt: v => v + '%', higher: true },
+    { label: 'Loyer estimé', key: b => b.loyer || 0, fmt: v => v + ' €/mois', higher: true },
+    { label: 'Cashflow', key: b => b.cashflow || 0, fmt: v => (v >= 0 ? '+' : '') + v + ' €/mois', higher: true },
+    { label: 'Tension', key: b => b.tension || '—', fmt: v => v, higher: null },
+    { label: 'Prix', key: b => b.prix || 0, fmt: v => v.toLocaleString('fr') + ' €', higher: false },
+    { label: 'Verdict', key: b => b.verdictInvest || b.verdict || '—', fmt: v => v, higher: null },
+  ];
+
+  const rows = isInvest ? rowsInvest : rowsAcheteur;
+
+  const headerCols = biens.map(b => `
+    <div class="compare-bien-col${b.score === bestScore ? ' winner' : ''}">
+      <div class="compare-bien-header">
+        <div class="compare-bien-name">${b.titre}</div>
+        <div class="compare-bien-score-row">
+          <span class="compare-score-badge ${b.verdictCls}">${b.score}</span>
+          <span style="font-size:11px;color:var(--muted);">${b.verdict}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  const rowsHtml = rows.map(row => {
+    const vals = biens.map(b => row.key(b));
+    const numVals = vals.filter(v => typeof v === 'number');
+    const best = numVals.length ? (row.higher === true ? Math.max(...numVals) : row.higher === false ? Math.min(...numVals) : null) : null;
+
+    const cells = biens.map((b, i) => {
+      const val = vals[i];
+      const isBest = best !== null && val === best && numVals.length > 1;
+      const isWorst = best !== null && row.higher !== null && typeof val === 'number' &&
+        val === (row.higher ? Math.min(...numVals) : Math.max(...numVals)) && numVals.length > 1;
+      return `<div class="compare-cell${isBest ? ' best' : isWorst ? ' worst' : ''}">${row.fmt(val)}</div>`;
+    }).join('');
+
+    return `
+      <div class="compare-row-label">${row.label}</div>
+      ${cells}
+    `;
+  }).join('');
+
+  document.getElementById('compareContent').innerHTML = `
+    <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;">
+        Comparaison de ${biens.length} biens
+      </div>
+      <button class="btn-action" onclick="showView('biens')" style="font-size:12px;">← Retour</button>
+    </div>
+    <div class="compare-grid ${cols}" style="align-items:start;">
+      <div class="compare-label-col">
+        <div style="height:72px;"></div>
+        ${rows.map(r => `<div class="compare-row-label">${r.label}</div>`).join('')}
+      </div>
+      ${headerCols}
+    </div>
+    <div class="compare-grid ${cols}" style="margin-top:0;">
+      <div class="compare-label-col"></div>
+      ${rowsHtml ? '' : ''}
+    </div>
+    <div style="background:var(--accent-light);border-radius:var(--radius);padding:12px 16px;margin-top:16px;font-size:13px;color:var(--accent);">
+      🏆 <strong>Le meilleur score</strong> est mis en vert — basé sur l'analyse Marlo.
+    </div>
+  `;
+
+  // Reconstruire proprement la grille avec labels + cellules alignés
+  const gridEl = document.querySelector('.compare-grid:last-of-type');
+  if (gridEl) gridEl.remove();
+
+  // Refaire avec une table HTML simple pour l'alignement
+  const tableHtml = `
+    <table style="width:100%;border-collapse:collapse;margin-top:8px;">
+      ${rows.map(row => {
+        const vals = biens.map(b => row.key(b));
+        const numVals = vals.filter(v => typeof v === 'number');
+        const best = numVals.length ? (row.higher === true ? Math.max(...numVals) : row.higher === false ? Math.min(...numVals) : null) : null;
+        return `<tr>
+          <td style="padding:10px 12px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--subtle);border-bottom:1px solid var(--border);width:120px;">${row.label}</td>
+          ${biens.map((b,i) => {
+            const val = vals[i];
+            const numVals2 = vals.filter(v => typeof v === 'number');
+            const isBest = best !== null && val === best && numVals2.length > 1;
+            const isWorst = best !== null && row.higher !== null && typeof val === 'number' && val === (row.higher ? Math.min(...numVals2) : Math.max(...numVals2)) && numVals2.length > 1;
+            return `<td style="padding:10px 12px;font-family:'Geist Mono',monospace;font-size:13px;border-bottom:1px solid var(--border);background:${isBest?'var(--green-light)':isWorst?'var(--red-bg)':'#fff'};color:${isBest?'var(--green)':isWorst?'var(--red)':'var(--ink)'};">${row.fmt(val)}</td>`;
+          }).join('')}
+        </tr>`;
+      }).join('')}
+    </table>
+  `;
+
+  document.getElementById('compareContent').innerHTML = `
+    <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em;">
+        Comparaison · ${biens.length} biens
+      </div>
+      <button class="btn-action" onclick="annulerComparaison();showView('biens')" style="font-size:12px;">← Retour</button>
+    </div>
+    ${biens.map(b => `
+      <div style="background:var(--bg);border:${b.score===bestScore?'2px solid var(--accent)':'1px solid var(--border)'};border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+        <div class="bien-score ${b.verdictCls}" style="width:36px;height:36px;font-size:13px;">${b.score}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${b.titre}</div>
+          <div style="font-size:11px;color:var(--muted);">${(b.prix||0).toLocaleString('fr')} €</div>
+        </div>
+        ${b.score===bestScore ? '<span style="font-size:10px;font-weight:700;background:var(--accent-light);color:var(--accent);padding:3px 8px;border-radius:99px;flex-shrink:0;">⭐ Meilleur score</span>' : ''}
+      </div>
+    `).join('')}
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:16px;">
+      ${tableHtml}
+    </div>
+    <div style="background:var(--accent-light);border-radius:var(--radius);padding:12px 16px;margin-top:12px;font-size:12px;color:var(--accent-2);line-height:1.5;">
+      🟢 Meilleure valeur · 🔴 Moins favorable · Les chiffres sont des estimations Marlo basées sur le marché.
+    </div>
+  `;
+}
+
+// ── ACTIONS ──
+function voirRapport(id) {
+  showToast('Rapport complet — connectez Supabase pour accéder aux données complètes');
+}
+
+function partagerRapport(id) {
+  if (navigator.share) {
+    navigator.share({ title: 'Analyse Marlo', text: 'Mon analyse de bien immobilier avec Marlo', url: window.location.href });
+  } else {
+    navigator.clipboard?.writeText(window.location.href);
+    showToast('Lien copié dans le presse-papiers');
+  }
+}
+
+function supprimerBien(id) {
+  BIENS = BIENS.filter(b => b.id !== id);
+  SELECTED.delete(id);
+  saveBiens();
+  renderStats();
+  renderBiens();
+  showToast('Bien supprimé');
+}
+
+// ── PROFIL ──
+function chargerProfil() {
+  try {
+    const raw = localStorage.getItem('marlo_profil');
+    if (raw) {
+      const p = JSON.parse(raw);
+      document.getElementById('profilPrenom').value = p.prenom || '';
+      document.getElementById('profilEmail').value = p.email || '';
+      document.getElementById('profilBudget').value = p.budget || '';
+      document.getElementById('profilZone').value = p.zone || '';
+      document.getElementById('profilSurface').value = p.surface || '';
+      document.getElementById('profilRendement').value = p.rendement || '';
+      document.getElementById('profilMode').value = p.mode || 'acheteur';
+      if (p.prenom) {
+        USER.prenom = p.prenom;
+        document.getElementById('sidebarName').textContent = p.prenom;
+        document.getElementById('sidebarAvatar').textContent = p.prenom.charAt(0).toUpperCase();
+      }
+    }
+  } catch(_) {}
+}
+
+function sauvegarderProfil() {
+  const profil = {
+    prenom: document.getElementById('profilPrenom').value,
+    email: document.getElementById('profilEmail').value,
+    budget: document.getElementById('profilBudget').value,
+    zone: document.getElementById('profilZone').value,
+    surface: document.getElementById('profilSurface').value,
+    rendement: document.getElementById('profilRendement').value,
+    mode: document.getElementById('profilMode').value,
+  };
+  try { localStorage.setItem('marlo_profil', JSON.stringify(profil)); } catch(_) {}
+  if (profil.prenom) {
+    document.getElementById('sidebarName').textContent = profil.prenom;
+    document.getElementById('sidebarAvatar').textContent = profil.prenom.charAt(0).toUpperCase();
+  }
+  setMode(profil.mode);
+  showToast('Profil sauvegardé ✓');
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── START ──
+init();
+</script>
+</body>
+</html>
