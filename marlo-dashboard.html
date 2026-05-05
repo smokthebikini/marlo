@@ -523,6 +523,24 @@ body {
       <!-- ════ VUE BIENS ════ -->
       <div class="view active" id="viewBiens">
 
+        <!-- Banner tunnel optionnel -->
+        <div id="bannerTunnel" style="background:linear-gradient(135deg,#eef0ff,#e8eaff);border:1.5px solid #c7cdff;border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:3px;">📊 Personnalisez votre dashboard</div>
+            <div style="font-size:12px;color:#6b6b80;line-height:1.5;">Renseignez votre profil financier pour voir votre capacité d'emprunt et vos biens à votre budget.</div>
+          </div>
+          <a href="/marlo-tunnel-v2.html" style="flex-shrink:0;background:#4361ee;color:#fff;font-size:13px;font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none;white-space:nowrap;">Compléter →</a>
+        </div>
+
+        <!-- Banner courtier -->
+        <div id="bannerCourtier" style="display:none;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:3px;">🤝 Prêt à passer à l'action ?</div>
+            <div style="font-size:12px;color:#6b6b80;line-height:1.5;">Un courtier partenaire peut optimiser votre financement en 48h. Mise en relation gratuite.</div>
+          </div>
+          <a href="/marlo-courtier.html" style="flex-shrink:0;background:#16a34a;color:#fff;font-size:13px;font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none;white-space:nowrap;">Être mis en relation →</a>
+        </div>
+
         <!-- Stats header -->
         <div class="stats-header" id="statsHeader"></div>
 
@@ -640,6 +658,7 @@ function init() {
   chargerProfil();
   renderStats();
   renderBiens();
+  updateBanners();
 }
 
 // ── DONNÉES (localStorage) ──
@@ -660,7 +679,7 @@ function chargerDonnees() {
   } catch(_) {
     BIENS = getDemoData();
   }
-  if (!BIENS.length) BIENS = getDemoData();
+  // Ne pas charger les démo data — afficher l'état vide réel
   saveBiens();
 }
 
@@ -863,6 +882,7 @@ function renderBiens() {
         ${metricsHtml}
         <div class="bien-actions">
           <button class="btn-action primary" onclick="voirRapport('${bien.id}')">Voir rapport</button>
+          <button class="btn-action" onclick="reAnalyser('${bien.url||''}')">🔄 Re-analyser</button>
           <button class="btn-action" onclick="partagerRapport('${bien.id}')">Partager</button>
           <button class="btn-action danger" onclick="supprimerBien('${bien.id}')">Supprimer</button>
         </div>
@@ -1119,6 +1139,27 @@ function sauvegarderProfil() {
   }
   setMode(profil.mode);
   showToast('Profil sauvegardé ✓');
+}
+
+function reAnalyser(url) {
+  if (url) {
+    window.location.href = '/?url=' + encodeURIComponent(url);
+  } else {
+    window.location.href = '/';
+  }
+}
+
+// Afficher banner courtier si l'user a au moins 1 bien
+function updateBanners() {
+  const hasBiens = BIENS.length > 0;
+  const bannerCourtier = document.getElementById('bannerCourtier');
+  if (bannerCourtier) bannerCourtier.style.display = hasBiens ? 'flex' : 'none';
+  // Cacher banner tunnel si profil déjà complété
+  try {
+    const profil = JSON.parse(localStorage.getItem('marlo_profil') || '{}');
+    const bannerTunnel = document.getElementById('bannerTunnel');
+    if (bannerTunnel && profil.budget) bannerTunnel.style.display = 'none';
+  } catch(_) {}
 }
 
 // ── TOAST ──
