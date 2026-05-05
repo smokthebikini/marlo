@@ -102,6 +102,135 @@ Leurs données de prix sont la source de vérité pour Marlo. Deux options :
 
 ---
 
+---
+
+## Analyse approfondie : LyBox, Horiz.io, Simulateur Locatif
+*Source : test terrain + avis App Store · Mai 2026*
+
+### LyBox
+
+**Ce qu'ils font :**
+- Extension Chrome qui analyse les annonces directement sur SeLoger, Leboncoin, etc.
+- Moteur de recherche multi-sites (1500+ sources)
+- Calcul automatique : rendement brut/net, cashflow, prix au m² vs marché
+- Alertes email/push sur nouveaux biens rentables
+- Dossier bancaire PDF exportable
+- Favoris multi-appareils avec persistance
+
+**Ce qu'ils ne font PAS — notre terrain :**
+- Zéro analyse décisionnelle ("dois-je acheter ce bien ?")
+- Zéro accompagnement primo-accédant résidence principale
+- Nécessite une extension Chrome → friction énorme (installation)
+- Outil pour investisseur expert, pas pour acheteur lambda
+- Payant avec abonnement mensuel
+- Zéro IA conversationnelle
+
+**Avertissement légal :** LyBox scrape les portails immobiliers. Ils ont des CGU tendues avec SeLoger/Leboncoin. Risque légal à surveiller — ne pas copier cette approche.
+
+---
+
+### Horiz.io
+
+**Ce qu'ils font :**
+- Application mobile + web pour simuler la rentabilité locative
+- Formules complètes : VAN, TRI, cashflow sur 25 ans, fiscalité LMNP/SCI/Pinel
+- Alertes push sur nouvelles annonces rentables
+- Plugin qui enrichit les annonces immobilières
+
+**Avis utilisateurs — enseignements directs :**
+
+✅ *"Le service d'alertes en temps réel fonctionne bien avec les notifs push"* → les alertes sont la feature la plus appréciée, indépendamment du reste
+
+✅ *"Très utile pour suivre le marché localement tout en étant à distance"* → la notion de surveillance passive à distance est très valorisée
+
+❌ *"Quand tu cliques sur simuler le projet d'achat, tu veux la simulation dans l'app et pas sur ton navigateur web"* → les redirections cassent l'expérience. **Marlo ne doit jamais faire de redirection mid-flow.**
+
+❌ *"Trop de crash lors des recherches avancées"* → la complexité crée des bugs. Notre approche simple = moins de bugs
+
+❌ *"La recherche ne s'effectue que par ville"* → leurs filtres géographiques sont limités
+
+**Ce qu'ils ne font PAS — notre terrain :**
+- Zéro analyse d'une annonce spécifique à la demande (URL)
+- Zéro accompagnement primo-accédant
+- Complexité rebutante pour le non-expert
+
+---
+
+### Simulateur Locatif (app + simulateur-locatif.fr)
+
+**Ce qu'ils font :**
+- Simulateur fiscal ultra-complet : micro-foncier, LMNP, SCI, déficit foncier, Pinel
+- PDF 4 pages avec graphiques cashflow, VAN, TRI sur 25 ans, tableaux fiscaux annuels
+- Tableau d'amortissement exportable
+- Paramètres avancés : CFE, CRL, amortissement gros œuvre/façades/équipements IGT
+
+**Avis utilisateurs — enseignements directs :**
+
+✅ *"Superbe appli pour avoir un bon visuel sur la rentabilité d'un projet"* → la visualisation est clé
+
+✅ *"Hyper simple d'utilisation"* → paradoxalement, malgré la complexité, l'UX est appréciée
+
+❌ *"Dommage qu'on ne puisse pas renseigner son profil fiscal commun à toutes les simulations"* → **les utilisateurs veulent UN profil persistant qui s'applique partout**. C'est exactement ce que notre tunnel crée.
+
+❌ *"L'enregistrement des simulations dans l'application ne semble pas fonctionner"* → la persistance des données est le problème #1 non résolu par tous ces acteurs. **C'est pourquoi Supabase est critique pour Marlo.**
+
+❌ *"Il manque l'amortissement du bâti... ça fait toute la différence en LMNP"* → leurs utilisateurs experts veulent encore plus de complexité. Ce n'est pas notre cible.
+
+**Ce qu'ils ne font PAS — notre terrain :**
+- Zéro connexion aux annonces (tout est manuel)
+- Zéro IA, zéro décisionnel
+- PDF trop dense pour être partagé facilement
+
+---
+
+## Enseignements produit directs — À intégrer dans Marlo
+
+### Ce qu'on doit faire (validé par les avis concurrents)
+
+**1. Persistance des données = priorité absolue**
+Tous les concurrents échouent là-dessus. Les utilisateurs le réclament explicitement dans les avis. Supabase doit être branché avant d'envoyer Marlo à des early users.
+
+**2. Profil unique partagé entre tous les biens**
+Les utilisateurs veulent renseigner leur profil fiscal/financier une fois. Notre tunnel crée ce profil — c'est un différenciateur réel, à mettre en avant dans le wording.
+
+**3. Alertes email = feature star**
+Citée en positif chez LyBox et Horiz. À builder en mois 2 avec Resend. Wording suggéré : *"Ce bien que tu surveilles vient de baisser de 12 000€"*.
+
+**4. PDF rapport = "effet waouh" documenté**
+LyBox documente que leur PDF crée un "effet waouh garanti lors du rendez-vous" bancaire. Notre PDF Marlo doit être plus clair, moins dense, et brandé pour l'acheteur (pas l'investisseur).
+
+**5. Zéro redirection mid-flow**
+Les utilisateurs Horiz se plaignent des redirections. Marlo doit garder l'utilisateur sur la même page du début à la fin.
+
+**6. Expérience fluide > Fonctionnalités complètes**
+Les outils les plus notés positivement sont ceux décrits comme "simples" malgré leur complexité sous-jacente. L'interface doit masquer la complexité.
+
+### Ce qu'on ne doit PAS faire
+
+- **Ne pas scraper les portails** → risque légal confirmé (LyBox marche sur des œufs avec SeLoger/Leboncoin)
+- **Ne pas complexifier l'interface** → VAN, TRI, amortissement IGT, CFE = perte immédiate de notre cible
+- **Ne pas forcer l'inscription avant la valeur** → le tunnel doit rester optionnel jusqu'à ce que l'utilisateur veuille sauvegarder
+- **Ne pas faire une app mobile** → le web sans installation est notre avantage face à LyBox (extension) et Simulateur Locatif (app)
+
+---
+
+## Positionnement différenciant confirmé
+
+| Ce que fait la concurrence | Ce que fait Marlo |
+|---|---|
+| Tu cherches des biens → on t'aide à filtrer | Tu as trouvé un bien → on t'aide à décider |
+| Tu dois être expert pour utiliser l'outil | Tu ne sais rien, c'est normal |
+| Formulaires manuels | Une URL suffit |
+| Investisseur locatif | Acheteur primo-accédant |
+| Extension Chrome ou app à installer | Web, zéro friction |
+| Payant dès le départ | Gratuit, lead gen vers courtiers |
+| Données que tu entres | IA qui analyse pour toi |
+
+**La phrase qui résume tout :**
+*"Eux font des outils pour ceux qui savent déjà. Marlo fait un outil pour ceux qui apprennent."*
+
+---
+
 ## Le vide stratégique confirmé
 
 ```
