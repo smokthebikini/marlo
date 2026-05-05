@@ -204,13 +204,8 @@ nav {
   padding: 52px 24px 40px;
   display: flex; flex-direction: column;
   justify-content: center;
-  max-width: 760px; margin: 0 auto; width: 100%;
+  max-width: 640px; margin: 0 auto; width: 100%;
   animation: fadeUp 0.5s ease both;
-}
-@media (min-width: 768px) {
-  .hero-content { max-width: 860px; padding: 72px 48px 56px; }
-  .hero-title { font-size: clamp(52px, 6vw, 80px); }
-  .hero-sub { font-size: 18px; max-width: 560px; }
 }
 
 @keyframes fadeUp {
@@ -243,33 +238,58 @@ nav {
   max-width: 440px;
 }
 
-/* Input */
-.input-wrap { margin-bottom: 14px; }
-.input-zone {
-  display: flex;
+/* Formulaire analyse */
+.form-card {
+  background: #fff;
   border: 1.5px solid var(--ink);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  background: #fff;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 14px;
+  max-width: 520px;
 }
-.input-zone:focus-within {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(67,97,238,0.12);
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--border);
 }
-.input-zone input {
-  flex: 1; border: none; background: transparent;
-  font-family: 'Geist Mono', monospace; font-size: 13px; color: var(--ink);
-  padding: 14px 18px; outline: none; min-width: 0;
+.form-row:last-of-type { border-bottom: none; }
+.form-field {
+  display: flex; flex-direction: column;
+  padding: 14px 16px;
+  border-right: 1px solid var(--border);
+  transition: background 0.15s;
 }
-.input-zone input::placeholder { color: var(--subtle); }
+.form-field:last-child { border-right: none; }
+.form-field:focus-within { background: var(--accent-light); }
+.form-field.full {
+  grid-column: 1 / -1;
+  border-right: none;
+}
+.form-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 4px;
+}
+.form-field input, .form-field select {
+  border: none; background: transparent; outline: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px; font-weight: 600; color: var(--ink);
+  padding: 0; width: 100%;
+  -webkit-appearance: none;
+}
+.form-field input::placeholder { color: var(--subtle); font-weight: 400; }
+.form-field select { cursor: pointer; }
+.form-field select option { font-weight: 400; }
+
 .btn-analyze {
+  width: 100%;
   background: var(--ink); color: #fff;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 14px; font-weight: 700; letter-spacing: -0.01em;
-  padding: 0 22px; border: none; cursor: pointer;
-  transition: background 0.15s; flex-shrink: 0;
-  white-space: nowrap;
+  font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
+  padding: 16px 22px; border: none; cursor: pointer;
+  transition: background 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .btn-analyze:hover { background: var(--accent); }
 .btn-analyze:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -458,22 +478,12 @@ nav {
 
 /* ─── EXEMPLE ─── */
 .example-section { padding: 72px 24px; background: #fff; }
-.example-inner { display: flex; align-items: flex-start; gap: 64px; }
-.example-left { flex: 1; min-width: 0; }
-.example-right { flex: 1; min-width: 0; }
 .example-title {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: clamp(24px, 5vw, 36px);
   font-weight: 800; letter-spacing: -0.035em;
-  color: var(--ink); margin-bottom: 20px; line-height: 1.1;
+  color: var(--ink); margin-bottom: 32px; line-height: 1.1;
 }
-.example-desc { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 28px; }
-.example-features { display: flex; flex-direction: column; gap: 14px; }
-.example-feature { display: flex; align-items: flex-start; gap: 12px; }
-.example-feature-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--accent-light); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; margin-top: 1px; }
-.example-feature-text { font-size: 14px; color: var(--ink-2); line-height: 1.5; }
-.example-feature-text strong { display: block; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
-@media (max-width: 768px) { .example-inner { flex-direction: column; gap: 32px; } }
 
 /* ─── CTA FINAL ─── */
 .cta-section {
@@ -531,7 +541,7 @@ footer p { font-size: 11px; color: var(--subtle); }
       <button class="mode-btn invest" id="btnInvestisseur" onclick="setMode('investisseur')">📈 Investisseur</button>
     </div>
 
-    <div class="hero-eyebrow" id="heroEyebrow">L'outil que les agents ne veulent pas que vous ayez</div>
+    <div class="hero-eyebrow" id="heroEyebrow">Copilote immobilier IA</div>
 
     <h1 class="hero-title" id="heroTitle">
       Ce bien vaut-il<br>
@@ -540,24 +550,46 @@ footer p { font-size: 11px; color: var(--subtle); }
     </h1>
 
     <p class="hero-sub" id="heroSub">
-      Collez l'URL d'une annonce SeLoger, Leboncoin ou PAP.
-      Marlo analyse le prix, détecte les risques et vous donne
-      les questions à poser — en 30 secondes.
+      Entrez les infos du bien. Marlo analyse le prix,
+      détecte les risques et vous donne les questions à poser — en 30 secondes.
     </p>
 
     <div class="input-wrap">
-      <div class="input-zone" id="inputZone">
-        <input
-          type="url" id="urlInput"
-          placeholder="https://www.seloger.com/annonces/..."
-          autocomplete="off" spellcheck="false"
-          onkeydown="if(event.key==='Enter') lancerAnalyse()"
-        >
+      <div class="form-card" id="formCard">
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label">Prix demandé (€)</label>
+            <input type="number" id="inputPrix" placeholder="350 000" min="1" autocomplete="off">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Surface (m²)</label>
+            <input type="number" id="inputSurface" placeholder="65" min="1" autocomplete="off">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field full">
+            <label class="form-label">Ville / Quartier</label>
+            <input type="text" id="inputVille" placeholder="Paris 11e, Lyon 6e, Bordeaux Centre…" autocomplete="off"
+              onkeydown="if(event.key==='Enter') lancerAnalyse()">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field full">
+            <label class="form-label">Type de bien</label>
+            <select id="inputType">
+              <option value="appartement">Appartement</option>
+              <option value="maison">Maison</option>
+              <option value="studio">Studio</option>
+              <option value="loft">Loft / Atypique</option>
+              <option value="terrain">Terrain</option>
+            </select>
+          </div>
+        </div>
         <button class="btn-analyze" id="btnAnalyze" onclick="lancerAnalyse()">
-          Analyser →
+          Analyser ce bien →
         </button>
       </div>
-      <p class="error-msg" id="errorMsg">URL non reconnue. Essayez SeLoger, Leboncoin, PAP ou BienIci.</p>
+      <p class="error-msg" id="errorMsg">Veuillez renseigner le prix, la surface et la ville.</p>
     </div>
 
     <div class="input-hints">
@@ -640,16 +672,16 @@ footer p { font-size: 11px; color: var(--subtle); }
   <!-- Stats -->
   <div class="stats-bar">
     <div class="stat-cell">
-      <div class="stat-num">30s</div>
-      <div class="stat-label">pour obtenir votre analyse</div>
+      <div class="stat-num">DVF</div>
+      <div class="stat-label">Données notariales officielles · Gouvernement français</div>
     </div>
     <div class="stat-cell">
-      <div class="stat-num">0€</div>
-      <div class="stat-label">aucune inscription requise</div>
+      <div class="stat-num">+2M</div>
+      <div class="stat-label">transactions immobilières dans notre base</div>
     </div>
     <div class="stat-cell">
-      <div class="stat-num">Bêta</div>
-      <div class="stat-label">soyez parmi les premiers à tester</div>
+      <div class="stat-num">2024</div>
+      <div class="stat-label">Données marché mises à jour</div>
     </div>
   </div>
 </section>
@@ -658,10 +690,8 @@ footer p { font-size: 11px; color: var(--subtle); }
 <section class="problem-section">
   <div class="s-eyebrow">Le problème</div>
   <h2 class="problem-title">
-    Tu n'as plus besoin de comprendre l'immobilier<br>
-    <span class="dim">pour prendre la bonne décision.</span>
-  </h2>
-  <p style="color:rgba(255,255,255,0.5);font-size:15px;margin-top:12px;line-height:1.6;">Le marché est opaque. Personne ne vous aide vraiment. Marlo change ça.</p>
+    Le marché immo est opaque.<br>
+    <span class="dim">Personne ne vous aide vraiment.</span>
   </h2>
   <div class="problem-items">
     <div class="problem-item">
@@ -696,8 +726,8 @@ footer p { font-size: 11px; color: var(--subtle); }
     <div class="step">
       <div class="step-num">01</div>
       <div class="step-body">
-        <h4>Collez l'URL de n'importe quelle annonce</h4>
-        <p>SeLoger, Leboncoin, PAP, BienIci. Marlo analyse l'annonce et la compare au marché réel.</p>
+        <h4>Entrez les infos du bien en 20 secondes</h4>
+        <p>Prix, surface, ville, type de bien. Quatre champs. Pas d'inscription. Pas de compte.</p>
       </div>
     </div>
     <div class="step">
@@ -726,32 +756,9 @@ footer p { font-size: 11px; color: var(--subtle); }
 
 <!-- ══ EXEMPLE ══ -->
 <section class="example-section">
-  <div class="example-inner">
-    <div class="example-left">
-      <div class="s-eyebrow" style="color:var(--muted);">Exemple de rapport</div>
-      <h2 class="example-title">Ce que Marlo vous donne.</h2>
-      <p class="example-desc">En 30 secondes, Marlo analyse n'importe quelle annonce et vous donne tout ce qu'il faut pour décider et négocier.</p>
-      <div class="example-features">
-        <div class="example-feature">
-          <div class="example-feature-icon">📊</div>
-          <div class="example-feature-text"><strong>Prix vs marché réel</strong>Comparaison avec les transactions récentes du quartier.</div>
-        </div>
-        <div class="example-feature">
-          <div class="example-feature-icon">🔍</div>
-          <div class="example-feature-text"><strong>Signaux de risque détectés</strong>DPE, durée en ligne, travaux copro, surestimation.</div>
-        </div>
-        <div class="example-feature">
-          <div class="example-feature-icon">💬</div>
-          <div class="example-feature-text"><strong>Questions à poser au vendeur</strong>Les vraies questions pour négocier intelligemment.</div>
-        </div>
-        <div class="example-feature">
-          <div class="example-feature-icon">💰</div>
-          <div class="example-feature-text"><strong>Fourchette de négociation chiffrée</strong>Combien vous pouvez réellement économiser.</div>
-        </div>
-      </div>
-    </div>
-    <div class="example-right">
-  <div class="rapport-card">
+  <div class="s-eyebrow" style="color:var(--muted);">Exemple de rapport</div>
+  <h2 class="example-title">Ce que Marlo vous donne.</h2>
+  <div class="rapport-card" style="max-width:540px;">
     <div class="r-header">
       <div class="r-score bad">41</div>
       <div class="r-meta">
@@ -791,7 +798,52 @@ footer p { font-size: 11px; color: var(--subtle); }
       <p><strong>Marge estimée : 45 000 à 65 000 €</strong><br>Basé sur les transactions des 6 derniers mois.</p>
       <button class="btn-r-cta" onclick="scrollToInput()">Analyser mon bien →</button>
     </div>
+  </div>
+</section>
+
+<!-- ══ EXEMPLE ══ -->
+<section class="example-section">
+  <div class="s-eyebrow" style="color:var(--muted);">Exemple de rapport</div>
+  <h2 class="example-title">Ce que Marlo vous donne.</h2>
+  <div class="rapport-card" style="max-width:540px;">
+    <div class="r-header">
+      <div class="r-score bad">41</div>
+      <div class="r-meta">
+        <h3>3 pièces · 68m² · Paris 11e</h3>
+        <p>Annoncé 695 000 € · Rue de la Roquette · 47 jours</p>
+      </div>
+      <div class="r-verdict bad">Surestimé</div>
     </div>
+    <div class="r-prix">
+      <div class="r-prix-cell">
+        <div class="r-prix-label">Prix / m²</div>
+        <div class="r-prix-val">10 220 €</div>
+      </div>
+      <div class="r-prix-cell">
+        <div class="r-prix-label">Marché Paris 11e</div>
+        <div class="r-prix-val">8 900 €</div>
+      </div>
+      <div class="r-prix-cell hi">
+        <div class="r-prix-label">Marge négociation</div>
+        <div class="r-prix-val">45–65k€</div>
+      </div>
+    </div>
+    <div class="r-section">
+      <div class="r-section-title">Signaux détectés</div>
+      <div class="r-signal">🔴 Prix au m² supérieur de 14,8% à la moyenne des transactions récentes.</div>
+      <div class="r-signal">🟡 DPE classé E — coût de rénovation entre 18 000 et 35 000 €.</div>
+      <div class="r-signal">🟡 Annonce publiée depuis 47 jours — signe de difficulté à vendre au prix affiché.</div>
+      <div class="r-signal">🟢 Localisation prime — forte liquidité à la revente, station Voltaire à 4 min.</div>
+    </div>
+    <div class="r-section">
+      <div class="r-section-title">Questions à poser au vendeur</div>
+      <div class="r-q"><span class="r-q-mark">?</span>Pourquoi le bien est-il en vente depuis plus de 6 semaines ?</div>
+      <div class="r-q"><span class="r-q-mark">?</span>Y a-t-il des travaux de copropriété votés ou à venir ?</div>
+      <div class="r-q"><span class="r-q-mark">?</span>Le vendeur a-t-il déjà refusé une offre ? Si oui, à quel prix ?</div>
+    </div>
+    <div class="r-footer">
+      <p><strong>Marge estimée : 45 000 à 65 000 €</strong><br>Basé sur les transactions des 6 derniers mois.</p>
+      <button class="btn-r-cta" onclick="scrollToInput()">Analyser mon bien →</button>
     </div>
   </div>
 </section>
@@ -812,7 +864,7 @@ footer p { font-size: 11px; color: var(--subtle); }
 </footer>
 
 <script>
-const PROXY_URL = '/api/analyse';
+const PROXY_URL = 'https://marlo-api.vercel.app/api/analyse';
 const DOMAINES  = ['seloger.com','leboncoin.fr','pap.fr','logic-immo.com','bienici.com','meilleursagents.com'];
 const LOADING_STEPS_ACHETEUR = [
   'Récupération de l\'annonce…','Analyse du prix au m²…',
@@ -843,8 +895,8 @@ function setMode(mode) {
     ? 'Ce bien est-il<br><span class="accent">vraiment</span><br>rentable ?'
     : 'Ce bien vaut-il<br><span class="accent">vraiment</span><br>ce prix ?';
   document.getElementById('heroSub').textContent = isInvest
-    ? 'Collez l\'URL d\'une annonce. Marlo calcule le rendement brut, net, le cashflow estimé et vous dit si c\'est une opportunité locative.'
-    : 'Collez l\'URL d\'une annonce SeLoger, Leboncoin ou PAP. Marlo analyse le prix, détecte les risques et vous donne les questions à poser — en 30 secondes.';
+    ? 'Entrez les infos du bien. Marlo calcule le rendement brut, net, le cashflow estimé et vous dit si c\'est une opportunité locative.'
+    : 'Entrez les infos du bien. Marlo analyse le prix, détecte les risques et vous donne les questions à poser — en 30 secondes.';
 
   // Masquer rapport précédent
   const rw = document.getElementById('rapportWrap');
@@ -857,8 +909,8 @@ function isValidURL(s) {
   catch { return false; }
 }
 function scrollToInput() {
-  document.getElementById('urlInput').scrollIntoView({behavior:'smooth',block:'center'});
-  setTimeout(()=>document.getElementById('urlInput').focus(),400);
+  document.getElementById('formCard').scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>document.getElementById('inputPrix').focus(),400);
 }
 function scrollToCTA() {
   document.getElementById('ctaSection').scrollIntoView({behavior:'smooth'});
@@ -1094,7 +1146,11 @@ async function soumettreInscription() {
     mode: MODE,
     rapport: rapportEnCours,
     date: new Date().toISOString(),
-    url: document.getElementById('urlInput').value.trim()
+    bien: {
+      prix: document.getElementById('inputPrix').value,
+      surface: document.getElementById('inputSurface').value,
+      ville: document.getElementById('inputVille').value,
+    }
   };
   try {
     const existing = JSON.parse(localStorage.getItem('marlo_users') || '[]');
@@ -1116,23 +1172,27 @@ async function soumettreInscription() {
 }
 
 function simulerFinancement() {
-  // Pour l'instant scroll vers CTA — plus tard ouvrira le tunnel
-  document.getElementById('ctaSection').scrollIntoView({ behavior: 'smooth' });
+  window.location.href = 'marlo-tunnel-v2.html';
 }
 
 // ── LANCER ANALYSE ──
 async function lancerAnalyse() {
-  const url = document.getElementById('urlInput').value.trim();
+  const prix   = document.getElementById('inputPrix').value.trim();
+  const surface = document.getElementById('inputSurface').value.trim();
+  const ville  = document.getElementById('inputVille').value.trim();
+  const type_bien = document.getElementById('inputType').value;
   const errorMsg = document.getElementById('errorMsg');
   const btn = document.getElementById('btnAnalyze');
 
-  if (!url || !isValidURL(url)) {
+  // Validation
+  if (!prix || !surface || !ville) {
     errorMsg.classList.add('visible');
-    document.getElementById('inputZone').style.borderColor = 'var(--red)';
+    if (!prix) document.getElementById('inputPrix').focus();
+    else if (!surface) document.getElementById('inputSurface').focus();
+    else document.getElementById('inputVille').focus();
     return;
   }
   errorMsg.classList.remove('visible');
-  document.getElementById('inputZone').style.borderColor = '';
 
   const rw = document.getElementById('rapportWrap');
   rw.classList.remove('visible'); rw.style.display = 'none';
@@ -1144,6 +1204,7 @@ async function lancerAnalyse() {
   const steps = MODE === 'investisseur' ? LOADING_STEPS_INVEST : LOADING_STEPS_ACHETEUR;
   lw.classList.add('visible'); fill.style.width = '0%';
   btn.disabled = true;
+  btn.textContent = 'Analyse en cours…';
 
   let idx = 0;
   const iv = setInterval(() => {
@@ -1152,46 +1213,53 @@ async function lancerAnalyse() {
       fill.style.width = ((idx+1)/steps.length*85) + '%';
       idx++;
     }
-  }, 600);
+  }, 700);
 
   let rapport = null;
+  let erreurMsg = null;
+
   try {
     const res = await fetch(PROXY_URL, {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ url, mode: MODE })
+      body: JSON.stringify({ prix: Number(prix), surface: Number(surface), ville, type_bien, mode: MODE })
     });
     const data = await res.json();
-    if (data.success && data.rapport) rapport = data.rapport;
-  } catch(_) {}
+    if (data.success && data.rapport) {
+      rapport = data.rapport;
+    } else {
+      erreurMsg = data.error || 'Erreur inconnue';
+    }
+  } catch(e) {
+    erreurMsg = 'Impossible de joindre le serveur.';
+  }
 
   clearInterval(iv);
   fill.style.width = '100%';
   await new Promise(r=>setTimeout(r,300));
   lw.classList.remove('visible');
   btn.disabled = false;
+  btn.textContent = 'Analyser ce bien →';
 
   if (rapport) {
     rapportEnCours = rapport;
     if (MODE === 'investisseur') afficherRapportInvest(rapport);
     else afficherRapport(rapport);
+    rw.style.display = 'block';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>rw.classList.add('visible')));
+    setTimeout(()=>rw.scrollIntoView({behavior:'smooth',block:'start'}),200);
   } else {
-    rapportEnCours = { mode: MODE, url };
-    if (MODE === 'investisseur') genererDemoInvest(url);
-    else genererDemo(url);
+    // Afficher l'erreur clairement — pas de démo silencieuse
+    errorMsg.textContent = erreurMsg || 'Une erreur est survenue. Réessayez.';
+    errorMsg.classList.add('visible');
   }
-
-  rw.style.display = 'block';
-  requestAnimationFrame(()=>requestAnimationFrame(()=>rw.classList.add('visible')));
-  setTimeout(()=>rw.scrollIntoView({behavior:'smooth',block:'start'}),200);
 }
 
-document.getElementById('urlInput').addEventListener('keydown', e=>{
-  if(e.key==='Enter') lancerAnalyse();
-});
-document.getElementById('urlInput').addEventListener('input', ()=>{
-  document.getElementById('inputZone').style.borderColor='';
-  document.getElementById('errorMsg').classList.remove('visible');
+// Effacer l'erreur quand l'utilisateur tape
+['inputPrix','inputSurface','inputVille'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    document.getElementById('errorMsg').classList.remove('visible');
+  });
 });
 </script>
 </body>
