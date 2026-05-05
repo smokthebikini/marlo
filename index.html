@@ -516,7 +516,7 @@ footer p { font-size: 11px; color: var(--subtle); }
       <button class="mode-btn invest" id="btnInvestisseur" onclick="setMode('investisseur')">📈 Investisseur</button>
     </div>
 
-    <div class="hero-eyebrow" id="heroEyebrow">Copilote immobilier IA</div>
+    <div class="hero-eyebrow" id="heroEyebrow">L'outil que les agents ne veulent pas que vous ayez</div>
 
     <h1 class="hero-title" id="heroTitle">
       Ce bien vaut-il<br>
@@ -625,16 +625,16 @@ footer p { font-size: 11px; color: var(--subtle); }
   <!-- Stats -->
   <div class="stats-bar">
     <div class="stat-cell">
-      <div class="stat-num">2 147</div>
-      <div class="stat-label">annonces analysées cette semaine</div>
+      <div class="stat-num">30s</div>
+      <div class="stat-label">pour obtenir votre analyse</div>
     </div>
     <div class="stat-cell">
-      <div class="stat-num">18%</div>
-      <div class="stat-label">de surestimation moyenne détectée</div>
+      <div class="stat-num">0€</div>
+      <div class="stat-label">aucune inscription requise</div>
     </div>
     <div class="stat-cell">
-      <div class="stat-num">8 400€</div>
-      <div class="stat-label">économisés en négociation en moyenne</div>
+      <div class="stat-num">Bêta</div>
+      <div class="stat-label">soyez parmi les premiers à tester</div>
     </div>
   </div>
 </section>
@@ -643,8 +643,10 @@ footer p { font-size: 11px; color: var(--subtle); }
 <section class="problem-section">
   <div class="s-eyebrow">Le problème</div>
   <h2 class="problem-title">
-    Le marché immo est opaque.<br>
-    <span class="dim">Personne ne vous aide vraiment.</span>
+    Tu n'as plus besoin de comprendre l'immobilier<br>
+    <span class="dim">pour prendre la bonne décision.</span>
+  </h2>
+  <p style="color:rgba(255,255,255,0.5);font-size:15px;margin-top:12px;line-height:1.6;">Le marché est opaque. Personne ne vous aide vraiment. Marlo change ça.</p>
   </h2>
   <div class="problem-items">
     <div class="problem-item">
@@ -680,7 +682,7 @@ footer p { font-size: 11px; color: var(--subtle); }
       <div class="step-num">01</div>
       <div class="step-body">
         <h4>Collez l'URL de n'importe quelle annonce</h4>
-        <p>SeLoger, Leboncoin, PAP, BienIci. Marlo récupère automatiquement les informations du bien.</p>
+        <p>SeLoger, Leboncoin, PAP, BienIci. Marlo analyse l'annonce et la compare au marché réel.</p>
       </div>
     </div>
     <div class="step">
@@ -1075,7 +1077,7 @@ async function soumettreInscription() {
 
 function simulerFinancement() {
   // Pour l'instant scroll vers CTA — plus tard ouvrira le tunnel
-  window.location.href = '/marlo-tunnel-v2.html';
+  document.getElementById('ctaSection').scrollIntoView({ behavior: 'smooth' });
 }
 
 // ── LANCER ANALYSE ──
