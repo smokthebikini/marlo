@@ -453,12 +453,22 @@ nav {
 
 /* ─── EXEMPLE ─── */
 .example-section { padding: 72px 24px; background: #fff; }
+.example-inner { display: flex; align-items: flex-start; gap: 64px; }
+.example-left { flex: 1; min-width: 0; }
+.example-right { flex: 1; min-width: 0; }
 .example-title {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: clamp(24px, 5vw, 36px);
   font-weight: 800; letter-spacing: -0.035em;
-  color: var(--ink); margin-bottom: 32px; line-height: 1.1;
+  color: var(--ink); margin-bottom: 20px; line-height: 1.1;
 }
+.example-desc { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 28px; }
+.example-features { display: flex; flex-direction: column; gap: 14px; }
+.example-feature { display: flex; align-items: flex-start; gap: 12px; }
+.example-feature-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--accent-light); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+.example-feature-text { font-size: 14px; color: var(--ink-2); line-height: 1.5; }
+.example-feature-text strong { display: block; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+@media (max-width: 768px) { .example-inner { flex-direction: column; gap: 32px; } }
 
 /* ─── CTA FINAL ─── */
 .cta-section {
@@ -711,9 +721,32 @@ footer p { font-size: 11px; color: var(--subtle); }
 
 <!-- ══ EXEMPLE ══ -->
 <section class="example-section">
-  <div class="s-eyebrow" style="color:var(--muted);">Exemple de rapport</div>
-  <h2 class="example-title">Ce que Marlo vous donne.</h2>
-  <div class="rapport-card" style="max-width:540px;">
+  <div class="example-inner">
+    <div class="example-left">
+      <div class="s-eyebrow" style="color:var(--muted);">Exemple de rapport</div>
+      <h2 class="example-title">Ce que Marlo vous donne.</h2>
+      <p class="example-desc">En 30 secondes, Marlo analyse n'importe quelle annonce et vous donne tout ce qu'il faut pour décider et négocier.</p>
+      <div class="example-features">
+        <div class="example-feature">
+          <div class="example-feature-icon">📊</div>
+          <div class="example-feature-text"><strong>Prix vs marché réel</strong>Comparaison avec les transactions récentes du quartier.</div>
+        </div>
+        <div class="example-feature">
+          <div class="example-feature-icon">🔍</div>
+          <div class="example-feature-text"><strong>Signaux de risque détectés</strong>DPE, durée en ligne, travaux copro, surestimation.</div>
+        </div>
+        <div class="example-feature">
+          <div class="example-feature-icon">💬</div>
+          <div class="example-feature-text"><strong>Questions à poser au vendeur</strong>Les vraies questions pour négocier intelligemment.</div>
+        </div>
+        <div class="example-feature">
+          <div class="example-feature-icon">💰</div>
+          <div class="example-feature-text"><strong>Fourchette de négociation chiffrée</strong>Combien vous pouvez réellement économiser.</div>
+        </div>
+      </div>
+    </div>
+    <div class="example-right">
+  <div class="rapport-card">
     <div class="r-header">
       <div class="r-score bad">41</div>
       <div class="r-meta">
@@ -752,6 +785,8 @@ footer p { font-size: 11px; color: var(--subtle); }
     <div class="r-footer">
       <p><strong>Marge estimée : 45 000 à 65 000 €</strong><br>Basé sur les transactions des 6 derniers mois.</p>
       <button class="btn-r-cta" onclick="scrollToInput()">Analyser mon bien →</button>
+    </div>
+    </div>
     </div>
   </div>
 </section>
