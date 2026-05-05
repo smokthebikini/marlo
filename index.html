@@ -1,1158 +1,4518 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="color-scheme" content="light only">
-<title>Marlo — Votre copilote immobilier</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --ink:        #1a1a2e;
-  --ink-2:      #2d2d44;
-  --muted:      #6b6b80;
-  --subtle:     #a8a8b8;
-  --border:     #e4e4ec;
-  --bg:         #ffffff;
-  --bg-off:     #f8f8ff;
-  --bg-warm:    #f2f2f8;
-  --accent:     #4361ee;
-  --accent-2:   #3451d1;
-  --accent-light: #e8eaff;
-  --green:      #0a7c6a;
-  --green-bg:   #e6f7f4;
-  --red:        #d63031;
-  --red-bg:     #fff2f2;
-  --amber:      #c0640a;
-  --amber-bg:   #fff4e6;
-  --radius:     10px;
-  --radius-lg:  14px;
-  --shadow-sm:  0 1px 3px rgba(26,26,46,0.08), 0 0 0 1px rgba(26,26,46,0.04);
-  --shadow-md:  0 4px 16px rgba(26,26,46,0.10), 0 0 0 1px rgba(26,26,46,0.05);
-  --shadow-lg:  0 8px 32px rgba(26,26,46,0.12), 0 0 0 1px rgba(26,26,46,0.06);
-}
-
-html { color-scheme: light only; background: #fff !important; }
-@media (prefers-color-scheme: dark) {
-  html, body { background: #ffffff !important; color: #1a1a2e !important; }
-}
-
-body {
-  font-family: 'Inter', -apple-system, sans-serif;
-  background: var(--bg);
-  color: var(--ink);
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-  line-height: 1.5;
-}
-
-/* ─── TOGGLE MODE ─── */
-.mode-toggle {
-  display: flex; align-items: center;
-  background: var(--bg-warm); border: 1.5px solid var(--border);
-  border-radius: 99px; padding: 4px; gap: 2px;
-  margin-bottom: 28px; width: fit-content;
-}
-.mode-btn {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 13px; font-weight: 700;
-  padding: 8px 18px; border-radius: 99px;
-  border: none; cursor: pointer;
-  transition: all 0.2s;
-  background: transparent; color: var(--muted);
-  letter-spacing: -0.01em; white-space: nowrap;
-}
-.mode-btn.active { background: var(--ink); color: #fff; box-shadow: 0 2px 8px rgba(26,26,46,0.2); }
-.mode-btn.active.invest { background: #16a34a; }
-
-/* ─── RAPPORT INVESTISSEUR ─── */
-.invest-bloc { border-top: 1.5px solid #d1fae5; background: linear-gradient(135deg,#f0fdf4,#dcfce7); }
-.invest-header {
-  padding: 12px 18px; display: flex; align-items: center; gap: 8px;
-  border-bottom: 1px solid #bbf7d0;
-}
-.invest-badge {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-  background: #16a34a; color: #fff; padding: 3px 8px; border-radius: 4px;
-}
-.invest-header-title { font-size: 12px; font-weight: 700; color: #15803d; }
-.invest-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
-.invest-kpi { padding: 14px 16px; border-right: 1px solid #bbf7d0; border-bottom: 1px solid #bbf7d0; }
-.invest-kpi:nth-child(2n) { border-right: none; }
-.invest-kpi:nth-last-child(-n+2) { border-bottom: none; }
-.invest-kpi-label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #15803d; opacity: 0.7; margin-bottom: 4px; }
-.invest-kpi-val { font-family: 'Geist Mono', monospace; font-size: 18px; font-weight: 500; color: #14532d; line-height: 1; }
-.invest-kpi-sub { font-size: 11px; color: #16a34a; margin-top: 3px; }
-.invest-verdict { padding: 14px 18px; border-top: 1px solid #bbf7d0; display: flex; align-items: flex-start; gap: 10px; }
-.invest-verdict-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
-.invest-verdict-text h4 { font-size: 14px; font-weight: 700; color: #14532d; margin-bottom: 2px; }
-.invest-verdict-text p { font-size: 12px; color: #15803d; line-height: 1.5; }
-.invest-signals { padding: 0 18px 14px; display: flex; flex-direction: column; gap: 6px; }
-.invest-signal { font-size: 13px; color: #15803d; display: flex; gap: 8px; line-height: 1.5; }
-
-/* ─── INSCRIPTION POST-RAPPORT ─── */
-.r-signup {
-  border-top: 1px solid var(--border);
-  padding: 20px;
-  background: var(--bg-off);
-}
-.r-signup-content {
-  display: flex; align-items: flex-start; gap: 12px;
-  margin-bottom: 16px;
-}
-.r-signup-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
-.r-signup-title {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 14px; font-weight: 700; letter-spacing: -0.02em;
-  color: var(--ink); margin-bottom: 4px;
-}
-.r-signup-sub { font-size: 12px; color: var(--muted); line-height: 1.5; }
-
-.r-signup-form { display: flex; flex-direction: column; gap: 8px; }
-.r-signup-form input {
-  width: 100%; border: 1.5px solid var(--border);
-  border-radius: var(--radius); padding: 11px 14px;
-  font-family: 'Inter', sans-serif; font-size: 14px; color: var(--ink);
-  background: #fff; outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.r-signup-form input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(67,97,238,0.1);
-}
-.r-signup-form input::placeholder { color: var(--subtle); }
-.r-signup-btn {
-  width: 100%; background: var(--accent); color: #fff;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 14px; font-weight: 700; letter-spacing: -0.01em;
-  padding: 13px; border-radius: var(--radius);
-  border: none; cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
-}
-.r-signup-btn:hover { background: var(--accent-2); }
-.r-signup-btn:active { transform: scale(0.98); }
-.r-signup-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.r-signup-legal { font-size: 11px; color: var(--subtle); text-align: center; }
-
-/* Succès */
-.r-signup-success {
-  border-top: 1px solid #bbf7d0;
-  padding: 24px 20px;
-  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-  text-align: center;
-}
-.r-signup-success-icon {
-  width: 44px; height: 44px; border-radius: 50%;
-  background: #16a34a; color: #fff;
-  font-size: 20px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 12px;
-}
-.r-signup-success-title {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 16px; font-weight: 800; letter-spacing: -0.02em;
-  color: #14532d; margin-bottom: 6px;
-}
-.r-signup-success-sub { font-size: 13px; color: #15803d; margin-bottom: 16px; line-height: 1.5; }
-.r-signup-btn-outline {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: #fff; color: var(--ink);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 13px; font-weight: 700;
-  padding: 10px 20px; border-radius: var(--radius);
-  border: 1.5px solid var(--ink); cursor: pointer;
-  transition: background 0.15s;
-}
-.r-signup-btn-outline:hover { background: var(--ink); color: #fff; }
-
-/* ─── NAV ─── */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; height: 56px;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 24px;
-  background: rgba(255,255,255,0.96);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border);
-  z-index: 100;
-}
-.logo {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 20px; font-weight: 800;
-  letter-spacing: -0.04em; color: var(--ink);
-  text-decoration: none;
-}
-.logo span { color: var(--accent); }
-.nav-pill {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
-  text-transform: uppercase;
-  background: var(--accent-light); color: var(--accent);
-  padding: 5px 12px; border-radius: 99px;
-}
-
-/* ─── HERO ─── */
-.hero {
-  padding: 56px 0 0;
-  min-height: 100vh;
-  display: flex; flex-direction: column;
-}
-
-.hero-content {
-  flex: 1;
-  padding: 52px 24px 40px;
-  display: flex; flex-direction: column;
-  justify-content: center;
-  max-width: 640px; margin: 0 auto; width: 100%;
-  animation: fadeUp 0.5s ease both;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: none; }
-}
-
-.hero-eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 20px;
-}
-.hero-eyebrow::before { content: ''; width: 18px; height: 1.5px; background: var(--muted); }
-
-.hero-title {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(36px, 8vw, 64px);
-  font-weight: 800;
-  line-height: 1.08;
-  letter-spacing: -0.04em;
-  color: var(--ink);
-  margin-bottom: 20px;
-}
-.hero-title .accent { color: var(--accent); }
-
-.hero-sub {
-  font-size: 16px; line-height: 1.65;
-  color: var(--muted);
-  margin-bottom: 36px;
-  max-width: 440px;
-}
-
-/* Input */
-.input-wrap { margin-bottom: 14px; }
-.input-zone {
-  display: flex;
-  border: 1.5px solid var(--ink);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: #fff;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.input-zone:focus-within {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(67,97,238,0.12);
-}
-.input-zone input {
-  flex: 1; border: none; background: transparent;
-  font-family: 'Geist Mono', monospace; font-size: 13px; color: var(--ink);
-  padding: 14px 18px; outline: none; min-width: 0;
-}
-.input-zone input::placeholder { color: var(--subtle); }
-.btn-analyze {
-  background: var(--ink); color: #fff;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 14px; font-weight: 700; letter-spacing: -0.01em;
-  padding: 0 22px; border: none; cursor: pointer;
-  transition: background 0.15s; flex-shrink: 0;
-  white-space: nowrap;
-}
-.btn-analyze:hover { background: var(--accent); }
-.btn-analyze:disabled { opacity: 0.4; cursor: not-allowed; }
-
-.input-hints {
-  display: flex; gap: 16px; flex-wrap: wrap;
-}
-.hint-item {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 12px; color: var(--subtle);
-}
-.hint-check { color: var(--green); font-weight: 700; font-size: 11px; }
-
-.error-msg {
-  font-size: 12px; color: var(--red); margin-top: 8px; display: none;
-}
-.error-msg.visible { display: block; }
-
-/* Loading */
-.loading-wrap { margin-top: 24px; display: none; max-width: 520px; }
-.loading-wrap.visible { display: block; }
-.loading-bar { height: 2px; background: var(--border); border-radius: 99px; overflow: hidden; margin-bottom: 10px; }
-.loading-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s ease; border-radius: 99px; }
-.loading-step { font-size: 12px; color: var(--muted); font-family: 'Geist Mono', monospace; }
-
-/* Rapport */
-.rapport-wrap {
-  margin-top: 28px; max-width: 520px;
-  display: none; opacity: 0; transform: translateY(10px);
-  transition: opacity 0.35s, transform 0.35s;
-}
-.rapport-wrap.visible { opacity: 1; transform: none; display: block; }
-
-.rapport-card {
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden; background: #fff;
-  box-shadow: var(--shadow-lg);
-}
-
-.r-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 14px;
-}
-.r-score {
-  width: 52px; height: 52px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Geist Mono', monospace; font-size: 17px; font-weight: 500;
-  flex-shrink: 0; border: 2px solid;
-}
-.r-score.good { background: var(--green-bg); color: var(--green); border-color: var(--green); }
-.r-score.warn { background: var(--amber-bg); color: var(--amber); border-color: var(--amber); }
-.r-score.bad  { background: var(--red-bg);   color: var(--red);   border-color: var(--red);   }
-
-.r-meta { flex: 1; min-width: 0; }
-.r-meta h3 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 14px; font-weight: 700; letter-spacing: -0.02em;
-  color: var(--ink); margin-bottom: 2px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.r-meta p { font-size: 12px; color: var(--muted); }
-.r-verdict {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-  padding: 4px 10px; border-radius: 99px; flex-shrink: 0;
-}
-.r-verdict.good { background: var(--green-bg); color: var(--green); }
-.r-verdict.warn { background: var(--amber-bg); color: var(--amber); }
-.r-verdict.bad  { background: var(--red-bg);   color: var(--red);   }
-
-.r-prix {
-  display: grid; grid-template-columns: 1fr 1fr 1fr;
-  border-bottom: 1px solid var(--border);
-}
-.r-prix-cell { padding: 12px 16px; border-right: 1px solid var(--border); }
-.r-prix-cell:last-child { border-right: none; }
-.r-prix-label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--subtle); margin-bottom: 4px; }
-.r-prix-val { font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 500; color: var(--ink); }
-.r-prix-cell.hi .r-prix-val { color: var(--accent); }
-
-.r-section { padding: 14px 18px; border-bottom: 1px solid var(--border); }
-.r-section:last-child { border-bottom: none; }
-.r-section-title { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--subtle); margin-bottom: 10px; }
-
-.r-signal { display: flex; gap: 8px; font-size: 13px; line-height: 1.5; color: var(--ink-2); margin-bottom: 6px; }
-.r-signal:last-child { margin-bottom: 0; }
-
-.r-q { display: flex; gap: 8px; font-size: 13px; color: var(--ink-2); padding: 9px 12px; background: var(--bg-off); border-radius: 8px; margin-bottom: 6px; }
-.r-q:last-child { margin-bottom: 0; }
-.r-q-mark { color: var(--accent); font-weight: 800; flex-shrink: 0; }
-
-.r-footer {
-  padding: 14px 18px; background: var(--bg-off);
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-}
-.r-footer p { font-size: 12px; color: var(--muted); line-height: 1.4; }
-.btn-r-cta {
-  background: var(--accent); color: #fff;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 13px; font-weight: 700;
-  padding: 9px 16px; border-radius: 8px;
-  border: none; cursor: pointer; flex-shrink: 0;
-  transition: background 0.15s;
-}
-.btn-r-cta:hover { background: var(--accent-2); }
-
-/* ─── STATS ─── */
-.stats-bar {
-  border-top: 1px solid var(--border);
-  display: grid; grid-template-columns: 1fr 1fr 1fr;
-  animation: fadeUp 0.5s 0.1s ease both;
-}
-.stat-cell {
-  padding: 28px 24px;
-  border-right: 1px solid var(--border);
-}
-.stat-cell:last-child { border-right: none; }
-.stat-num {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 28px; font-weight: 800; letter-spacing: -0.04em;
-  color: var(--ink); line-height: 1; margin-bottom: 4px;
-}
-.stat-label { font-size: 12px; color: var(--muted); line-height: 1.4; }
-
-/* ─── SECTION PROBLÈME ─── */
-.problem-section {
-  background: var(--ink);
-  padding: 72px 24px;
-}
-.s-eyebrow {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-  color: rgba(255,255,255,0.35); margin-bottom: 20px;
-  display: flex; align-items: center; gap: 10px;
-}
-.s-eyebrow::before { content: ''; width: 18px; height: 1.5px; background: currentColor; }
-
-.problem-title {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(28px, 6vw, 48px);
-  font-weight: 800; letter-spacing: -0.035em;
-  line-height: 1.1; color: #fff; margin-bottom: 48px;
-}
-.problem-title .dim { color: rgba(255,255,255,0.35); }
-
-.problem-items { display: flex; flex-direction: column; }
-.problem-item {
-  display: flex; gap: 20px; padding: 24px 0;
-  border-top: 1px solid rgba(255,255,255,0.08);
-}
-.problem-num {
-  font-family: 'Geist Mono', monospace; font-size: 11px;
-  color: rgba(255,255,255,0.25); flex-shrink: 0; margin-top: 2px; width: 20px;
-}
-.problem-body h4 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 16px; font-weight: 700; letter-spacing: -0.02em;
-  color: #fff; margin-bottom: 6px;
-}
-.problem-body p { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.6; }
-
-/* ─── SECTION COMMENT ─── */
-.how-section { padding: 72px 24px; background: var(--bg-warm); }
-.how-title {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(26px, 5vw, 40px);
-  font-weight: 800; letter-spacing: -0.035em;
-  color: var(--ink); margin-bottom: 48px; line-height: 1.1;
-}
-
-.steps { display: flex; flex-direction: column; }
-.step { display: flex; gap: 18px; padding: 22px 0; border-top: 1px solid var(--border); }
-.step:last-child { border-bottom: 1px solid var(--border); }
-.step-num {
-  font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500;
-  color: var(--accent); background: var(--accent-light);
-  width: 28px; height: 28px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; margin-top: 1px;
-}
-.step-body h4 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 15px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px;
-}
-.step-body p { font-size: 14px; color: var(--muted); line-height: 1.6; }
-
-/* ─── EXEMPLE ─── */
-.example-section { padding: 72px 24px; background: #fff; }
-.example-title {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(24px, 5vw, 36px);
-  font-weight: 800; letter-spacing: -0.035em;
-  color: var(--ink); margin-bottom: 32px; line-height: 1.1;
-}
-
-/* ─── CTA FINAL ─── */
-.cta-section {
-  background: var(--accent);
-  padding: 72px 24px; text-align: center;
-}
-.cta-title {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(28px, 6vw, 48px);
-  font-weight: 800; letter-spacing: -0.04em;
-  color: #fff; line-height: 1.1; margin-bottom: 14px;
-}
-.cta-sub { font-size: 16px; color: rgba(255,255,255,0.7); margin-bottom: 32px; line-height: 1.6; }
-.btn-cta-main {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: #fff; color: var(--accent);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 15px; font-weight: 800;
-  padding: 15px 32px; border-radius: var(--radius-lg);
-  border: none; cursor: pointer; text-decoration: none;
-  transition: opacity 0.15s, transform 0.1s;
-  letter-spacing: -0.02em;
-}
-.btn-cta-main:hover { opacity: 0.92; transform: translateY(-1px); }
-
-/* ─── FOOTER ─── */
-footer {
-  padding: 20px 24px;
-  border-top: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 10px;
-}
-.footer-logo {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 16px; font-weight: 800; letter-spacing: -0.03em; color: var(--ink);
-}
-.footer-logo span { color: var(--accent); }
-footer p { font-size: 11px; color: var(--subtle); }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Just In Look — Video Pipeline</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root { height: 100%; }
+    body { font-family: 'DM Sans', sans-serif; background: #f7f7f5; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+  </style>
 </head>
 <body>
+  <div id="root"></div>
+  <script>
+const {
+  useState,
+  useEffect,
+  useRef
+} = React;
 
-<!-- NAV -->
-<nav>
-  <a class="logo" href="#">mar<span>lo</span></a>
-  <div class="nav-pill">Bêta gratuite</div>
-</nav>
+/* ─────────────── DONNÉES ─────────────── */
 
-<!-- ══ HERO ══ -->
-<section class="hero">
-  <div class="hero-content">
-    <!-- Toggle mode -->
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="btnAcheteur" onclick="setMode('acheteur')">🏠 Acheteur</button>
-      <button class="mode-btn invest" id="btnInvestisseur" onclick="setMode('investisseur')">📈 Investisseur</button>
-    </div>
-
-    <div class="hero-eyebrow" id="heroEyebrow">L'outil que les agents ne veulent pas que vous ayez</div>
-
-    <h1 class="hero-title" id="heroTitle">
-      Ce bien vaut-il<br>
-      <span class="accent">vraiment</span><br>
-      ce prix ?
-    </h1>
-
-    <p class="hero-sub" id="heroSub">
-      Collez l'URL d'une annonce SeLoger, Leboncoin ou PAP.
-      Marlo analyse le prix, détecte les risques et vous donne
-      les questions à poser — en 30 secondes.
-    </p>
-
-    <div class="input-wrap">
-      <div class="input-zone" id="inputZone">
-        <input
-          type="url" id="urlInput"
-          placeholder="https://www.seloger.com/annonces/..."
-          autocomplete="off" spellcheck="false"
-          onkeydown="if(event.key==='Enter') lancerAnalyse()"
-        >
-        <button class="btn-analyze" id="btnAnalyze" onclick="lancerAnalyse()">
-          Analyser →
-        </button>
-      </div>
-      <p class="error-msg" id="errorMsg">URL non reconnue. Essayez SeLoger, Leboncoin, PAP ou BienIci.</p>
-    </div>
-
-    <div class="input-hints">
-      <span class="hint-item"><span class="hint-check">✓</span> Gratuit</span>
-      <span class="hint-item"><span class="hint-check">✓</span> Aucune inscription</span>
-      <span class="hint-item"><span class="hint-check">✓</span> 30 secondes</span>
-    </div>
-
-    <!-- Loading -->
-    <div class="loading-wrap" id="loadingWrap">
-      <div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div>
-      <p class="loading-step" id="loadingStep">Analyse en cours…</p>
-    </div>
-
-    <!-- Rapport -->
-    <div class="rapport-wrap" id="rapportWrap">
-      <div class="rapport-card">
-        <div class="r-header">
-          <div class="r-score warn" id="rScore">—</div>
-          <div class="r-meta">
-            <h3 id="rTitre">—</h3>
-            <p id="rMeta">—</p>
-          </div>
-          <div class="r-verdict warn" id="rVerdict">—</div>
-        </div>
-        <div class="r-prix" id="rPrix"></div>
-        <div class="r-section">
-          <div class="r-section-title">Signaux détectés</div>
-          <div id="rSignaux"></div>
-        </div>
-        <div class="r-section">
-          <div class="r-section-title">Questions à poser au vendeur</div>
-          <div id="rQuestions"></div>
-        </div>
-        <!-- Bloc investisseur (caché par défaut) -->
-        <div class="invest-bloc" id="investBloc" style="display:none;">
-          <div class="invest-header">
-            <span class="invest-badge">Investisseur</span>
-            <span class="invest-header-title">Analyse locative</span>
-          </div>
-          <div class="invest-kpis" id="investKpis"></div>
-          <div class="invest-signals" id="investSignals"></div>
-          <div class="invest-verdict" id="investVerdict"></div>
-        </div>
-        <!-- Flow inscription post-rapport -->
-        <div id="inscriptionBloc">
-          <!-- État 1 : CTA inscription -->
-          <div class="r-signup" id="signupCTA">
-            <div class="r-signup-content">
-              <div class="r-signup-icon">💾</div>
-              <div>
-                <div class="r-signup-title">Sauvegardez ce rapport gratuitement</div>
-                <div class="r-signup-sub">Comparez vos biens, partagez avec votre courtier, retrouvez vos analyses.</div>
-              </div>
-            </div>
-            <div class="r-signup-form">
-              <input type="text" id="signupPrenom" placeholder="Votre prénom" autocomplete="given-name">
-              <input type="email" id="signupEmail" placeholder="Votre email" autocomplete="email">
-              <button class="r-signup-btn" onclick="soumettreInscription()">
-                Sauvegarder mon rapport →
-              </button>
-              <p class="r-signup-legal">Aucun spam. Désabonnement en 1 clic.</p>
-            </div>
-          </div>
-
-          <!-- État 2 : Confirmation -->
-          <div class="r-signup-success" id="signupSuccess" style="display:none;">
-            <div class="r-signup-success-icon">✓</div>
-            <div class="r-signup-success-title">Rapport sauvegardé !</div>
-            <div class="r-signup-success-sub" id="signupSuccessSub">On vous envoie un récap par email.</div>
-            <button class="r-signup-btn-outline" onclick="simulerFinancement()">
-              Simuler mon financement →
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Stats -->
-  <div class="stats-bar">
-    <div class="stat-cell">
-      <div class="stat-num">30s</div>
-      <div class="stat-label">pour obtenir votre analyse</div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-num">0€</div>
-      <div class="stat-label">aucune inscription requise</div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-num">Bêta</div>
-      <div class="stat-label">soyez parmi les premiers à tester</div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ PROBLÈME ══ -->
-<section class="problem-section">
-  <div class="s-eyebrow">Le problème</div>
-  <h2 class="problem-title">
-    Tu n'as plus besoin de comprendre l'immobilier<br>
-    <span class="dim">pour prendre la bonne décision.</span>
-  </h2>
-  <p style="color:rgba(255,255,255,0.5);font-size:15px;margin-top:12px;line-height:1.6;">Le marché est opaque. Personne ne vous aide vraiment. Marlo change ça.</p>
-  </h2>
-  <div class="problem-items">
-    <div class="problem-item">
-      <div class="problem-num">01</div>
-      <div class="problem-body">
-        <h4>Les portails montrent des biens. Pas si ils sont au juste prix.</h4>
-        <p>SeLoger et BienIci sont des vitrines. Ils ne vous disent pas si l'annonce à 650k€ vaut réellement 580k€.</p>
-      </div>
-    </div>
-    <div class="problem-item">
-      <div class="problem-num">02</div>
-      <div class="problem-body">
-        <h4>L'agent immobilier travaille pour le vendeur. Pas pour vous.</h4>
-        <p>Sa commission augmente avec le prix de vente. Son intérêt n'est pas aligné avec le vôtre.</p>
-      </div>
-    </div>
-    <div class="problem-item">
-      <div class="problem-num">03</div>
-      <div class="problem-body">
-        <h4>Vous prenez une décision à 300 000€ avec moins d'infos qu'pour acheter un iPhone.</h4>
-        <p>Marlo comble ce vide. Analyse du prix, détection des risques, questions clés — en 30 secondes.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ COMMENT ══ -->
-<section class="how-section">
-  <div class="s-eyebrow" style="color:var(--muted);">Comment ça marche</div>
-  <h2 class="how-title">De l'annonce à la décision<br>en 30 secondes.</h2>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">01</div>
-      <div class="step-body">
-        <h4>Collez l'URL de n'importe quelle annonce</h4>
-        <p>SeLoger, Leboncoin, PAP, BienIci. Marlo analyse l'annonce et la compare au marché réel.</p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">02</div>
-      <div class="step-body">
-        <h4>L'IA analyse le prix face au marché réel</h4>
-        <p>Comparaison avec les transactions récentes. Détection de surestimation. Score de négociation estimé.</p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">03</div>
-      <div class="step-body">
-        <h4>Recevez les signaux et les questions clés</h4>
-        <p>Points de vigilance, fourchette de négociation chiffrée, questions précises à poser au vendeur.</p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">04</div>
-      <div class="step-body">
-        <h4>Comparez et décidez avec confiance</h4>
-        <p>Sauvegardez plusieurs biens. Comparez côte à côte. Partagez avec votre courtier.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ EXEMPLE ══ -->
-<section class="example-section">
-  <div class="s-eyebrow" style="color:var(--muted);">Exemple de rapport</div>
-  <h2 class="example-title">Ce que Marlo vous donne.</h2>
-  <div class="rapport-card" style="max-width:540px;">
-    <div class="r-header">
-      <div class="r-score bad">41</div>
-      <div class="r-meta">
-        <h3>3 pièces · 68m² · Paris 11e</h3>
-        <p>Annoncé 695 000 € · Rue de la Roquette · 47 jours</p>
-      </div>
-      <div class="r-verdict bad">Surestimé</div>
-    </div>
-    <div class="r-prix">
-      <div class="r-prix-cell">
-        <div class="r-prix-label">Prix / m²</div>
-        <div class="r-prix-val">10 220 €</div>
-      </div>
-      <div class="r-prix-cell">
-        <div class="r-prix-label">Marché Paris 11e</div>
-        <div class="r-prix-val">8 900 €</div>
-      </div>
-      <div class="r-prix-cell hi">
-        <div class="r-prix-label">Marge négociation</div>
-        <div class="r-prix-val">45–65k€</div>
-      </div>
-    </div>
-    <div class="r-section">
-      <div class="r-section-title">Signaux détectés</div>
-      <div class="r-signal">🔴 Prix au m² supérieur de 14,8% à la moyenne des transactions récentes.</div>
-      <div class="r-signal">🟡 DPE classé E — coût de rénovation entre 18 000 et 35 000 €.</div>
-      <div class="r-signal">🟡 Annonce publiée depuis 47 jours — signe de difficulté à vendre au prix affiché.</div>
-      <div class="r-signal">🟢 Localisation prime — forte liquidité à la revente, station Voltaire à 4 min.</div>
-    </div>
-    <div class="r-section">
-      <div class="r-section-title">Questions à poser au vendeur</div>
-      <div class="r-q"><span class="r-q-mark">?</span>Pourquoi le bien est-il en vente depuis plus de 6 semaines ?</div>
-      <div class="r-q"><span class="r-q-mark">?</span>Y a-t-il des travaux de copropriété votés ou à venir ?</div>
-      <div class="r-q"><span class="r-q-mark">?</span>Le vendeur a-t-il déjà refusé une offre ? Si oui, à quel prix ?</div>
-    </div>
-    <div class="r-footer">
-      <p><strong>Marge estimée : 45 000 à 65 000 €</strong><br>Basé sur les transactions des 6 derniers mois.</p>
-      <button class="btn-r-cta" onclick="scrollToInput()">Analyser mon bien →</button>
-    </div>
-  </div>
-</section>
-
-<!-- ══ CTA ══ -->
-<section class="cta-section" id="ctaSection">
-  <h2 class="cta-title">Arrêtez de visiter<br>des biens surestimés.</h2>
-  <p class="cta-sub">Marlo analyse votre annonce gratuitement.<br>Aucune inscription requise pour le premier rapport.</p>
-  <button class="btn-cta-main" onclick="scrollToInput()">Analyser une annonce →</button>
-  <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:16px;">Gratuit · Pas de carte bancaire · 30 secondes</p>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-logo">mar<span>lo</span></div>
-  <p>© 2026 Marlo · Outil d'aide à la décision immobilière</p>
-  <p>Les estimations sont indicatives et ne constituent pas un conseil financier ou juridique.</p>
-</footer>
-
-<script>
-const PROXY_URL = 'https://marlo-api.vercel.app/api/analyse';
-const DOMAINES  = ['seloger.com','leboncoin.fr','pap.fr','logic-immo.com','bienici.com','meilleursagents.com'];
-const LOADING_STEPS_ACHETEUR = [
-  'Récupération de l\'annonce…','Analyse du prix au m²…',
-  'Comparaison avec les transactions récentes…',
-  'Détection des signaux de risque…','Génération du rapport…'
-];
-const LOADING_STEPS_INVEST = [
-  'Récupération de l\'annonce…','Analyse du prix au m²…',
-  'Calcul du rendement locatif estimé…',
-  'Évaluation du cashflow et de la fiscalité…','Génération du rapport investisseur…'
-];
-
-// ── ÉTAT ──
-let MODE = 'acheteur'; // 'acheteur' | 'investisseur'
-
-// ── TOGGLE ──
-function setMode(mode) {
-  MODE = mode;
-  const isInvest = mode === 'investisseur';
-
-  document.getElementById('btnAcheteur').classList.toggle('active', !isInvest);
-  document.getElementById('btnInvestisseur').classList.toggle('active', isInvest);
-
-  // Titre dynamique
-  document.getElementById('heroEyebrow').textContent = isInvest
-    ? 'Analyse locative IA' : 'Copilote immobilier IA';
-  document.getElementById('heroTitle').innerHTML = isInvest
-    ? 'Ce bien est-il<br><span class="accent">vraiment</span><br>rentable ?'
-    : 'Ce bien vaut-il<br><span class="accent">vraiment</span><br>ce prix ?';
-  document.getElementById('heroSub').textContent = isInvest
-    ? 'Collez l\'URL d\'une annonce. Marlo calcule le rendement brut, net, le cashflow estimé et vous dit si c\'est une opportunité locative.'
-    : 'Collez l\'URL d\'une annonce SeLoger, Leboncoin ou PAP. Marlo analyse le prix, détecte les risques et vous donne les questions à poser — en 30 secondes.';
-
-  // Masquer rapport précédent
-  const rw = document.getElementById('rapportWrap');
-  rw.classList.remove('visible'); rw.style.display = 'none';
-}
-
-// ── UTILS ──
-function isValidURL(s) {
-  try { const u = new URL(s); return DOMAINES.some(d => u.hostname.includes(d)); }
-  catch { return false; }
-}
-function scrollToInput() {
-  document.getElementById('urlInput').scrollIntoView({behavior:'smooth',block:'center'});
-  setTimeout(()=>document.getElementById('urlInput').focus(),400);
-}
-function scrollToCTA() {
-  document.getElementById('ctaSection').scrollIntoView({behavior:'smooth'});
-}
-function setCls(el, cls) {
-  el.classList.remove('good','warn','bad'); el.classList.add(cls);
-}
-function safeNum(v) { return (isNaN(v) || v === null || v === undefined) ? 0 : Number(v); }
-
-// ── AFFICHER RAPPORT ACHETEUR ──
-function afficherRapport(r) {
-  const score = Math.max(10, Math.min(95, safeNum(r.score) || 55));
-  const cls   = score >= 70 ? 'good' : score >= 50 ? 'warn' : 'bad';
-
-  const rScore = document.getElementById('rScore');
-  rScore.textContent = score; setCls(rScore, cls);
-  const rVerdict = document.getElementById('rVerdict');
-  rVerdict.textContent = r.verdict || '—'; setCls(rVerdict, cls);
-  document.getElementById('rTitre').textContent = r.titre || '—';
-
-  const prix = safeNum(r.prix_affiche);
-  const jours = safeNum(r.jours_marche);
-  document.getElementById('rMeta').textContent =
-    `${prix > 0 ? prix.toLocaleString('fr') + ' €' : '—'}${jours > 0 ? ' · ' + jours + ' jours' : ''}`;
-
-  const pm2 = safeNum(r.prix_m2_annonce);
-  const pm2m = safeNum(r.prix_m2_marche);
-  const mn = safeNum(r.marge_nego_min);
-  const mx = safeNum(r.marge_nego_max);
-  document.getElementById('rPrix').innerHTML = `
-    <div class="r-prix-cell"><div class="r-prix-label">Prix / m²</div><div class="r-prix-val">${pm2 > 0 ? pm2.toLocaleString('fr') + ' €' : '—'}</div></div>
-    <div class="r-prix-cell"><div class="r-prix-label">Marché estimé</div><div class="r-prix-val">${pm2m > 0 ? pm2m.toLocaleString('fr') + ' €' : '—'}</div></div>
-    <div class="r-prix-cell hi"><div class="r-prix-label">Marge négo</div><div class="r-prix-val">${mn > 0 ? mn.toLocaleString('fr') + '–' + mx.toLocaleString('fr') + ' €' : '~Juste prix'}</div></div>
-  `;
-
-  const signaux = Array.isArray(r.signaux) ? r.signaux : [];
-  document.getElementById('rSignaux').innerHTML = signaux
-    .map(s=>`<div class="r-signal">${s.icon||'🟡'} ${s.texte||''}</div>`).join('')
-    || '<div class="r-signal">🟡 Analyse consolidée.</div>';
-
-  const questions = Array.isArray(r.questions) ? r.questions : [];
-  document.getElementById('rQuestions').innerHTML = questions
-    .map(q=>`<div class="r-q"><span class="r-q-mark">?</span>${q}</div>`).join('')
-    || '<div class="r-q"><span class="r-q-mark">?</span>Demandez les diagnostics complets au vendeur.</div>';
-
-  // Masquer bloc investisseur
-  document.getElementById('investBloc').style.display = 'none';
-}
-
-// ── AFFICHER RAPPORT INVESTISSEUR ──
-function afficherRapportInvest(r) {
-  // Réutiliser l'affichage acheteur pour le header/prix/signaux
-  afficherRapport(r);
-
-  // Calculs investisseur
-  const prixBien = safeNum(r.prix_affiche) || 250000;
-  const surface  = safeNum(r.surface_m2)  || 45;
-  const loyer    = safeNum(r.loyer_estime);
-  const loyerNet = safeNum(r.loyer_net_estime);
-  const rendBrut = safeNum(r.rendement_brut);
-  const rendNet  = safeNum(r.rendement_net);
-  const cashflow = safeNum(r.cashflow_mensuel);
-  const tension  = r.tension_locative || '—';
-  const verdictInvest = r.verdict_investissement || '—';
-  const verdictDesc   = r.verdict_investissement_desc || 'Analysez les chiffres avant de décider.';
-  const verdictIcon   = rendBrut >= 7 ? '🚀' : rendBrut >= 5 ? '✅' : rendBrut > 0 ? '⚠️' : '❓';
-
-  // KPIs 2×3
-  document.getElementById('investKpis').innerHTML = `
-    <div class="invest-kpi">
-      <div class="invest-kpi-label">Rendement brut</div>
-      <div class="invest-kpi-val">${rendBrut > 0 ? rendBrut.toFixed(1) + '%' : '—'}</div>
-      <div class="invest-kpi-sub">Loyer annuel / prix</div>
-    </div>
-    <div class="invest-kpi">
-      <div class="invest-kpi-label">Rendement net</div>
-      <div class="invest-kpi-val">${rendNet > 0 ? rendNet.toFixed(1) + '%' : '—'}</div>
-      <div class="invest-kpi-sub">Charges et taxes déduites</div>
-    </div>
-    <div class="invest-kpi">
-      <div class="invest-kpi-label">Loyer estimé</div>
-      <div class="invest-kpi-val">${loyer > 0 ? loyer.toLocaleString('fr') + ' €' : '—'}</div>
-      <div class="invest-kpi-sub">Mensuel, marché local</div>
-    </div>
-    <div class="invest-kpi">
-      <div class="invest-kpi-label">Cashflow estimé</div>
-      <div class="invest-kpi-val">${cashflow !== 0 ? (cashflow > 0 ? '+' : '') + cashflow.toLocaleString('fr') + ' €' : '—'}</div>
-      <div class="invest-kpi-sub">Loyer - mensualité crédit</div>
-    </div>
-    <div class="invest-kpi">
-      <div class="invest-kpi-label">Tension locative</div>
-      <div class="invest-kpi-val" style="font-size:14px;">${tension}</div>
-      <div class="invest-kpi-sub">Demande locative secteur</div>
-    </div>
-    <div class="invest-kpi">
-      <div class="invest-kpi-label">Loyer net charges</div>
-      <div class="invest-kpi-val">${loyerNet > 0 ? loyerNet.toLocaleString('fr') + ' €' : '—'}</div>
-      <div class="invest-kpi-sub">Après charges copro</div>
-    </div>
-  `;
-
-  // Signaux investisseur
-  const siInvest = Array.isArray(r.signaux_investisseur) ? r.signaux_investisseur : [];
-  document.getElementById('investSignals').innerHTML = siInvest
-    .map(s=>`<div class="invest-signal">${s.icon||'🟢'} ${s.texte||''}</div>`).join('');
-
-  // Verdict
-  document.getElementById('investVerdict').innerHTML = `
-    <div class="invest-verdict-icon">${verdictIcon}</div>
-    <div class="invest-verdict-text">
-      <h4>${verdictInvest}</h4>
-      <p>${verdictDesc}</p>
-    </div>
-  `;
-
-  document.getElementById('investBloc').style.display = 'block';
-}
-
-// ── DEMO ACHETEUR ──
-function genererDemo(url) {
-  const h = url.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
-  const score = 35+(h%52), pm2 = 7000+(h%6000), ecart = -10+(h%24);
-  const pm2m = Math.round(pm2/(1+ecart/100)), jours = 15+(h%70);
-  const cls = score>=70?'good':score>=50?'warn':'bad';
-  const verdicts = {good:'Prix cohérent',warn:'À négocier',bad:'Surestimé'};
-  const types = ['3 pièces · 68m²','2 pièces · 45m²','Studio · 28m²','4 pièces · 92m²'];
-  const villes = ['Paris 11e','Paris 15e','Lyon 6e','Bordeaux Centre'];
-  const mn = Math.max(0,Math.round((pm2-pm2m)*65*0.6));
-  const mx = Math.max(0,Math.round((pm2-pm2m)*65*1.1));
-  afficherRapport({
-    score, verdict: verdicts[cls],
-    titre: `${types[h%types.length]} · ${villes[(h>>2)%villes.length]}`,
-    prix_affiche: pm2*65, jours_marche: jours,
-    prix_m2_annonce: pm2, prix_m2_marche: pm2m,
-    marge_nego_min: mn, marge_nego_max: mx,
-    signaux: [
-      ecart>6 ? {icon:'🔴',texte:`Prix au m² supérieur de ${ecart}% à la moyenne des transactions récentes.`}
-              : {icon:'🟢',texte:'Prix dans la moyenne du marché local — pas de surestimation détectée.'},
-      jours>35 ? {icon:'🟡',texte:`Annonce publiée depuis ${jours} jours — marge de négociation potentiellement plus importante.`}
-               : {icon:'🟢',texte:'Annonce récente — peu de pression sur le vendeur.'},
-      {icon:'🟢',texte:'Localisation bien desservie — forte liquidité à la revente.'},
-    ],
-    questions: [
-      'Pourquoi le bien est-il mis en vente maintenant ?',
-      jours>30 ? 'Des offres ont-elles déjà été refusées ? Si oui, à quel prix ?' : 'Y a-t-il une urgence à vendre ?',
-      'Y a-t-il des travaux de copropriété votés ou prévisibles dans les 2 ans ?',
-      'Quel est le montant des charges de copropriété mensuelles ?',
-    ]
-  });
-}
-
-// ── DEMO INVESTISSEUR ──
-function genererDemoInvest(url) {
-  const h = url.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
-  const prix = 80000 + (h%220000);
-  const surface = 25 + (h%55);
-  const loyer = Math.round(surface * (10 + (h%8)));
-  const loyerNet = Math.round(loyer * 0.85);
-  const rendBrut = parseFloat(((loyer * 12 / prix) * 100).toFixed(1));
-  const rendNet  = parseFloat((rendBrut * 0.72).toFixed(1));
-  const mensualite = Math.round(prix * 0.8 / 240 * 1.038);
-  const cashflow = loyer - mensualite - Math.round(loyer * 0.15);
-  const tensions = ['Forte 🔥','Modérée 📊','Faible ⚠️'];
-  const tension = tensions[h%3];
-  const types = ['Studio · '+surface+'m²','2 pièces · '+surface+'m²','T3 · '+surface+'m²'];
-  const villes = ['Lyon 7e','Rennes Centre','Bordeaux Bacalan','Nantes Chantenay','Toulouse Capitole'];
-  const score = Math.min(88, Math.max(30, Math.round(rendBrut * 10 + (h%15))));
-  const verdicts = rendBrut >= 7 ? {v:'Opportunité',d:'Rendement attractif pour ce secteur. À creuser rapidement.'} :
-                   rendBrut >= 5 ? {v:'Passable',d:'Rendement correct mais pas exceptionnel. Négociation possible pour améliorer les chiffres.'} :
-                                   {v:'À éviter',d:'Rendement insuffisant pour un investissement locatif rentable à ce prix.'};
-  afficherRapportInvest({
-    score, verdict: rendBrut >= 7 ? 'Bon prix' : rendBrut >= 5 ? 'À négocier' : 'Surestimé',
-    titre: `${types[h%types.length]} · ${villes[h%villes.length]}`,
-    prix_affiche: prix, jours_marche: 10+(h%60),
-    prix_m2_annonce: Math.round(prix/surface),
-    prix_m2_marche: Math.round(prix/surface * (0.9 + (h%20)/100)),
-    marge_nego_min: Math.round(prix*0.03), marge_nego_max: Math.round(prix*0.08),
-    surface_m2: surface,
-    loyer_estime: loyer, loyer_net_estime: loyerNet,
-    rendement_brut: rendBrut, rendement_net: rendNet,
-    cashflow_mensuel: cashflow, tension_locative: tension,
-    verdict_investissement: verdicts.v, verdict_investissement_desc: verdicts.d,
-    signaux: [
-      {icon:'🔴',texte:`Prix au m² ${Math.round(prix/surface).toLocaleString('fr')} € — à comparer avec les transactions DVF récentes.`},
-      {icon:'🟡',texte:'Vérifier le DPE avant tout — un bien F ou G peut nécessiter 15 000 à 50 000 € de travaux.'},
-      {icon:'🟢',texte:`Loyer estimé à ${loyer} €/mois — cohérent avec le marché locatif du secteur.`},
-    ],
-    signaux_investisseur: [
-      cashflow >= 0 ? {icon:'🟢',texte:`Cashflow positif de +${cashflow} €/mois — le bien s'autofinance.`}
-                    : {icon:'🔴',texte:`Cashflow négatif de ${cashflow} €/mois — vous devrez compléter de votre poche.`},
-      rendBrut >= 7 ? {icon:'🟢',texte:`Rendement brut de ${rendBrut}% — au-dessus du seuil de 7% recommandé pour l'investissement locatif.`}
-                    : rendBrut >= 5 ? {icon:'🟡',texte:`Rendement brut de ${rendBrut}% — correct mais négociez le prix pour améliorer les chiffres.`}
-                    : {icon:'🔴',texte:`Rendement brut de ${rendBrut}% — insuffisant. Cherchez des biens à plus de 5% minimum.`},
-      {icon:'🟡',texte:`Tension locative ${tension.replace(/[🔥📊⚠️]/g,'').trim()} dans ce secteur — évaluez la vacance locative potentielle.`},
-    ],
-  });
-}
-
-// ── INSCRIPTION ──
-let rapportEnCours = null; // stocker le rapport pour l'email
-
-function resetInscription() {
-  document.getElementById('signupCTA').style.display = 'block';
-  document.getElementById('signupSuccess').style.display = 'none';
-  document.getElementById('signupPrenom').value = '';
-  document.getElementById('signupEmail').value = '';
-}
-
-async function soumettreInscription() {
-  const prenom = document.getElementById('signupPrenom').value.trim();
-  const email  = document.getElementById('signupEmail').value.trim();
-  const btn    = document.querySelector('.r-signup-btn');
-
-  if (!prenom) {
-    document.getElementById('signupPrenom').focus();
-    document.getElementById('signupPrenom').style.borderColor = 'var(--red)';
-    setTimeout(() => document.getElementById('signupPrenom').style.borderColor = '', 1500);
-    return;
+const STAGES = [{
+  id: "idea",
+  label: "Idée",
+  emoji: "💡",
+  color: "#C9B8F0",
+  bg: "#F3EFFD"
+}, {
+  id: "to_shoot",
+  label: "À tourner",
+  emoji: "📅",
+  color: "#F5C76A",
+  bg: "#FEF7E6"
+}, {
+  id: "shot",
+  label: "Tournée",
+  emoji: "🎥",
+  color: "#7DC9A8",
+  bg: "#EAF7F1"
+}, {
+  id: "to_edit",
+  label: "À monter",
+  emoji: "✂️",
+  color: "#F4A07A",
+  bg: "#FEF0E8"
+}, {
+  id: "vo_write",
+  label: "VO à écrire",
+  emoji: "🎙️",
+  color: "#85C0E8",
+  bg: "#EAF4FC"
+}, {
+  id: "vo_record",
+  label: "VO à enregistrer",
+  emoji: "🎤",
+  color: "#F0A0C0",
+  bg: "#FDE8F2"
+}, {
+  id: "to_validate",
+  label: "À valider",
+  emoji: "✅",
+  color: "#A0D48A",
+  bg: "#EEF8E8"
+}, {
+  id: "scheduled",
+  label: "Programmé",
+  emoji: "🚀",
+  color: "#A0B8F0",
+  bg: "#EBF0FD"
+}];
+const ASSIGNEES = ["—", "Justine", "Camille", "Caio", "Ange-Maria", "Éléonore", "Greg"];
+const STAGE_TAGS = {
+  idea: {
+    refs: true,
+    shopping: true
+  },
+  to_shoot: {
+    refs: true,
+    shopping: true
+  },
+  shot: {
+    recipe: true,
+    shopping: true
+  },
+  to_edit: {
+    recipe: true
+  },
+  vo_write: {
+    recipe: true,
+    caption: true
+  },
+  vo_record: {
+    recipe: true,
+    caption: true
+  },
+  to_validate: {
+    recipe: true,
+    caption: true,
+    link: true,
+    time: true
+  },
+  scheduled: {
+    recipe: true,
+    caption: true,
+    link: true
   }
-  if (!email || !email.includes('@')) {
-    document.getElementById('signupEmail').focus();
-    document.getElementById('signupEmail').style.borderColor = 'var(--red)';
-    setTimeout(() => document.getElementById('signupEmail').style.borderColor = '', 1500);
-    return;
-  }
+};
 
-  btn.disabled = true;
-  btn.textContent = 'Sauvegarde en cours…';
+// Assignations par défaut selon le stage
+const STAGE_DEFAULTS = {
+  idea: ["Justine", "Caio"],
+  to_shoot: ["Justine", "Caio"],
+  shot: ["Justine", "Caio"],
+  to_edit: ["Caio"],
+  vo_write: ["Camille"],
+  vo_record: ["Justine"],
+  to_validate: ["Justine", "Caio", "Camille"],
+  scheduled: ["Justine"]
+};
+const PLATFORMS = [{
+  id: "instagram",
+  label: "Instagram",
+  emoji: "📸",
+  color: "#E1306C",
+  bg: "#FDE8F2"
+}, {
+  id: "youtube",
+  label: "YouTube",
+  emoji: "▶️",
+  color: "#FF0000",
+  bg: "#FEE8E8"
+}, {
+  id: "tiktok",
+  label: "TikTok",
+  emoji: "🎵",
+  color: "#111",
+  bg: "#f0f0f0"
+}, {
+  id: "all",
+  label: "Multi",
+  emoji: "🌐",
+  color: "#85C0E8",
+  bg: "#EAF4FC"
+}];
+const PRIORITIES = [{
+  id: "normal",
+  label: "Normal",
+  color: "#bbb"
+}, {
+  id: "urgent",
+  label: "Urgent",
+  color: "#ef4444"
+}];
+const INITIAL_CARDS = [{
+  id: 1,
+  title: "9 vidéos à trouver — brainstorming à faire",
+  stage: "idea",
+  assignees: [],
+  date: "",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 2,
+  title: "Astuce : comment tabler le chocolat — Nicolas Paccielo",
+  stage: "to_shoot",
+  assignees: ["Justine", "Caio"],
+  date: "",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 3,
+  title: "2 vidéos à tourner le 27",
+  stage: "to_shoot",
+  assignees: ["Justine", "Caio"],
+  date: "2026-04-27",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 4,
+  title: "3 vidéos à tourner le 28",
+  stage: "to_shoot",
+  assignees: ["Justine", "Caio"],
+  date: "2026-04-28",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 5,
+  title: "2 vidéos avant tournage KODJO",
+  stage: "to_shoot",
+  assignees: ["Justine", "Caio"],
+  date: "2026-04-29",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 6,
+  title: "Tournage KODJO",
+  stage: "to_shoot",
+  assignees: ["Justine", "Caio"],
+  date: "2026-04-29",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 7,
+  title: "3 vidéos à tourner — vendredi 30",
+  stage: "to_shoot",
+  assignees: ["Justine", "Caio"],
+  date: "2026-04-30",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 8,
+  title: "Remontage POKEBOWL + sous-titres",
+  stage: "to_edit",
+  assignees: ["Caio"],
+  date: "",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 9,
+  title: "Remontage Popcorn sucré",
+  stage: "to_edit",
+  assignees: ["Caio"],
+  date: "",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 10,
+  title: "Amélioration — JOKER — mois de mars",
+  stage: "to_edit",
+  assignees: ["Caio"],
+  date: "",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 11,
+  title: "V1 — LYCEE JEANDROUANT",
+  stage: "to_edit",
+  assignees: ["Caio"],
+  date: "",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "youtube",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 12,
+  title: "V1 — VERSION LONGUE LYCEE JEANDROUANT",
+  stage: "to_edit",
+  assignees: ["Caio"],
+  date: "",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "youtube",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 13,
+  title: "Voix off Popcorn en standby",
+  stage: "vo_record",
+  assignees: ["Justine"],
+  date: "",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 14,
+  title: "VOIX OFF — TRAITEUR KENWOOD",
+  stage: "vo_record",
+  assignees: ["Justine"],
+  date: "",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 15,
+  title: "RECAP MOIS DE MARS — VOIX OFF à enregistrer",
+  stage: "vo_record",
+  assignees: ["Justine"],
+  date: "",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 16,
+  title: "VOIX OFF — SCRIPT — FOCCACIA — KODJO",
+  stage: "vo_write",
+  assignees: ["Camille"],
+  date: "",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 19,
+  title: "POKEBOWL — légende en attente Camille",
+  stage: "vo_write",
+  assignees: ["Camille"],
+  date: "",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}, {
+  id: 18,
+  title: "POPCORN SUCRE — à programmer le 24 avril 18H",
+  stage: "to_validate",
+  assignees: ["Justine", "Caio", "Camille"],
+  date: "2026-04-24",
+  time: "18:00",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "urgent",
+  deadlines: {}
+}, {
+  id: 17,
+  title: "BAR_BOWL_TROPICAL — ok le 22 avril 18H",
+  stage: "scheduled",
+  assignees: ["Justine"],
+  date: "2026-04-22",
+  time: "18:00",
+  caption: "",
+  recipe: "",
+  link: "",
+  refs: "",
+  shopping: "",
+  platform: "instagram",
+  priority: "normal",
+  deadlines: {}
+}];
+const INITIAL_EVENTS = [{
+  id: "e1",
+  title: "Tournage KODJO",
+  date: "2026-04-29",
+  type: "external",
+  assignee: "Justine"
+}, {
+  id: "e2",
+  title: "Tournage KENWOOD",
+  date: "2026-05-06",
+  type: "external",
+  assignee: "Justine"
+}, {
+  id: "e3",
+  title: "Créneau stock interne",
+  date: "2026-04-27",
+  type: "internal",
+  assignee: "Justine"
+}, {
+  id: "e4",
+  title: "Créneau stock interne",
+  date: "2026-05-04",
+  type: "internal",
+  assignee: "Justine"
+}];
+let nextId = 50;
 
-  // Stocker localement (en attendant Supabase)
-  const inscription = {
-    prenom, email,
-    mode: MODE,
-    rapport: rapportEnCours,
-    date: new Date().toISOString(),
-    url: document.getElementById('urlInput').value.trim()
-  };
-  try {
-    const existing = JSON.parse(localStorage.getItem('marlo_users') || '[]');
-    existing.push(inscription);
-    localStorage.setItem('marlo_users', JSON.stringify(existing));
-  } catch(_) {}
+/* ─────────────── STYLES PARTAGÉS ─────────────── */
 
-  // Simuler un délai réseau
-  await new Promise(r => setTimeout(r, 800));
-
-  // Afficher succès
-  document.getElementById('signupCTA').style.display = 'none';
-  document.getElementById('signupSuccess').style.display = 'block';
-  document.getElementById('signupSuccessSub').textContent =
-    `Bienvenue ${prenom} ! Votre rapport est sauvegardé. On vous envoie un récap à ${email}.`;
-
-  btn.disabled = false;
-  btn.textContent = 'Sauvegarder mon rapport →';
-}
-
-function simulerFinancement() {
-  // Pour l'instant scroll vers CTA — plus tard ouvrira le tunnel
-  document.getElementById('ctaSection').scrollIntoView({ behavior: 'smooth' });
-}
-
-// ── LANCER ANALYSE ──
-async function lancerAnalyse() {
-  const url = document.getElementById('urlInput').value.trim();
-  const errorMsg = document.getElementById('errorMsg');
-  const btn = document.getElementById('btnAnalyze');
-
-  if (!url || !isValidURL(url)) {
-    errorMsg.classList.add('visible');
-    document.getElementById('inputZone').style.borderColor = 'var(--red)';
-    return;
-  }
-  errorMsg.classList.remove('visible');
-  document.getElementById('inputZone').style.borderColor = '';
-
-  const rw = document.getElementById('rapportWrap');
-  rw.classList.remove('visible'); rw.style.display = 'none';
-  resetInscription();
-
-  const lw = document.getElementById('loadingWrap');
-  const fill = document.getElementById('loadingFill');
-  const stepEl = document.getElementById('loadingStep');
-  const steps = MODE === 'investisseur' ? LOADING_STEPS_INVEST : LOADING_STEPS_ACHETEUR;
-  lw.classList.add('visible'); fill.style.width = '0%';
-  btn.disabled = true;
-
-  let idx = 0;
-  const iv = setInterval(() => {
-    if (idx < steps.length) {
-      stepEl.textContent = steps[idx];
-      fill.style.width = ((idx+1)/steps.length*85) + '%';
-      idx++;
+const SI = {
+  width: "100%",
+  background: "#fafafa",
+  border: "1.5px solid #ebebeb",
+  borderRadius: "8px",
+  color: "#111",
+  padding: "12px 14px",
+  fontSize: "14px",
+  fontFamily: "'DM Sans', sans-serif",
+  boxSizing: "border-box",
+  outline: "none"
+};
+const SL = {
+  display: "block",
+  fontSize: "10px",
+  fontWeight: "700",
+  letterSpacing: "0.09em",
+  textTransform: "uppercase",
+  color: "#aaa",
+  marginBottom: "6px"
+};
+const Btn = _ref => {
+  let {
+    onClick,
+    children,
+    variant = "ghost"
+  } = _ref;
+  const styles = {
+    primary: {
+      background: "#111",
+      border: "none",
+      color: "#fff"
+    },
+    ghost: {
+      background: "#f5f5f5",
+      border: "none",
+      color: "#111"
+    },
+    outline: {
+      background: "#fff",
+      border: "1.5px solid #e0e0e0",
+      color: "#666"
+    },
+    danger: {
+      background: "#fff",
+      border: "1.5px solid #fee2e2",
+      color: "#ef4444"
+    },
+    accent: {
+      background: "#EAF7F1",
+      border: "1.5px solid #7DC9A8",
+      color: "#2a8a68"
     }
-  }, 600);
+  };
+  return /*#__PURE__*/React.createElement("button", {
+    onClick: onClick,
+    style: {
+      ...styles[variant],
+      padding: "8px 16px",
+      borderRadius: "8px",
+      cursor: "pointer",
+      fontSize: "12px",
+      fontWeight: "700",
+      fontFamily: "'DM Sans', sans-serif"
+    }
+  }, children);
+};
 
-  let rapport = null;
-  try {
-    const res = await fetch(PROXY_URL, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ url, mode: MODE })
-    });
-    const data = await res.json();
-    if (data.success && data.rapport) rapport = data.rapport;
-  } catch(_) {}
+/* ─────────────── MODAL CARTE ─────────────── */
 
-  clearInterval(iv);
-  fill.style.width = '100%';
-  await new Promise(r=>setTimeout(r,300));
-  lw.classList.remove('visible');
-  btn.disabled = false;
-
-  if (rapport) {
-    rapportEnCours = rapport;
-    if (MODE === 'investisseur') afficherRapportInvest(rapport);
-    else afficherRapport(rapport);
-  } else {
-    rapportEnCours = { mode: MODE, url };
-    if (MODE === 'investisseur') genererDemoInvest(url);
-    else genererDemo(url);
-  }
-
-  rw.style.display = 'block';
-  requestAnimationFrame(()=>requestAnimationFrame(()=>rw.classList.add('visible')));
-  setTimeout(()=>rw.scrollIntoView({behavior:'smooth',block:'start'}),200);
+function CardModal(_ref2) {
+  let {
+    card,
+    onClose,
+    onSave,
+    onDelete,
+    onAdvance,
+    onRewind,
+    onArchive,
+    isMobile
+  } = _ref2;
+  const [d, setD] = useState({
+    ...card
+  });
+  const si = STAGES.findIndex(s => s.id === d.stage);
+  const stage = STAGES[si];
+  const tags = STAGE_TAGS[d.stage] || {};
+  return /*#__PURE__*/React.createElement("div", {
+    onClick: e => e.target === e.currentTarget && onClose(),
+    style: {
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.3)",
+      zIndex: 1000,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "20px",
+      backdropFilter: "blur(4px)"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#fff",
+      borderRadius: "16px",
+      width: "100%",
+      maxWidth: "560px",
+      maxHeight: "92vh",
+      overflowY: "auto",
+      boxShadow: "0 32px 80px rgba(0,0,0,0.12)",
+      fontFamily: "'DM Sans', sans-serif"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "22px 24px 18px",
+      borderBottom: "1.5px solid #f0f0f0"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "5px",
+      background: stage.bg,
+      border: `1px solid ${stage.color}`,
+      borderRadius: "20px",
+      padding: "3px 10px",
+      marginBottom: "10px"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "11px"
+    }
+  }, stage.emoji), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "10px",
+      fontWeight: "700",
+      color: stage.color,
+      letterSpacing: "0.06em",
+      textTransform: "uppercase"
+    }
+  }, stage.label)), /*#__PURE__*/React.createElement("input", {
+    value: d.title,
+    onChange: e => setD({
+      ...d,
+      title: e.target.value
+    }),
+    style: {
+      display: "block",
+      fontSize: "18px",
+      fontWeight: "800",
+      color: "#111",
+      background: "transparent",
+      border: "none",
+      outline: "none",
+      width: "100%",
+      fontFamily: "'DM Sans', sans-serif",
+      letterSpacing: "-0.02em"
+    }
+  })), /*#__PURE__*/React.createElement("button", {
+    onClick: onClose,
+    style: {
+      background: "none",
+      border: "none",
+      color: "#ccc",
+      fontSize: "18px",
+      cursor: "pointer",
+      padding: "2px 6px",
+      marginLeft: "8px"
+    }
+  }, "\u2715"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "18px 24px",
+      display: "flex",
+      flexDirection: "column",
+      gap: "16px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+      gap: "12px"
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: SL
+  }, "Responsable(s)"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexWrap: "wrap",
+      gap: "6px"
+    }
+  }, ASSIGNEES.filter(a => a !== "—").map(a => {
+    const selected = (d.assignees || []).includes(a);
+    return /*#__PURE__*/React.createElement("button", {
+      key: a,
+      type: "button",
+      onClick: () => {
+        const cur = d.assignees || [];
+        setD({
+          ...d,
+          assignees: selected ? cur.filter(x => x !== a) : [...cur, a]
+        });
+      },
+      style: {
+        padding: "5px 12px",
+        borderRadius: "20px",
+        border: "1.5px solid " + (selected ? "#111" : "#e0e0e0"),
+        background: selected ? "#111" : "#fff",
+        color: selected ? "#fff" : "#888",
+        fontSize: "12px",
+        fontWeight: "700",
+        cursor: "pointer",
+        fontFamily: "'DM Sans', sans-serif",
+        transition: "all 0.12s"
+      }
+    }, a);
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: SL
+  }, "Date"), /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    value: d.date,
+    onChange: e => setD({
+      ...d,
+      date: e.target.value
+    }),
+    style: SI
+  })), tags.time && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: SL
+  }, "Heure de publication"), /*#__PURE__*/React.createElement("input", {
+    type: "time",
+    value: d.time || "",
+    onChange: e => setD({
+      ...d,
+      time: e.target.value
+    }),
+    style: SI
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#fafaf8",
+      border: "1.5px solid #ebebeb",
+      borderRadius: "10px",
+      padding: "14px 16px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "10px",
+      fontWeight: "800",
+      color: "#aaa",
+      textTransform: "uppercase",
+      letterSpacing: "0.09em",
+      marginBottom: "10px"
+    }
+  }, "\u23F1 Deadline \u2014 ", STAGES[si].emoji, " ", STAGES[si].label), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: "16px"
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    value: (d.deadlines || {})[d.stage] || "",
+    onChange: e => setD({
+      ...d,
+      deadlines: {
+        ...(d.deadlines || {}),
+        [d.stage]: e.target.value
+      }
+    }),
+    style: {
+      ...SI,
+      flex: 1
+    }
+  }), (d.deadlines || {})[d.stage] && (() => {
+    const diff = Math.ceil((new Date((d.deadlines || {})[d.stage] + "T12:00:00") - new Date()) / 86400000);
+    const color = diff < 0 ? "#ef4444" : diff <= 2 ? "#c47a00" : "#2a8a68";
+    const label = diff < 0 ? `${Math.abs(diff)}j de retard` : diff === 0 ? "Aujourd'hui" : `${diff}j restants`;
+    return /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: "12px",
+        fontWeight: "800",
+        color,
+        whiteSpace: "nowrap",
+        background: diff < 0 ? "#FEF2F2" : diff <= 2 ? "#FEF7E6" : "#EAF7F1",
+        padding: "4px 10px",
+        borderRadius: "20px"
+      }
+    }, label);
+  })()), Object.entries(d.deadlines || {}).filter(_ref3 => {
+    let [k, v] = _ref3;
+    return k !== d.stage && v;
+  }).length > 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: "10px",
+      display: "flex",
+      flexWrap: "wrap",
+      gap: "6px"
+    }
+  }, Object.entries(d.deadlines || {}).filter(_ref4 => {
+    let [k, v] = _ref4;
+    return k !== d.stage && v;
+  }).map(_ref5 => {
+    let [stageId, dl] = _ref5;
+    const st = STAGES.find(s => s.id === stageId);
+    const diff = Math.ceil((new Date(dl + "T12:00:00") - new Date()) / 86400000);
+    const color = diff < 0 ? "#ef4444" : "#888";
+    return /*#__PURE__*/React.createElement("span", {
+      key: stageId,
+      style: {
+        fontSize: "10px",
+        color,
+        background: "#f5f5f5",
+        borderRadius: "20px",
+        padding: "2px 8px",
+        fontWeight: "700"
+      }
+    }, st?.emoji, " ", st?.label, " \u2192 ", new Date(dl + "T12:00:00").toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "short"
+    }));
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: "12px"
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: SL
+  }, "Plateforme"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: "6px",
+      flexWrap: "wrap"
+    }
+  }, PLATFORMS.map(p => {
+    const sel = d.platform === p.id;
+    return /*#__PURE__*/React.createElement("button", {
+      key: p.id,
+      type: "button",
+      onClick: () => setD({
+        ...d,
+        platform: p.id
+      }),
+      style: {
+        padding: "5px 10px",
+        borderRadius: "20px",
+        border: "1.5px solid " + (sel ? p.color : "#e0e0e0"),
+        background: sel ? p.bg : "#fff",
+        color: sel ? p.color : "#888",
+        fontSize: "11px",
+        fontWeight: "700",
+        cursor: "pointer",
+        fontFamily: "'DM Sans', sans-serif"
+      }
+    }, p.emoji, " ", p.label);
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: SL
+  }, "Priorit\xE9"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: "6px"
+    }
+  }, PRIORITIES.map(p => {
+    const sel = d.priority === p.id;
+    return /*#__PURE__*/React.createElement("button", {
+      key: p.id,
+      type: "button",
+      onClick: () => setD({
+        ...d,
+        priority: p.id
+      }),
+      style: {
+        padding: "5px 14px",
+        borderRadius: "20px",
+        border: "1.5px solid " + (sel ? p.color : "#e0e0e0"),
+        background: sel ? p.id === "urgent" ? "#FEF2F2" : "#f5f5f5" : "#fff",
+        color: sel ? p.color : "#888",
+        fontSize: "11px",
+        fontWeight: "700",
+        cursor: "pointer",
+        fontFamily: "'DM Sans', sans-serif"
+      }
+    }, p.id === "urgent" ? "🔴 " : "", p.label);
+  })))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: "12px"
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: SL
+  }, "Blocage"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: "6px",
+      flexWrap: "wrap"
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setD({
+      ...d,
+      blocked: false,
+      blockReason: d.blockReason || ""
+    }),
+    style: {
+      padding: "5px 12px",
+      borderRadius: "20px",
+      border: "1.5px solid " + (!d.blocked ? "#111" : "#e0e0e0"),
+      background: !d.blocked ? "#111" : "#fff",
+      color: !d.blocked ? "#fff" : "#888",
+      fontSize: "11px",
+      fontWeight: "700",
+      cursor: "pointer",
+      fontFamily: "'DM Sans', sans-serif"
+    }
+  }, "OK"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setD({
+      ...d,
+      blocked: true
+    }),
+    style: {
+      padding: "5px 12px",
+      borderRadius: "20px",
+      border: "1.5px solid " + (d.blocked ? "#ef4444" : "#e0e0e0"),
+      background: d.blocked ? "#FEF2F2" : "#fff",
+      color: d.blocked ? "#ef4444" : "#888",
+      fontSize: "11px",
+      fontWeight: "700",
+      cursor: "pointer",
+      fontFamily: "'DM Sans', sans-serif"
+    }
+  }, "\uD83D\uDD34 Bloqu\xE9"))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: SL
+  }, "Raison"), /*#__PURE__*/React.createElement("input", {
+    value: d.blockReason || "",
+    onChange: e => setD({
+      ...d,
+      blockReason: e.target.value,
+      blocked: !!e.target.value || d.blocked
+    }),
+    placeholder: "VO, validation, asset manquant...",
+    style: SI
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: {
+      ...SL,
+      color: "#111"
+    }
+  }, "\uD83D\uDCAC Notes / commentaires"), /*#__PURE__*/React.createElement("textarea", {
+    value: d.comments || "",
+    onChange: e => setD({
+      ...d,
+      comments: e.target.value
+    }),
+    placeholder: "Notes d'\xE9quipe, contexte, d\xE9cisions...",
+    rows: 3,
+    style: {
+      ...SI,
+      resize: "vertical",
+      lineHeight: "1.6"
+    }
+  })), tags.refs && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: {
+      ...SL,
+      color: "#5a3fa8"
+    }
+  }, "\uD83D\uDD16 R\xE9f\xE9rences"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: "11px",
+      color: "#bbb",
+      margin: "0 0 8px"
+    }
+  }, "Liens Instagram, Pinterest, photos d'inspiration..."), /*#__PURE__*/React.createElement("textarea", {
+    value: d.refs || "",
+    onChange: e => setD({
+      ...d,
+      refs: e.target.value
+    }),
+    placeholder: "https://instagram.com/p/...\nhttps://pinterest.com/...\nidée : filmer en contre-jour",
+    rows: 3,
+    style: {
+      ...SI,
+      resize: "vertical",
+      lineHeight: "1.6"
+    }
+  })), tags.shopping && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: {
+      ...SL,
+      color: "#c47a00"
+    }
+  }, "\uD83D\uDED2 Liste de courses"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: "11px",
+      color: "#bbb",
+      margin: "0 0 8px"
+    }
+  }, "Ce que Justine doit acheter pour cette vid\xE9o"), /*#__PURE__*/React.createElement("textarea", {
+    value: d.shopping || "",
+    onChange: e => setD({
+      ...d,
+      shopping: e.target.value
+    }),
+    placeholder: "- 500g de farine\n- 3 œufs\n- crème fraîche...",
+    rows: 3,
+    style: {
+      ...SI,
+      resize: "vertical",
+      lineHeight: "1.6"
+    }
+  })), tags.recipe && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: {
+      ...SL,
+      color: "#2a8a68"
+    }
+  }, "\uD83C\uDF7D\uFE0F Fiche recette"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: "11px",
+      color: "#bbb",
+      margin: "0 0 8px"
+    }
+  }, "Pour que Camille \xE9crive la caption"), /*#__PURE__*/React.createElement("textarea", {
+    value: d.recipe,
+    onChange: e => setD({
+      ...d,
+      recipe: e.target.value
+    }),
+    placeholder: "Ingr\xE9dients, portions, temps...",
+    rows: 4,
+    style: {
+      ...SI,
+      resize: "vertical",
+      lineHeight: "1.6"
+    }
+  })), tags.caption && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: {
+      ...SL,
+      color: "#5a3fa8"
+    }
+  }, "\u270D\uFE0F L\xE9gende / Caption"), /*#__PURE__*/React.createElement("textarea", {
+    value: d.caption,
+    onChange: e => setD({
+      ...d,
+      caption: e.target.value
+    }),
+    placeholder: "Caption Instagram, description YouTube...",
+    rows: 3,
+    style: {
+      ...SI,
+      resize: "vertical",
+      lineHeight: "1.6"
+    }
+  })), tags.link && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: {
+      ...SL,
+      color: "#111"
+    }
+  }, "\uD83D\uDD17 Lien vid\xE9o mont\xE9e"), /*#__PURE__*/React.createElement("input", {
+    type: "url",
+    value: d.link,
+    onChange: e => setD({
+      ...d,
+      link: e.target.value
+    }),
+    placeholder: "https://drive.google.com/...",
+    style: SI
+  }), d.link && /*#__PURE__*/React.createElement("a", {
+    href: d.link,
+    target: "_blank",
+    rel: "noreferrer",
+    style: {
+      display: "inline-block",
+      marginTop: "8px",
+      fontSize: "12px",
+      color: "#111",
+      fontWeight: "700",
+      textDecoration: "underline"
+    }
+  }, "\u2197 T\xE9l\xE9charger")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: "8px",
+      flexWrap: "wrap",
+      paddingTop: "12px",
+      borderTop: "1.5px solid #f0f0f0",
+      alignItems: "center"
+    }
+  }, si > 0 && /*#__PURE__*/React.createElement(Btn, {
+    variant: "outline",
+    onClick: () => {
+      onRewind(d);
+      onClose();
+    }
+  }, "\u2190 ", STAGES[si - 1].emoji), /*#__PURE__*/React.createElement(Btn, {
+    variant: "danger",
+    onClick: () => {
+      onDelete(d.id);
+      onClose();
+    }
+  }, "Supprimer"), d.stage === "scheduled" && /*#__PURE__*/React.createElement(Btn, {
+    variant: "accent",
+    onClick: () => {
+      onArchive(d);
+      onClose();
+    }
+  }, "\uD83D\uDCE6 Archiver"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }), /*#__PURE__*/React.createElement(Btn, {
+    variant: "ghost",
+    onClick: () => {
+      onSave(d);
+      onClose();
+    }
+  }, "Enregistrer"), si < STAGES.length - 1 && /*#__PURE__*/React.createElement(Btn, {
+    variant: "primary",
+    onClick: () => {
+      onAdvance(d);
+      onClose();
+    }
+  }, STAGES[si + 1].emoji, " ", STAGES[si + 1].label, " \u2192")))));
+}
+function AddModal(_ref6) {
+  let {
+    stageId,
+    onClose,
+    onAdd
+  } = _ref6;
+  const [title, setTitle] = useState("");
+  const stage = STAGES.find(s => s.id === stageId);
+  return /*#__PURE__*/React.createElement("div", {
+    onClick: e => e.target === e.currentTarget && onClose(),
+    style: {
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.3)",
+      zIndex: 1000,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "20px",
+      backdropFilter: "blur(4px)"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#fff",
+      borderRadius: "16px",
+      padding: "26px",
+      width: "100%",
+      maxWidth: "400px",
+      boxShadow: "0 32px 80px rgba(0,0,0,0.12)",
+      fontFamily: "'DM Sans', sans-serif"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "13px",
+      color: "#999",
+      marginBottom: "14px",
+      fontWeight: "600"
+    }
+  }, "Nouvelle vid\xE9o \xB7 ", /*#__PURE__*/React.createElement("strong", {
+    style: {
+      color: "#111"
+    }
+  }, stage.emoji, " ", stage.label)), /*#__PURE__*/React.createElement("input", {
+    autoFocus: true,
+    value: title,
+    onChange: e => setTitle(e.target.value),
+    onKeyDown: async e => {
+      if (e.key === "Enter" && title.trim()) {
+        await onAdd(title.trim());
+        onClose();
+      }
+      if (e.key === "Escape") onClose();
+    },
+    placeholder: "Titre de la vid\xE9o...",
+    style: {
+      ...SI,
+      fontSize: "15px",
+      fontWeight: "700",
+      marginBottom: "14px"
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: "8px",
+      justifyContent: "flex-end"
+    }
+  }, /*#__PURE__*/React.createElement(Btn, {
+    variant: "ghost",
+    onClick: onClose
+  }, "Annuler"), /*#__PURE__*/React.createElement(Btn, {
+    variant: "primary",
+    onClick: async () => {
+      if (title.trim()) {
+        await onAdd(title.trim());
+        onClose();
+      }
+    }
+  }, "Ajouter"))));
+}
+function AddEventModal(_ref7) {
+  let {
+    onClose,
+    onAdd,
+    initialDate = ""
+  } = _ref7;
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState(initialDate || new Date().toISOString().split("T")[0]);
+  const [type, setType] = useState("external");
+  const [assignee, setAssignee] = useState("Justine");
+  return /*#__PURE__*/React.createElement("div", {
+    onClick: e => e.target === e.currentTarget && onClose(),
+    style: {
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.3)",
+      zIndex: 1100,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "20px",
+      backdropFilter: "blur(4px)"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#fff",
+      borderRadius: "16px",
+      padding: "26px",
+      width: "100%",
+      maxWidth: "440px",
+      boxShadow: "0 32px 80px rgba(0,0,0,0.12)",
+      fontFamily: "'DM Sans', sans-serif"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "13px",
+      color: "#999",
+      marginBottom: "14px",
+      fontWeight: "600"
+    }
+  }, "Nouvel \xE9v\xE9nement"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gap: "12px"
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    autoFocus: true,
+    value: title,
+    onChange: e => setTitle(e.target.value),
+    placeholder: "Nom du tournage / de la collab",
+    style: SI
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    value: date,
+    onChange: e => setDate(e.target.value),
+    style: SI
+  }), /*#__PURE__*/React.createElement("select", {
+    value: type,
+    onChange: e => setType(e.target.value),
+    style: SI
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "external"
+  }, "Collaboration / externe"), /*#__PURE__*/React.createElement("option", {
+    value: "internal"
+  }, "Interne")), /*#__PURE__*/React.createElement("select", {
+    value: assignee,
+    onChange: e => setAssignee(e.target.value),
+    style: SI
+  }, ASSIGNEES.filter(a => a !== "—").map(a => /*#__PURE__*/React.createElement("option", {
+    key: a,
+    value: a
+  }, a)))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: "8px",
+      justifyContent: "flex-end",
+      marginTop: "16px"
+    }
+  }, /*#__PURE__*/React.createElement(Btn, {
+    variant: "ghost",
+    onClick: onClose
+  }, "Annuler"), /*#__PURE__*/React.createElement(Btn, {
+    variant: "primary",
+    onClick: async () => {
+      if (!title.trim() || !date) return;
+      await onAdd({
+        id: "e" + Date.now(),
+        title: title.trim(),
+        date,
+        type,
+        assignee
+      });
+      onClose();
+    }
+  }, "Ajouter"))));
 }
 
-document.getElementById('urlInput').addEventListener('keydown', e=>{
-  if(e.key==='Enter') lancerAnalyse();
-});
-document.getElementById('urlInput').addEventListener('input', ()=>{
-  document.getElementById('inputZone').style.borderColor='';
-  document.getElementById('errorMsg').classList.remove('visible');
-});
-</script>
+/* ─────────────── KANBAN CARD ─────────────── */
+
+function KCard(_ref8) {
+  let {
+    card,
+    onClick,
+    onDragStart
+  } = _ref8;
+  const stage = STAGES.find(s => s.id === card.stage) || {};
+  const tags = STAGE_TAGS[card.stage] || {};
+  const [hov, setHov] = useState(false);
+  return /*#__PURE__*/React.createElement("div", {
+    draggable: true,
+    onDragStart: onDragStart,
+    onClick: onClick,
+    onMouseEnter: () => setHov(true),
+    onMouseLeave: () => setHov(false),
+    style: {
+      background: hov ? stage.bg || "#fafafa" : "#fff",
+      border: "1.5px solid " + (hov ? stage.color || "#ddd" : "#ebebeb"),
+      borderLeft: "3.5px solid " + (stage.color || "#ddd"),
+      borderRadius: "10px",
+      padding: "11px 13px",
+      cursor: "pointer",
+      transition: "all 0.12s ease",
+      boxShadow: hov ? "0 4px 14px rgba(0,0,0,0.06)" : "0 1px 3px rgba(0,0,0,0.03)",
+      userSelect: "none"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "flex-start",
+      gap: "6px",
+      marginBottom: "7px"
+    }
+  }, card.priority === "urgent" && /*#__PURE__*/React.createElement("span", {
+    style: {
+      flexShrink: 0,
+      width: "8px",
+      height: "8px",
+      borderRadius: "50%",
+      background: "#ef4444",
+      marginTop: "4px",
+      boxShadow: "0 0 0 3px #fee2e2"
+    }
+  }), card.blocked && /*#__PURE__*/React.createElement("span", {
+    style: {
+      flexShrink: 0,
+      fontSize: "9px",
+      fontWeight: "800",
+      color: "#ef4444",
+      background: "#FEF2F2",
+      borderRadius: "20px",
+      padding: "2px 6px",
+      marginTop: "1px"
+    }
+  }, "Bloqu\xE9"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "13px",
+      color: "#111",
+      fontWeight: "600",
+      lineHeight: "1.45"
+    }
+  }, card.title)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: "5px",
+      flexWrap: "wrap",
+      alignItems: "center"
+    }
+  }, (card.assignees || []).map(a => /*#__PURE__*/React.createElement("span", {
+    key: a,
+    style: {
+      fontSize: "10px",
+      fontWeight: "700",
+      background: "#f0f0f0",
+      color: "#666",
+      padding: "2px 7px",
+      borderRadius: "20px"
+    }
+  }, a)), card.date && /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "10px",
+      color: "#bbb",
+      fontWeight: "600"
+    }
+  }, new Date(card.date + "T12:00:00").toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short"
+  }), card.time ? " · " + card.time : ""), card.blocked && card.blockReason && /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "9px",
+      fontWeight: "800",
+      background: "#FEF2F2",
+      color: "#ef4444",
+      padding: "1px 6px",
+      borderRadius: "20px"
+    }
+  }, card.blockReason), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }), card.platform && card.platform !== "instagram" && (() => {
+    const p = PLATFORMS.find(x => x.id === card.platform);
+    return p ? /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: "9px",
+        fontWeight: "800",
+        background: p.bg,
+        color: p.color,
+        padding: "1px 6px",
+        borderRadius: "20px"
+      }
+    }, p.emoji, " ", p.label) : null;
+  })(), (() => {
+    const dl = (card.deadlines || {})[card.stage];
+    if (!dl) return null;
+    const diff = Math.ceil((new Date(dl + "T12:00:00") - new Date()) / 86400000);
+    if (diff > 5) return null; // only show when close or late
+    const color = diff < 0 ? "#ef4444" : diff <= 2 ? "#c47a00" : "#888";
+    const bg = diff < 0 ? "#FEF2F2" : diff <= 2 ? "#FEF7E6" : "#f5f5f5";
+    return /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: "9px",
+        fontWeight: "800",
+        color,
+        background: bg,
+        padding: "1px 6px",
+        borderRadius: "20px"
+      }
+    }, "\u23F1 ", diff < 0 ? `${Math.abs(diff)}j late` : diff === 0 ? "Auj." : `${diff}j`);
+  })(), tags.refs && card.refs && /*#__PURE__*/React.createElement("span", {
+    title: "R\xE9f\xE9rences"
+  }, "\uD83D\uDD16"), tags.shopping && card.shopping && /*#__PURE__*/React.createElement("span", {
+    title: "Liste de courses"
+  }, "\uD83D\uDED2"), tags.recipe && card.recipe && /*#__PURE__*/React.createElement("span", {
+    title: "Fiche recette"
+  }, "\uD83C\uDF7D\uFE0F"), tags.caption && card.caption && /*#__PURE__*/React.createElement("span", {
+    title: "Caption"
+  }, "\u270D\uFE0F"), tags.link && card.link && /*#__PURE__*/React.createElement("span", {
+    title: "Lien"
+  }, "\uD83D\uDD17"), card.comments && /*#__PURE__*/React.createElement("span", {
+    title: "Commentaires"
+  }, "\uD83D\uDCAC")));
+}
+
+/* ─────────────── VUES ─────────────── */
+
+function Dashboard(_ref9) {
+  let {
+    cards,
+    events,
+    weeklyGoal,
+    setWeeklyGoal,
+    onNavigate,
+    onOpenCard,
+    user,
+    isMobile
+  } = _ref9;
+  const stock = cards.filter(c => c.stage === "to_validate" || c.stage === "scheduled").length;
+  const mounted = cards.filter(c => ["to_validate", "scheduled", "vo_write", "vo_record"].includes(c.stage)).length;
+  const thisMonth = new Date().getMonth();
+  const publishedThisMonth = cards.filter(c => c.stage === "scheduled" && c.date && new Date(c.date).getMonth() === thisMonth).length;
+  const shootsPlanned = cards.filter(c => c.stage === "to_shoot" && c.date).length;
+  const stockAlert = stock < 3;
+  const blockedCount = cards.filter(c => c.blocked).length;
+  const byMember = ASSIGNEES.filter(a => a !== "—").map(name => ({
+    name,
+    count: cards.filter(c => (c.assignees || []).includes(name) && !["scheduled"].includes(c.stage)).length
+  })).filter(m => m.count > 0).sort((a, b) => b.count - a.count);
+  const maxCount = Math.max(...byMember.map(m => m.count), 1);
+  const statCard = (label, value, sub, alert, onClick) => /*#__PURE__*/React.createElement("div", {
+    onClick: onClick,
+    style: {
+      background: alert ? "#FEF2F2" : "#fff",
+      border: "1.5px solid " + (alert ? "#FECACA" : "#ebebeb"),
+      borderRadius: "14px",
+      padding: "22px 24px",
+      cursor: onClick ? "pointer" : "default",
+      transition: "box-shadow 0.12s"
+    },
+    onMouseEnter: e => onClick && (e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.08)"),
+    onMouseLeave: e => onClick && (e.currentTarget.style.boxShadow = "none")
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "11px",
+      fontWeight: "800",
+      letterSpacing: "0.1em",
+      textTransform: "uppercase",
+      color: alert ? "#ef4444" : "#aaa",
+      marginBottom: "12px"
+    }
+  }, label), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "48px",
+      fontWeight: "900",
+      color: alert ? "#ef4444" : "#111",
+      letterSpacing: "-0.05em",
+      lineHeight: 1,
+      marginBottom: "8px"
+    }
+  }, value), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "14px",
+      color: alert ? "#ef4444" : "#bbb",
+      fontWeight: "500",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between"
+    }
+  }, /*#__PURE__*/React.createElement("span", null, sub), onClick && /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "11px",
+      color: alert ? "#ef4444" : "#bbb",
+      opacity: 0.6
+    }
+  }, "Voir \u2192")));
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: isMobile ? "20px 14px 32px" : "52px 64px",
+      maxWidth: isMobile ? "100%" : "1480px",
+      width: "100%"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: "28px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "11px",
+      fontWeight: "700",
+      color: "#bbb",
+      letterSpacing: "0.1em",
+      textTransform: "uppercase",
+      marginBottom: "6px"
+    }
+  }, new Date().toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: isMobile ? "flex-start" : "center",
+      flexDirection: isMobile ? "column" : "row",
+      gap: "14px",
+      marginBottom: "10px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: isMobile ? "56px" : "72px",
+      height: isMobile ? "56px" : "72px",
+      borderRadius: "50%",
+      background: user.bg,
+      border: "2px solid " + user.color,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexShrink: 0
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: isMobile ? "18px" : "24px",
+      fontWeight: "900",
+      color: user.color
+    }
+  }, user.avatar)), /*#__PURE__*/React.createElement("h1", {
+    style: {
+      fontSize: isMobile ? "34px" : "56px",
+      fontWeight: "900",
+      color: "#111",
+      letterSpacing: "-0.06em",
+      margin: 0,
+      textAlign: isMobile ? "center" : "left"
+    }
+  }, "Bonjour, ", user.name, " \uD83D\uDC4B")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#fff",
+      border: "1.5px solid #ebebeb",
+      borderRadius: "12px",
+      padding: "18px 22px",
+      borderLeft: "3.5px solid " + user.color
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: "#444",
+      fontSize: isMobile ? "14px" : "16px",
+      margin: 0,
+      fontWeight: "500",
+      lineHeight: "1.7"
+    }
+  }, getSmartMessage(user, cards, weeklyGoal)))), blockedCount > 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#FEF2F2",
+      border: "1.5px solid #FECACA",
+      borderRadius: "12px",
+      padding: "12px 16px",
+      marginBottom: "16px",
+      display: "flex",
+      alignItems: "center",
+      gap: "10px"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "18px"
+    }
+  }, "\uD83D\uDD34"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "13px",
+      color: "#dc2626",
+      fontWeight: "700"
+    }
+  }, blockedCount, " contenu", blockedCount > 1 ? "s" : "", " bloqu\xE9", blockedCount > 1 ? "s" : "", " dans le pipeline")), stockAlert && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#FEF2F2",
+      border: "1.5px solid #FECACA",
+      borderRadius: "12px",
+      padding: "14px 18px",
+      marginBottom: "24px",
+      display: "flex",
+      alignItems: "center",
+      gap: "12px"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "20px"
+    }
+  }, "\u26A0\uFE0F"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "13px",
+      fontWeight: "800",
+      color: "#dc2626"
+    }
+  }, "Stock bas \u2014 ", stock, " vid\xE9o", stock > 1 ? "s" : "", " pr\xEAte", stock > 1 ? "s" : ""), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "12px",
+      color: "#ef4444"
+    }
+  }, "Moins de 3 vid\xE9os en r\xE9serve. Planifiez un tournage interne cette semaine."))), (() => {
+    const todayStr = new Date().toISOString().split("T")[0];
+    const upcomingScheduled = cards.filter(c => c.stage === "scheduled" && c.date && c.date >= todayStr);
+    const toValidate = cards.filter(c => c.stage === "to_validate");
+    const voRecord = cards.filter(c => c.stage === "vo_record");
+    const voWrite = cards.filter(c => c.stage === "vo_write");
+    const toEdit = cards.filter(c => c.stage === "to_edit");
+    const shot = cards.filter(c => c.stage === "shot");
+    const toShoot = cards.filter(c => c.stage === "to_shoot");
+    const datedToShoot = toShoot.filter(c => c.date && c.date >= todayStr);
+    const upcomingEvents = (events || []).filter(e => e.date && e.date >= todayStr);
+    const externalEvents = upcomingEvents.filter(e => e.type === "external");
+    const internalEvents = upcomingEvents.filter(e => e.type === "internal");
+    const readyCount = upcomingScheduled.length;
+    const almostReadyCount = toValidate.length + voRecord.length;
+    const inProductionCount = voWrite.length + toEdit.length + shot.length;
+    const plannedCount = datedToShoot.length + upcomingEvents.length;
+    const healthyReadyTarget = Math.max(3, Math.ceil(weeklyGoal * 0.3));
+    const healthyNearTarget = Math.max(4, Math.ceil(weeklyGoal * 0.45));
+    let statusLabel = "Sain";
+    let statusTone = "green";
+    let reaction = "Le pipeline tourne bien. Le bon réflexe est de continuer à programmer régulièrement les contenus déjà prêts.";
+    if (readyCount === 0 && toValidate.length > 0) {
+      statusLabel = "Critique";
+      statusTone = "red";
+      reaction = `Rien n'est sécurisé pour la publication. Priorité : valider puis programmer ${toValidate.length} contenu${toValidate.length > 1 ? "s" : ""}.`;
+    } else if (readyCount === 0 && voRecord.length > 0) {
+      statusLabel = "Critique";
+      statusTone = "red";
+      reaction = `Le point de blocage est la voix off. Enregistrez ${voRecord.length} VO pour débloquer rapidement le stock.`;
+    } else if (readyCount < 2 && toEdit.length > 0) {
+      statusLabel = "Fragile";
+      statusTone = "orange";
+      reaction = `Le stock prêt est trop faible. Le vrai sujet maintenant, c'est le montage de ${toEdit.length} contenu${toEdit.length > 1 ? "s" : ""}.`;
+    } else if (voWrite.length + voRecord.length + toEdit.length >= Math.max(4, Math.ceil(weeklyGoal * 0.5))) {
+      statusLabel = "Sous tension";
+      statusTone = "orange";
+      reaction = `Le pipeline existe, mais il s'embouteille entre écriture, voix off et montage. Il faut faire avancer la post-prod.`;
+    } else if (readyCount >= healthyReadyTarget && almostReadyCount >= healthyNearTarget) {
+      statusLabel = "Sain";
+      statusTone = "green";
+      reaction = `Vous avez du stock prêt et du stock proche. L'objectif maintenant est surtout de garder le rythme de programmation.`;
+    } else if (plannedCount > 0) {
+      statusLabel = "En construction";
+      statusTone = "blue";
+      reaction = `Le calendrier est alimenté, mais il faut encore transformer ce planning en contenus prêts à publier.`;
+    }
+    const tones = {
+      red: {
+        border: "#FECACA",
+        bg: "#FEF2F2",
+        accent: "#ef4444",
+        soft: "#fff5f5"
+      },
+      orange: {
+        border: "#FDE68A",
+        bg: "#FEF7E6",
+        accent: "#c47a00",
+        soft: "#fffaf0"
+      },
+      green: {
+        border: "#DDEFE6",
+        bg: "#EAF7F1",
+        accent: "#2a8a68",
+        soft: "#f7fcf9"
+      },
+      blue: {
+        border: "#BFDBFE",
+        bg: "#EAF4FC",
+        accent: "#3b82f6",
+        soft: "#f6fbff"
+      }
+    };
+    const tone = tones[statusTone];
+    const statBox = function (label, value, sub) {
+      let toneName = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "neutral";
+      const boxTones = {
+        neutral: {
+          bg: "#f7f7f5",
+          color: "#111",
+          sub: "#999"
+        },
+        red: {
+          bg: "#FEF2F2",
+          color: "#ef4444",
+          sub: "#ef4444"
+        },
+        orange: {
+          bg: "#FEF7E6",
+          color: "#c47a00",
+          sub: "#c47a00"
+        },
+        green: {
+          bg: "#EAF7F1",
+          color: "#2a8a68",
+          sub: "#2a8a68"
+        },
+        blue: {
+          bg: "#EAF4FC",
+          color: "#3b82f6",
+          sub: "#3b82f6"
+        }
+      };
+      const t = boxTones[toneName] || boxTones.neutral;
+      return /*#__PURE__*/React.createElement("div", {
+        style: {
+          background: t.bg,
+          borderRadius: "14px",
+          padding: "18px 18px",
+          minHeight: "118px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between"
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          fontSize: "11px",
+          fontWeight: "800",
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+          color: "#aaa"
+        }
+      }, label), /*#__PURE__*/React.createElement("div", {
+        style: {
+          fontSize: "34px",
+          fontWeight: "900",
+          color: t.color,
+          letterSpacing: "-0.05em",
+          lineHeight: 1
+        }
+      }, value), /*#__PURE__*/React.createElement("div", {
+        style: {
+          fontSize: "13px",
+          fontWeight: "700",
+          color: t.sub,
+          lineHeight: 1.4
+        }
+      }, sub));
+    };
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        background: "#fff",
+        border: "1.5px solid " + tone.border,
+        borderRadius: "20px",
+        padding: "24px 26px",
+        marginBottom: "26px",
+        boxShadow: "0 6px 18px rgba(0,0,0,0.03)"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "grid",
+        gridTemplateColumns: "1.35fr 0.9fr",
+        gap: "18px",
+        alignItems: "stretch",
+        marginBottom: "18px"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        minHeight: "170px"
+      }
+    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: "11px",
+        fontWeight: "800",
+        letterSpacing: "0.09em",
+        textTransform: "uppercase",
+        color: "#aaa",
+        marginBottom: "8px"
+      }
+    }, "\uD83D\uDCE6 Vue d'ensemble du pipeline"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        flexWrap: "wrap",
+        marginBottom: "10px"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: "30px",
+        fontWeight: "900",
+        color: "#111",
+        letterSpacing: "-0.04em"
+      }
+    }, statusLabel), /*#__PURE__*/React.createElement("div", {
+      style: {
+        background: tone.bg,
+        color: tone.accent,
+        borderRadius: "999px",
+        padding: "6px 12px",
+        fontSize: "12px",
+        fontWeight: "800",
+        textTransform: "uppercase",
+        letterSpacing: "0.06em"
+      }
+    }, "objectif hebdo : ", weeklyGoal, " contenus")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: "15px",
+        color: "#666",
+        lineHeight: 1.55,
+        maxWidth: "920px"
+      }
+    }, reaction))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        background: tone.bg,
+        borderRadius: "18px",
+        padding: "18px 20px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        minHeight: "170px"
+      }
+    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: "11px",
+        fontWeight: "800",
+        letterSpacing: "0.08em",
+        color: tone.accent,
+        textTransform: "uppercase",
+        marginBottom: "10px"
+      }
+    }, "Lien pipeline + calendrier"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: "18px",
+        fontWeight: "800",
+        color: "#111",
+        lineHeight: 1.45,
+        marginBottom: "10px"
+      }
+    }, plannedCount > 0 ? `Le planning de tournage est déjà alimenté.` : `Le calendrier n'alimente pas encore assez le pipeline.`)), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: "14px",
+        color: "#666",
+        lineHeight: 1.7
+      }
+    }, plannedCount > 0 ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", null, "Des tournages et collaborations sont d\xE9j\xE0 pr\xE9vus."), /*#__PURE__*/React.createElement("div", null, "Le prochain goulot n'est pas le planning, mais la post-production.")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", null, "Tr\xE8s peu de tournages sont planifi\xE9s pour alimenter la suite."), /*#__PURE__*/React.createElement("div", null, "La priorit\xE9 est de poser de vraies dates dans le calendrier."))))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "grid",
+        gridTemplateColumns: "repeat(6, minmax(0, 1fr))",
+        gap: "12px"
+      }
+    }, statBox("Programmées", upcomingScheduled.length, "déjà sécurisées", upcomingScheduled.length === 0 ? "red" : "green"), statBox("À valider", toValidate.length, "presque prêtes", toValidate.length > 0 ? "orange" : "neutral"), statBox("À enregistrer", voRecord.length, "VO à faire", voRecord.length > 0 ? "blue" : "neutral"), statBox("À écrire", voWrite.length, "scripts à finir", voWrite.length > 0 ? "blue" : "neutral"), statBox("À monter", toEdit.length, "post-prod en attente", toEdit.length > 0 ? "red" : "neutral"), statBox("À tourner", toShoot.length, `${datedToShoot.length} déjà datée${datedToShoot.length > 1 ? "s" : ""}`, "neutral")));
+  })(), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: isMobile ? "1fr" : "repeat(3, minmax(260px, 1fr))",
+      gap: "18px",
+      marginBottom: "30px"
+    }
+  }, statCard("Montées ce mois", mounted, "en post-prod avancée", false, () => onNavigate("focus", {
+    stages: ["to_edit", "vo_write", "vo_record", "to_validate", "scheduled"],
+    label: "Montées ce mois",
+    desc: "Vidéos en post-production avancée"
+  })), statCard("Publiées ce mois", publishedThisMonth, "déjà sorties", false, () => onNavigate("focus", {
+    stages: ["scheduled"],
+    label: "Publiées ce mois",
+    desc: "Vidéos programmées ce mois-ci"
+  })), statCard("Tournages planifiés", shootsPlanned, "avec une date fixée", false, () => onNavigate("focus", {
+    stages: ["to_shoot"],
+    label: "Tournages planifiés",
+    desc: "Vidéos avec une date de tournage fixée"
+  }))), (() => {
+    const todayStr = new Date().toISOString().split("T")[0];
+    const late = cards.filter(c => c.date && c.date < todayStr && ["to_shoot", "to_edit", "vo_write", "vo_record", "to_validate"].includes(c.stage));
+    const todayCards = cards.filter(c => c.date === todayStr && c.stage !== "scheduled");
+    const upcoming = cards.filter(c => c.date && c.date > todayStr && c.stage !== "scheduled").sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5);
+    const total = late.length + todayCards.length + upcoming.length;
+    if (total === 0) return null;
+    const todoRow = (card, urgency) => {
+      const stage = STAGES.find(s => s.id === card.stage);
+      const colors = {
+        late: {
+          bg: "#FEF2F2",
+          color: "#dc2626",
+          label: "En retard"
+        },
+        today: {
+          bg: "#FEF7E6",
+          color: "#c47a00",
+          label: "Aujourd'hui"
+        },
+        soon: {
+          bg: "#f7f7f5",
+          color: "#888",
+          label: ""
+        }
+      };
+      const u = colors[urgency];
+      return /*#__PURE__*/React.createElement("div", {
+        key: card.id,
+        onClick: () => onOpenCard(card),
+        style: {
+          display: "flex",
+          alignItems: "center",
+          gap: "12px",
+          padding: "11px 14px",
+          borderBottom: "1px solid #f5f5f5",
+          cursor: "pointer",
+          transition: "background 0.1s"
+        },
+        onMouseEnter: e => e.currentTarget.style.background = "#fafafa",
+        onMouseLeave: e => e.currentTarget.style.background = "transparent"
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          width: "18px",
+          height: "18px",
+          borderRadius: "5px",
+          border: "2px solid #ddd",
+          flexShrink: 0
+        }
+      }), /*#__PURE__*/React.createElement("div", {
+        style: {
+          flex: 1,
+          minWidth: 0
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          fontSize: "16px",
+          fontWeight: "700",
+          color: "#111",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis"
+        }
+      }, card.title), /*#__PURE__*/React.createElement("div", {
+        style: {
+          fontSize: "11px",
+          color: "#bbb",
+          marginTop: "2px",
+          display: "flex",
+          gap: "8px"
+        }
+      }, /*#__PURE__*/React.createElement("span", {
+        style: {
+          background: stage?.bg,
+          color: stage?.color,
+          borderRadius: "20px",
+          padding: "1px 7px",
+          fontWeight: "700"
+        }
+      }, stage?.emoji, " ", stage?.label), (card.assignees || []).length > 0 && /*#__PURE__*/React.createElement("span", null, card.assignees.join(', ')))), u.label && /*#__PURE__*/React.createElement("span", {
+        style: {
+          fontSize: "10px",
+          fontWeight: "800",
+          color: u.color,
+          background: u.bg,
+          padding: "3px 8px",
+          borderRadius: "6px",
+          whiteSpace: "nowrap"
+        }
+      }, urgency === "late" ? "⚠ " : "📅 ", u.label, card.date && urgency === "late" ? " · " + new Date(card.date + "T12:00:00").toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "short"
+      }) : ""), urgency === "soon" && card.date && /*#__PURE__*/React.createElement("span", {
+        style: {
+          fontSize: "13px",
+          color: "#bbb",
+          fontWeight: "600",
+          whiteSpace: "nowrap"
+        }
+      }, new Date(card.date + "T12:00:00").toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "short"
+      })));
+    };
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        background: "#fff",
+        border: "1.5px solid #ebebeb",
+        borderRadius: "14px",
+        marginBottom: "24px",
+        overflow: "hidden"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        padding: "16px 20px",
+        borderBottom: "1.5px solid #f0f0f0",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: "10px",
+        fontWeight: "800",
+        letterSpacing: "0.09em",
+        textTransform: "uppercase",
+        color: "#aaa"
+      }
+    }, "\xC0 faire"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        gap: "8px"
+      }
+    }, [["EN RETARD", late.length, "#dc2626", "#FEF2F2"], ["AUJOURD'HUI", todayCards.length, "#c47a00", "#FEF7E6"], ["À VENIR", upcoming.length, "#2a8a68", "#EAF7F1"]].map(_ref0 => {
+      let [label, count, color, bg] = _ref0;
+      return /*#__PURE__*/React.createElement("div", {
+        key: label,
+        style: {
+          background: count > 0 ? bg : "#f7f7f5",
+          borderRadius: "8px",
+          padding: "6px 12px",
+          textAlign: "center"
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          fontSize: "9px",
+          fontWeight: "800",
+          letterSpacing: "0.08em",
+          color: count > 0 ? color : "#ccc",
+          textTransform: "uppercase"
+        }
+      }, label), /*#__PURE__*/React.createElement("div", {
+        style: {
+          fontSize: "20px",
+          fontWeight: "900",
+          color: count > 0 ? color : "#ccc",
+          letterSpacing: "-0.03em",
+          lineHeight: 1.1
+        }
+      }, count));
+    }))), /*#__PURE__*/React.createElement("div", null, late.map(c => todoRow(c, "late")), todayCards.map(c => todoRow(c, "today")), upcoming.map(c => todoRow(c, "soon"))));
+  })(), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: "16px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#fff",
+      border: "1.5px solid #ebebeb",
+      borderRadius: "14px",
+      padding: "22px 24px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "10px",
+      fontWeight: "700",
+      letterSpacing: "0.09em",
+      textTransform: "uppercase",
+      color: "#aaa",
+      marginBottom: "14px"
+    }
+  }, "\uD83C\uDFAF Objectif tournage hebdo"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: "12px",
+      marginBottom: "16px"
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setWeeklyGoal(g => Math.max(1, g - 1)),
+    style: {
+      width: "32px",
+      height: "32px",
+      borderRadius: "8px",
+      border: "1.5px solid #e0e0e0",
+      background: "#fff",
+      fontSize: "16px",
+      cursor: "pointer",
+      fontWeight: "700"
+    }
+  }, "\u2212"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "center"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: isMobile ? "24px" : "36px",
+      fontWeight: "900",
+      color: "#111",
+      letterSpacing: "-0.04em",
+      lineHeight: 1
+    }
+  }, weeklyGoal), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "13px",
+      color: "#bbb",
+      fontWeight: "600"
+    }
+  }, "vid\xE9os / semaine")), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setWeeklyGoal(g => g + 1),
+    style: {
+      width: "32px",
+      height: "32px",
+      borderRadius: "8px",
+      border: "1.5px solid #e0e0e0",
+      background: "#fff",
+      fontSize: "16px",
+      cursor: "pointer",
+      fontWeight: "700"
+    }
+  }, "+")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#f7f7f5",
+      borderRadius: "8px",
+      padding: "10px 14px",
+      fontSize: "12px",
+      color: "#888",
+      lineHeight: "1.5"
+    }
+  }, "Pour tenir ce rythme, vous devez tourner ", /*#__PURE__*/React.createElement("strong", {
+    style: {
+      color: "#111"
+    }
+  }, weeklyGoal, " vid\xE9o", weeklyGoal > 1 ? "s" : ""), " chaque semaine ind\xE9pendamment des events externes.")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#fff",
+      border: "1.5px solid #ebebeb",
+      borderRadius: "14px",
+      padding: "22px 24px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "10px",
+      fontWeight: "700",
+      letterSpacing: "0.09em",
+      textTransform: "uppercase",
+      color: "#aaa",
+      marginBottom: "14px"
+    }
+  }, "\uD83D\uDC65 Charge \xE9quipe (en cours)"), byMember.length === 0 ? /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: "13px",
+      color: "#ccc"
+    }
+  }, "Aucune t\xE2che assign\xE9e.") : /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "10px"
+    }
+  }, byMember.map(m => /*#__PURE__*/React.createElement("div", {
+    key: m.name
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      marginBottom: "4px"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "12px",
+      fontWeight: "700",
+      color: "#111"
+    }
+  }, m.name), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "18px",
+      color: "#bbb",
+      fontWeight: "600"
+    }
+  }, m.count, " t\xE2che", m.count > 1 ? "s" : "")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: "6px",
+      background: "#f0f0f0",
+      borderRadius: "4px",
+      overflow: "hidden"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: "100%",
+      width: `${m.count / maxCount * 100}%`,
+      background: "#111",
+      borderRadius: "4px",
+      transition: "width 0.3s ease"
+    }
+  }))))))));
+}
+function Pipeline(_ref1) {
+  let {
+    cards,
+    setCards,
+    archived,
+    setArchived,
+    stageFilter,
+    onClearFilter,
+    initialOpenCard,
+    onClearOpenCard,
+    onAddEvent,
+    isMobile,
+    onUpdateCard,
+    onAddCard,
+    onDeleteCard,
+    onArchiveCard,
+    onAdvanceCard,
+    onRewindCard
+  } = _ref1;
+  const [selected, setSelected] = useState(initialOpenCard || null);
+  // Clear the dashboard-passed card after using it once
+  useEffect(() => {
+    if (initialOpenCard) onClearOpenCard?.();
+  }, []);
+  const [adding, setAdding] = useState(null);
+  const [dragCard, setDragCard] = useState(null);
+  const [dragOver, setDragOver] = useState(null);
+  const [filterAssignee, setFilterAssignee] = useState("Tous");
+  const [filterPlatform, setFilterPlatform] = useState("tous");
+  const [filterPriority, setFilterPriority] = useState("tous");
+  const advance = c => {
+    if (onAdvanceCard) {
+      onAdvanceCard(c);
+      return;
+    }
+    const si = STAGES.findIndex(s => s.id === c.stage);
+    if (si < STAGES.length - 1) {
+      const nextStage = STAGES[si + 1].id;
+      const defaults = STAGE_DEFAULTS[nextStage] || [];
+      const assignees = defaults.length >= 1 ? defaults : c.assignees || [];
+      setCards(p => p.map(x => x.id === c.id ? {
+        ...c,
+        stage: nextStage,
+        assignees
+      } : x));
+    }
+  };
+  const rewind = c => {
+    if (onRewindCard) {
+      onRewindCard(c);
+      return;
+    }
+    const si = STAGES.findIndex(s => s.id === c.stage);
+    if (si > 0) setCards(p => p.map(x => x.id === c.id ? {
+      ...c,
+      stage: STAGES[si - 1].id
+    } : x));
+  };
+  const save = c => {
+    if (onUpdateCard) {
+      onUpdateCard(c);
+      return;
+    }
+    setCards(p => p.map(x => x.id === c.id ? c : x));
+  };
+  const del = id => {
+    if (onDeleteCard) {
+      onDeleteCard(id);
+      return;
+    }
+    setCards(p => p.filter(x => x.id !== id));
+  };
+  const archive = c => {
+    if (onArchiveCard) {
+      onArchiveCard(c);
+      return;
+    }
+    setCards(p => p.filter(x => x.id !== c.id));
+    setArchived(p => [{
+      ...c,
+      archivedAt: new Date().toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      })
+    }, ...p]);
+  };
+  const addCard = (stageId, title) => {
+    if (onAddCard) {
+      onAddCard(stageId, title);
+      return;
+    }
+    nextId++;
+    const defaults = STAGE_DEFAULTS[stageId] || [];
+    const assignees = defaults.length >= 1 ? defaults : [];
+    setCards(p => [...p, {
+      id: nextId,
+      title,
+      stage: stageId,
+      assignees,
+      date: "",
+      time: "",
+      caption: "",
+      recipe: "",
+      link: "",
+      refs: "",
+      shopping: "",
+      platform: "instagram",
+      priority: "normal",
+      deadlines: {},
+      blocked: false,
+      blockReason: "",
+      comments: ""
+    }]);
+  };
+  const visible = cards.filter(c => filterAssignee === "Tous" || (c.assignees || []).includes(filterAssignee)).filter(c => filterPlatform === "tous" || c.platform === filterPlatform).filter(c => filterPriority === "tous" || c.priority === filterPriority);
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      height: "100%",
+      overflow: "hidden"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: isMobile ? "12px 10px" : "16px 20px",
+      borderBottom: "1.5px solid #ebebeb",
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      background: "#fff",
+      flexWrap: "wrap"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "13px",
+      fontWeight: "800",
+      color: "#111",
+      letterSpacing: "-0.01em",
+      marginRight: "8px"
+    }
+  }, "Pipeline"), /*#__PURE__*/React.createElement("select", {
+    value: filterAssignee,
+    onChange: e => setFilterAssignee(e.target.value),
+    style: {
+      background: "#fff",
+      border: "1.5px solid #e0e0e0",
+      color: "#111",
+      padding: "5px 10px",
+      borderRadius: "8px",
+      cursor: "pointer",
+      fontSize: "11px",
+      fontWeight: "700",
+      fontFamily: "'DM Sans', sans-serif",
+      outline: "none"
+    }
+  }, ["Tous", ...ASSIGNEES.filter(a => a !== "—")].map(a => /*#__PURE__*/React.createElement("option", {
+    key: a
+  }, a))), /*#__PURE__*/React.createElement("select", {
+    value: filterPlatform,
+    onChange: e => setFilterPlatform(e.target.value),
+    style: {
+      background: "#fff",
+      border: "1.5px solid #e0e0e0",
+      color: "#111",
+      padding: "5px 10px",
+      borderRadius: "8px",
+      cursor: "pointer",
+      fontSize: "11px",
+      fontWeight: "700",
+      fontFamily: "'DM Sans', sans-serif",
+      outline: "none"
+    }
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "tous"
+  }, "Toutes plateformes"), PLATFORMS.map(p => /*#__PURE__*/React.createElement("option", {
+    key: p.id,
+    value: p.id
+  }, p.emoji, " ", p.label))), /*#__PURE__*/React.createElement("select", {
+    value: filterPriority,
+    onChange: e => setFilterPriority(e.target.value),
+    style: {
+      background: "#fff",
+      border: "1.5px solid #e0e0e0",
+      color: "#111",
+      padding: "5px 10px",
+      borderRadius: "8px",
+      cursor: "pointer",
+      fontSize: "11px",
+      fontWeight: "700",
+      fontFamily: "'DM Sans', sans-serif",
+      outline: "none"
+    }
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "tous"
+  }, "Toutes priorit\xE9s"), /*#__PURE__*/React.createElement("option", {
+    value: "urgent"
+  }, "\uD83D\uDD34 Urgent seulement")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }), /*#__PURE__*/React.createElement(Btn, {
+    variant: "outline",
+    onClick: onAddEvent
+  }, "+ \xC9v\xE9nement"), stageFilter && /*#__PURE__*/React.createElement("button", {
+    onClick: onClearFilter,
+    style: {
+      fontSize: "11px",
+      fontWeight: "700",
+      color: "#888",
+      background: "#f0f0f0",
+      border: "none",
+      borderRadius: "20px",
+      padding: "4px 12px",
+      cursor: "pointer",
+      fontFamily: "'DM Sans', sans-serif"
+    }
+  }, "Filtre actif \u2715"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "13px",
+      color: "#bbb",
+      fontWeight: "600"
+    }
+  }, cards.length, " vid\xE9os au total")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      overflowX: "auto",
+      flex: 1,
+      padding: "18px 12px 40px"
+    }
+  }, STAGES.map((stage, si) => {
+    const stageCards = visible.filter(c => c.stage === stage.id).sort((a, b) => {
+      if (a.priority === "urgent" && b.priority !== "urgent") return -1;
+      if (b.priority === "urgent" && a.priority !== "urgent") return 1;
+      if (a.blocked && !b.blocked) return -1;
+      if (b.blocked && !a.blocked) return 1;
+      return 0;
+    });
+    const isOver = dragOver === stage.id;
+    return /*#__PURE__*/React.createElement("div", {
+      key: stage.id,
+      onDragOver: e => {
+        e.preventDefault();
+        setDragOver(stage.id);
+      },
+      onDragLeave: () => setDragOver(null),
+      onDrop: () => {
+        if (dragCard && dragCard.stage !== stage.id) {
+          const updated = {
+            ...dragCard,
+            stage: stage.id
+          };
+          if (onUpdateCard) {
+            onUpdateCard(updated);
+          } else {
+            setCards(p => p.map(c => c.id === dragCard.id ? updated : c));
+          }
+        }
+        setDragCard(null);
+        setDragOver(null);
+      },
+      style: {
+        minWidth: "320px",
+        width: "320px",
+        flexShrink: 0,
+        padding: "0 10px",
+        borderRight: si < STAGES.length - 1 ? "1.5px solid #ebebeb" : "none",
+        background: isOver ? stage.bg : "transparent",
+        transition: "background 0.15s"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginBottom: "12px"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        height: "3px",
+        background: stage.color,
+        borderRadius: "2px",
+        marginBottom: "10px",
+        opacity: stageFilter ? stageFilter.includes(stage.id) ? 1 : 0.2 : 0.6
+      }
+    }), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: "5px"
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: "12px"
+      }
+    }, stage.emoji), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: "10px",
+        fontWeight: "800",
+        color: "#111",
+        textTransform: "uppercase",
+        letterSpacing: "0.07em"
+      }
+    }, stage.label)), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: "10px",
+        fontWeight: "800",
+        background: stage.bg,
+        color: stage.color,
+        padding: "1px 7px",
+        borderRadius: "20px"
+      }
+    }, stageCards.length))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "6px"
+      }
+    }, stageCards.map(card => /*#__PURE__*/React.createElement(KCard, {
+      key: card.id,
+      card: card,
+      onClick: () => setSelected(card),
+      onDragStart: () => setDragCard(card)
+    }))), /*#__PURE__*/React.createElement("button", {
+      onClick: () => setAdding(stage.id),
+      style: {
+        width: "100%",
+        marginTop: "8px",
+        padding: "8px",
+        background: "transparent",
+        border: "1.5px dashed #ddd",
+        borderRadius: "10px",
+        color: "#ccc",
+        cursor: "pointer",
+        fontSize: "16px",
+        transition: "all 0.12s"
+      },
+      onMouseEnter: e => {
+        e.currentTarget.style.borderColor = stage.color;
+        e.currentTarget.style.color = stage.color;
+      },
+      onMouseLeave: e => {
+        e.currentTarget.style.borderColor = "#ddd";
+        e.currentTarget.style.color = "#ccc";
+      }
+    }, "+"));
+  })), selected && /*#__PURE__*/React.createElement(CardModal, {
+    card: selected,
+    isMobile: isMobile,
+    onClose: () => setSelected(null),
+    onSave: c => {
+      save(c);
+      setSelected(null);
+    },
+    onDelete: id => {
+      del(id);
+      setSelected(null);
+    },
+    onAdvance: c => {
+      advance(c);
+      setSelected(null);
+    },
+    onRewind: c => {
+      rewind(c);
+      setSelected(null);
+    },
+    onArchive: c => {
+      archive(c);
+      setSelected(null);
+    }
+  }), adding && /*#__PURE__*/React.createElement(AddModal, {
+    stageId: adding,
+    onClose: () => setAdding(null),
+    onAdd: title => addCard(adding, title)
+  }));
+}
+function CalendarView(_ref10) {
+  let {
+    cards,
+    events,
+    setEvents,
+    isMobile,
+    onAddEvent
+  } = _ref10;
+  const today = new Date();
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
+  const [currentYear, setCurrentYear] = useState(today.getFullYear());
+  const [showAddEvent, setShowAddEvent] = useState(null); // date string
+  const [newEventTitle, setNewEventTitle] = useState("");
+  const [newEventType, setNewEventType] = useState("internal");
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  const startOffset = (firstDay + 6) % 7; // Monday first
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const monthName = new Date(currentYear, currentMonth).toLocaleDateString("fr-FR", {
+    month: "long",
+    year: "numeric"
+  });
+  const itemsOnDay = dateStr => {
+    const cardItems = cards.filter(c => c.date === dateStr);
+    const eventItems = events.filter(e => e.date === dateStr);
+    return {
+      cards: cardItems,
+      events: eventItems
+    };
+  };
+  const addEvent = async dateStr => {
+    if (!newEventTitle.trim()) return;
+    const newEv = {
+      id: "e" + Date.now(),
+      title: newEventTitle.trim(),
+      date: dateStr,
+      type: newEventType,
+      assignee: "Justine"
+    };
+    if (onAddEvent) {
+      await onAddEvent(newEv);
+    } else {
+      setEvents(p => [...p, newEv]);
+    }
+    setNewEventTitle("");
+    setShowAddEvent(null);
+  };
+  const cells = [];
+  for (let i = 0; i < startOffset; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "28px 36px",
+      maxWidth: "1120px",
+      width: "100%"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: "20px",
+      gap: "12px"
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontSize: "24px",
+      fontWeight: "900",
+      color: "#111",
+      letterSpacing: "-0.03em",
+      margin: 0,
+      textTransform: "capitalize"
+    }
+  }, monthName), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: "12px",
+      color: "#bbb",
+      margin: "3px 0 0",
+      fontWeight: "600"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "4px",
+      marginRight: "12px"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: "8px",
+      height: "8px",
+      borderRadius: "2px",
+      background: "#7DC9A8",
+      display: "inline-block"
+    }
+  }), " Cr\xE9neau interne"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "4px"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: "8px",
+      height: "8px",
+      borderRadius: "2px",
+      background: "#F4A07A",
+      display: "inline-block"
+    }
+  }), " Event externe"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: "6px",
+      alignItems: "center"
+    }
+  }, /*#__PURE__*/React.createElement(Btn, {
+    variant: "outline",
+    onClick: () => setShowAddEvent(new Date(currentYear, currentMonth, 1).toISOString().split("T")[0])
+  }, "+ \xC9v\xE9nement"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => {
+      if (currentMonth === 0) {
+        setCurrentMonth(11);
+        setCurrentYear(y => y - 1);
+      } else setCurrentMonth(m => m - 1);
+    },
+    style: {
+      background: "#fff",
+      border: "1.5px solid #e0e0e0",
+      borderRadius: "8px",
+      padding: "6px 12px",
+      cursor: "pointer",
+      fontSize: "14px",
+      fontWeight: "700"
+    }
+  }, "\u2190"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => {
+      if (currentMonth === 11) {
+        setCurrentMonth(0);
+        setCurrentYear(y => y + 1);
+      } else setCurrentMonth(m => m + 1);
+    },
+    style: {
+      background: "#fff",
+      border: "1.5px solid #e0e0e0",
+      borderRadius: "8px",
+      padding: "6px 12px",
+      cursor: "pointer",
+      fontSize: "14px",
+      fontWeight: "700"
+    }
+  }, "\u2192"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "repeat(7, 1fr)",
+      gap: "4px",
+      marginBottom: "4px"
+    }
+  }, ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map(d => /*#__PURE__*/React.createElement("div", {
+    key: d,
+    style: {
+      textAlign: "center",
+      fontSize: "10px",
+      fontWeight: "800",
+      color: "#bbb",
+      letterSpacing: "0.08em",
+      padding: "6px 0",
+      textTransform: "uppercase"
+    }
+  }, d))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "repeat(7, 1fr)",
+      gap: "4px"
+    }
+  }, cells.map((day, i) => {
+    if (!day) return /*#__PURE__*/React.createElement("div", {
+      key: i
+    });
+    const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    const {
+      cards: dayCards,
+      events: dayEvents
+    } = itemsOnDay(dateStr);
+    const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
+    const hasInternal = dayEvents.some(e => e.type === "internal");
+    const hasExternal = dayEvents.some(e => e.type === "external");
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      onClick: () => setShowAddEvent(dateStr),
+      style: {
+        minHeight: "80px",
+        background: "#fff",
+        border: "1.5px solid " + (isToday ? "#111" : "#ebebeb"),
+        borderRadius: "10px",
+        padding: "8px",
+        cursor: "pointer",
+        transition: "all 0.12s",
+        position: "relative"
+      },
+      onMouseEnter: e => !isToday && (e.currentTarget.style.borderColor = "#ccc"),
+      onMouseLeave: e => !isToday && (e.currentTarget.style.borderColor = "#ebebeb")
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: "12px",
+        fontWeight: isToday ? "900" : "700",
+        color: isToday ? "#fff" : "#111",
+        background: isToday ? "#111" : "transparent",
+        borderRadius: "6px",
+        width: "28px",
+        height: "28px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: "4px"
+      }
+    }, day), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "2px"
+      }
+    }, dayEvents.map(ev => /*#__PURE__*/React.createElement("div", {
+      key: ev.id,
+      style: {
+        fontSize: "9px",
+        fontWeight: "700",
+        background: ev.type === "internal" ? "#EAF7F1" : "#FEF0E8",
+        color: ev.type === "internal" ? "#2a8a68" : "#c45a1e",
+        borderRadius: "4px",
+        padding: "2px 5px",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis"
+      }
+    }, ev.type === "internal" ? "📷" : "🎬", " ", ev.title)), dayCards.slice(0, 2).map(c => {
+      const st = STAGES.find(s => s.id === c.stage);
+      return /*#__PURE__*/React.createElement("div", {
+        key: c.id,
+        style: {
+          fontSize: "9px",
+          fontWeight: "600",
+          background: st?.bg || "#f0f0f0",
+          color: st?.color || "#888",
+          borderRadius: "4px",
+          padding: "2px 5px",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis"
+        }
+      }, st?.emoji, " ", c.title);
+    }), dayCards.length > 2 && /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: "9px",
+        color: "#bbb",
+        fontWeight: "600"
+      }
+    }, "+", dayCards.length - 2)));
+  })), showAddEvent && /*#__PURE__*/React.createElement("div", {
+    onClick: e => e.target === e.currentTarget && setShowAddEvent(null),
+    style: {
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.3)",
+      zIndex: 1000,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      backdropFilter: "blur(4px)"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#fff",
+      borderRadius: "16px",
+      padding: "24px",
+      width: "360px",
+      boxShadow: "0 32px 80px rgba(0,0,0,0.12)",
+      fontFamily: "'DM Sans', sans-serif"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "13px",
+      color: "#999",
+      fontWeight: "600",
+      marginBottom: "14px"
+    }
+  }, "Ajouter un \xE9v\xE9nement \xB7 ", /*#__PURE__*/React.createElement("strong", {
+    style: {
+      color: "#111"
+    }
+  }, new Date(showAddEvent + "T12:00:00").toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long"
+  }))), /*#__PURE__*/React.createElement("input", {
+    value: newEventTitle,
+    onChange: e => setNewEventTitle(e.target.value),
+    onKeyDown: e => {
+      if (e.key === "Enter") addEvent(showAddEvent);
+      if (e.key === "Escape") setShowAddEvent(null);
+    },
+    placeholder: "Nom de l'\xE9v\xE9nement...",
+    autoFocus: true,
+    style: {
+      ...SI,
+      marginBottom: "12px"
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: "8px",
+      marginBottom: "14px"
+    }
+  }, [["internal", "📷 Créneau interne", "#EAF7F1", "#2a8a68"], ["external", "🎬 Event externe", "#FEF0E8", "#c45a1e"]].map(_ref11 => {
+    let [type, label, bg, color] = _ref11;
+    return /*#__PURE__*/React.createElement("button", {
+      key: type,
+      onClick: () => setNewEventType(type),
+      style: {
+        flex: 1,
+        padding: "8px",
+        borderRadius: "8px",
+        border: "1.5px solid " + (newEventType === type ? color : "#e0e0e0"),
+        background: newEventType === type ? bg : "#fff",
+        color: newEventType === type ? color : "#888",
+        fontSize: "11px",
+        fontWeight: "700",
+        cursor: "pointer",
+        fontFamily: "'DM Sans', sans-serif"
+      }
+    }, label);
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: "8px",
+      justifyContent: "flex-end"
+    }
+  }, /*#__PURE__*/React.createElement(Btn, {
+    variant: "ghost",
+    onClick: () => setShowAddEvent(null)
+  }, "Annuler"), /*#__PURE__*/React.createElement(Btn, {
+    variant: "primary",
+    onClick: () => addEvent(showAddEvent)
+  }, "Ajouter")))));
+}
+function Archives(_ref12) {
+  let {
+    archived,
+    setArchived,
+    setCards,
+    onUnarchive,
+    isMobile
+  } = _ref12;
+  const unarchive = c => {
+    if (onUnarchive) {
+      onUnarchive(c);
+      return;
+    }
+    setArchived(p => p.filter(x => x.id !== c.id));
+    setCards(p => [...p, {
+      ...c,
+      archivedAt: undefined
+    }]);
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "44px 52px",
+      maxWidth: "1280px",
+      width: "100%"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: "24px"
+    }
+  }, /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontSize: "26px",
+      fontWeight: "900",
+      color: "#111",
+      letterSpacing: "-0.04em",
+      margin: "0 0 4px"
+    }
+  }, "Archives"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: "#bbb",
+      fontSize: "13px",
+      margin: 0,
+      fontWeight: "600"
+    }
+  }, "Vid\xE9os publi\xE9es \u2014 recettes et captions conserv\xE9es")), archived.length === 0 ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "center",
+      padding: "80px 0",
+      color: "#ccc"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: isMobile ? "28px" : "40px",
+      marginBottom: "12px"
+    }
+  }, "\uD83D\uDCE6"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: "14px",
+      fontWeight: "600"
+    }
+  }, "Aucune vid\xE9o archiv\xE9e.", /*#__PURE__*/React.createElement("br", null), "Archive une vid\xE9o depuis la colonne \uD83D\uDE80 Programm\xE9.")) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "10px"
+    }
+  }, archived.map(card => /*#__PURE__*/React.createElement("div", {
+    key: card.id,
+    style: {
+      background: "#fff",
+      border: "1.5px solid #ebebeb",
+      borderRadius: "12px",
+      padding: "18px 20px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: "12px",
+      marginBottom: card.recipe || card.caption ? "12px" : 0
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "15px",
+      fontWeight: "800",
+      color: "#111",
+      letterSpacing: "-0.02em",
+      marginBottom: "3px"
+    }
+  }, card.title), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "13px",
+      color: "#bbb",
+      fontWeight: "600"
+    }
+  }, "Archiv\xE9 le ", card.archivedAt, card.assignee && card.assignee !== "—" ? " · " + card.assignee : "")), /*#__PURE__*/React.createElement("button", {
+    onClick: () => unarchive(card),
+    style: {
+      background: "#f5f5f5",
+      border: "none",
+      color: "#666",
+      padding: "7px 13px",
+      borderRadius: "8px",
+      cursor: "pointer",
+      fontSize: "11px",
+      fontWeight: "800",
+      fontFamily: "'DM Sans', sans-serif",
+      whiteSpace: "nowrap",
+      flexShrink: 0
+    }
+  }, "\u21A9 Restaurer")), card.shopping && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#fafaf8",
+      border: "1.5px solid #ebebeb",
+      borderRadius: "8px",
+      padding: "12px 14px",
+      marginBottom: "8px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "10px",
+      fontWeight: "800",
+      color: "#c47a00",
+      textTransform: "uppercase",
+      letterSpacing: "0.09em",
+      marginBottom: "6px"
+    }
+  }, "\uD83D\uDED2 Liste de courses"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "13px",
+      color: "#444",
+      lineHeight: "1.6",
+      whiteSpace: "pre-wrap"
+    }
+  }, card.shopping)), card.recipe && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#fafaf8",
+      border: "1.5px solid #ebebeb",
+      borderRadius: "8px",
+      padding: "12px 14px",
+      marginBottom: "8px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "10px",
+      fontWeight: "800",
+      color: "#2a8a68",
+      textTransform: "uppercase",
+      letterSpacing: "0.09em",
+      marginBottom: "6px"
+    }
+  }, "\uD83C\uDF7D\uFE0F Fiche recette"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "13px",
+      color: "#444",
+      lineHeight: "1.6",
+      whiteSpace: "pre-wrap"
+    }
+  }, card.recipe)), card.caption && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#fafaf8",
+      border: "1.5px solid #ebebeb",
+      borderRadius: "8px",
+      padding: "12px 14px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "10px",
+      fontWeight: "800",
+      color: "#5a3fa8",
+      textTransform: "uppercase",
+      letterSpacing: "0.09em",
+      marginBottom: "6px"
+    }
+  }, "\u270D\uFE0F Caption"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "13px",
+      color: "#444",
+      lineHeight: "1.6",
+      whiteSpace: "pre-wrap"
+    }
+  }, card.caption)), card.link && /*#__PURE__*/React.createElement("a", {
+    href: card.link,
+    target: "_blank",
+    rel: "noreferrer",
+    style: {
+      display: "inline-block",
+      marginTop: "10px",
+      fontSize: "12px",
+      color: "#111",
+      fontWeight: "700",
+      textDecoration: "underline"
+    }
+  }, "\u2197 T\xE9l\xE9charger la vid\xE9o")))));
+}
+
+/* ─────────────── APP PRINCIPALE ─────────────── */
+
+const NAV = [{
+  id: "dashboard",
+  label: "Tableau de bord",
+  emoji: "🏠"
+}, {
+  id: "pipeline",
+  label: "Pipeline",
+  emoji: "🗂"
+}, {
+  id: "calendar",
+  label: "Calendrier",
+  emoji: "📅"
+}, {
+  id: "archives",
+  label: "Archives",
+  emoji: "📦"
+}];
+const USERS = [{
+  id: "justine",
+  name: "Justine",
+  avatar: "J",
+  color: "#F4A07A",
+  bg: "#FEF0E8",
+  role: "La Cheffe"
+}, {
+  id: "caio",
+  name: "Caio",
+  avatar: "C",
+  color: "#85C0E8",
+  bg: "#EAF4FC",
+  role: "Le DA"
+}, {
+  id: "camille",
+  name: "Camille",
+  avatar: "Ca",
+  color: "#C9B8F0",
+  bg: "#F3EFFD",
+  role: "La Plume"
+}, {
+  id: "angemaria",
+  name: "Ange-Maria",
+  avatar: "A",
+  color: "#7DC9A8",
+  bg: "#EAF7F1",
+  role: "La Chercheuse d'or"
+}, {
+  id: "eleonore",
+  name: "Éléonore",
+  avatar: "É",
+  color: "#F0A0C0",
+  bg: "#FDE8F2",
+  role: "La Padawan"
+}, {
+  id: "greg",
+  name: "Greg",
+  avatar: "G",
+  color: "#F5C76A",
+  bg: "#FEF7E6",
+  role: "Le Pickpocket"
+}];
+function getSmartMessage(user, cards, weeklyGoal) {
+  const today = new Date();
+  const todayStr = today.toISOString().split("T")[0];
+  const dayOfWeek = today.getDay(); // 0=dim, 1=lun...5=ven, 6=sam
+
+  const stock = cards.filter(c => ["to_validate", "scheduled"].includes(c.stage)).length;
+  const lateCards = cards.filter(c => c.date && c.date < todayStr && ["to_shoot", "to_edit", "vo_write", "vo_record", "to_validate"].includes(c.stage));
+  const todayCards = cards.filter(c => c.date === todayStr && c.stage !== "scheduled");
+  const ideasCount = cards.filter(c => c.stage === "idea").length;
+  const toEditCount = cards.filter(c => c.stage === "to_edit").length;
+  const voWriteCount = cards.filter(c => c.stage === "vo_write" && (c.assignees || []).includes("Camille")).length;
+  const voRecordCount = cards.filter(c => c.stage === "vo_record" && (c.assignees || []).includes("Justine")).length;
+  const shootsThisWeek = cards.filter(c => c.stage === "to_shoot" && c.date && c.date >= todayStr).length;
+  const days = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
+  const day = days[dayOfWeek];
+
+  // Messages by role + context
+  if (user.id === "justine") {
+    if (dayOfWeek === 1) {
+      // Lundi
+      if (stock < 3) return `Nouvelle semaine, ${user.name}. Le stock est à ${stock} vidéo${stock > 1 ? "s" : ""} — c'est serré. Ton objectif cette semaine : tourner au moins ${weeklyGoal} vidéo${weeklyGoal > 1 ? "s" : ""} internes, peu importe les events externes.`;
+      return `Bonne semaine, ${user.name}. ${stock} vidéos en stock, vous êtes à l'aise. Commence par faire le point sur les ${toEditCount > 0 ? toEditCount + " vidéos au montage" : "priorités de la semaine"}.`;
+    }
+    if (dayOfWeek === 5) {
+      // Vendredi
+      if (stock < 3) return `C'est vendredi, ${user.name}. Stock à ${stock} — avant de fermer la semaine, il faut brainstormer les prochains tournages. Lundi tu repars avec un plan.`;
+      if (voRecordCount > 0) return `Vendredi, ${user.name}. Il te reste ${voRecordCount} voix off à enregistrer. Si c'est fait aujourd'hui, Camille peut boucler les captions ce week-end.`;
+      return `Belle fin de semaine, ${user.name}. ${stock} vidéos prêtes en stock — le rythme est bon. Pense à valider les prochaines idées pour lundi.`;
+    }
+    if (lateCards.length > 0) return `${user.name}, tu as ${lateCards.length} vidéo${lateCards.length > 1 ? "s" : ""} en retard sur le planning. C'est la priorité du jour — avant tout le reste.`;
+    if (todayCards.length > 0) return `${user.name}, ${todayCards.length} vidéo${todayCards.length > 1 ? "s planifiées" : " planifiée"} aujourd'hui. C'est parti.`;
+    if (voRecordCount > 0) return `${user.name}, ${voRecordCount} voix off${voRecordCount > 1 ? "" : ""} t'attendent. Camille ne peut pas avancer sans toi sur ces fichiers.`;
+    return `Bonjour ${user.name}. ${stock < 3 ? "Stock bas — planifie un tournage interne dès que possible." : `${stock} vidéos en réserve, le rythme tient.`}`;
+  }
+  if (user.id === "caio") {
+    if (dayOfWeek === 1) return `Lundi, ${user.name}. ${toEditCount > 0 ? toEditCount + " vidéos au montage t'attendent." : "Pipeline tranquille pour l'instant."} ${stock < 3 ? "Stock bas — prévois des tournages cette semaine." : ""}`;
+    if (dayOfWeek === 5) return `Vendredi, ${user.name}. Bilan de semaine : ${stock} vidéos en stock, ${toEditCount} au montage. ${lateCards.length > 0 ? lateCards.length + " vidéo(s) en retard à traiter." : "La semaine est propre."}`;
+    if (toEditCount > 0) return `${user.name}, ${toEditCount} vidéo${toEditCount > 1 ? "s" : ""} au montage. ${lateCards.length > 0 ? lateCards.length + " sont en retard — commence par là." : "Priorise selon les dates de publication."}`;
+    if (lateCards.length > 0) return `${user.name}, ${lateCards.length} vidéo${lateCards.length > 1 ? "s en retard" : " en retard"}. Priorité absolue aujourd'hui.`;
+    return `Bonjour ${user.name}. ${stock >= 3 ? "Le stock est bon — " + stock + " vidéos prêtes." : "Stock à " + stock + " — tournages à planifier."} ${shootsThisWeek > 0 ? shootsThisWeek + " tournage(s) à venir cette semaine." : ""}`;
+  }
+  if (user.id === "camille") {
+    if (voWriteCount > 0) return `${user.name}, ${voWriteCount} caption${voWriteCount > 1 ? "s" : ""} à écrire. Les vidéos sont montées et t'attendent — sans toi elles ne peuvent pas être publiées.`;
+    if (dayOfWeek === 5) return `Vendredi, ${user.name}. ${voWriteCount === 0 ? "Toutes tes captions sont à jour — bien joué." : voWriteCount + " captions encore en attente."} Bonne fin de semaine.`;
+    return `Bonjour ${user.name}. ${voWriteCount === 0 ? "Pas de caption urgente pour l'instant — tu peux anticiper les prochaines." : voWriteCount + " caption(s) en attente."}`;
+  }
+
+  // Default for other team members
+  if (lateCards.length > 0) return `Bonjour ${user.name}. ${lateCards.length} tâche${lateCards.length > 1 ? "s" : ""} en retard dans le pipeline.`;
+  return `Bonjour ${user.name}. ${stock} vidéo${stock > 1 ? "s" : ""} en stock aujourd'hui.`;
+}
+
+/* ─────────────── ÉCRAN DE CONNEXION ─────────────── */
+
+function LoginScreen(_ref13) {
+  let {
+    onLogin,
+    isMobile
+  } = _ref13;
+  const [hovered, setHovered] = useState(null);
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      minHeight: "100vh",
+      background: "#f7f7f5",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      fontFamily: "'DM Sans', sans-serif",
+      padding: isMobile ? "24px 16px" : "48px 40px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "baseline",
+      gap: "8px",
+      marginBottom: isMobile ? "28px" : "36px"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: isMobile ? "20px" : "24px",
+      fontWeight: "900",
+      color: "#111",
+      fontFamily: "'Playfair Display', serif",
+      letterSpacing: "-0.02em"
+    }
+  }, "JUST IN"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "10px",
+      fontWeight: "700",
+      color: "#bbb",
+      letterSpacing: "0.3em",
+      textTransform: "uppercase"
+    }
+  }, "LOOK")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: isMobile ? "24px" : "32px",
+      textAlign: "center"
+    }
+  }, /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontSize: isMobile ? "22px" : "28px",
+      fontWeight: "900",
+      color: "#111",
+      letterSpacing: "-0.03em",
+      margin: "0 0 6px"
+    }
+  }, "Qui \xEAtes-vous ?"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: "13px",
+      color: "#bbb",
+      margin: 0,
+      fontWeight: "500"
+    }
+  }, "S\xE9lectionnez votre profil pour continuer")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: isMobile ? "10px" : "12px",
+      flexWrap: "wrap",
+      justifyContent: "center",
+      maxWidth: "720px"
+    }
+  }, USERS.map(user => /*#__PURE__*/React.createElement("div", {
+    key: user.id,
+    onClick: () => onLogin(user),
+    onMouseEnter: () => setHovered(user.id),
+    onMouseLeave: () => setHovered(null),
+    style: {
+      background: hovered === user.id ? user.bg : "#fff",
+      border: "1.5px solid " + (hovered === user.id ? user.color : "#ebebeb"),
+      borderRadius: "14px",
+      padding: isMobile ? "14px 12px" : "16px 20px",
+      cursor: "pointer",
+      transition: "all 0.15s ease",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: "8px",
+      width: isMobile ? "calc(50% - 5px)" : "160px",
+      boxShadow: hovered === user.id ? "0 4px 14px rgba(0,0,0,0.07)" : "0 1px 3px rgba(0,0,0,0.04)",
+      transform: hovered === user.id ? "translateY(-2px)" : "none"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: "48px",
+      height: "48px",
+      borderRadius: "50%",
+      background: user.bg,
+      border: "1.5px solid " + user.color,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "16px",
+      fontWeight: "900",
+      color: user.color
+    }
+  }, user.avatar)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "center"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "14px",
+      fontWeight: "800",
+      color: "#111",
+      letterSpacing: "-0.01em"
+    }
+  }, user.name), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "11px",
+      fontWeight: "600",
+      color: "#bbb",
+      marginTop: "2px"
+    }
+  }, user.role))))));
+}
+
+/* ─────────────── SUPABASE ─────────────── */
+
+const SUPABASE_URL = "https://ziahoemzcxhoosdrntlm.supabase.co";
+const SUPABASE_KEY = "sb_publishable_-NchszqzNVnpa02Gat3fxw_X1pmyzeY";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ─────────────── LOGIN SCREEN SUPABASE ─────────────── */
+
+function AuthScreen(_ref14) {
+  let {
+    onAuth,
+    isMobile
+  } = _ref14;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) return;
+    setLoading(true);
+    setError("");
+    const {
+      data,
+      error: err
+    } = await sb.auth.signInWithPassword({
+      email: email.trim(),
+      password
+    });
+    setLoading(false);
+    if (err) {
+      setError(err.message);
+      return;
+    }
+    onAuth(data.session);
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      minHeight: "100vh",
+      background: "#f7f7f5",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      fontFamily: "'DM Sans', sans-serif",
+      padding: "40px 20px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "baseline",
+      gap: "8px",
+      marginBottom: "40px"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "24px",
+      fontWeight: "900",
+      color: "#111",
+      fontFamily: "'Playfair Display', serif",
+      letterSpacing: "-0.02em"
+    }
+  }, "JUST IN"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "10px",
+      fontWeight: "700",
+      color: "#bbb",
+      letterSpacing: "0.3em",
+      textTransform: "uppercase"
+    }
+  }, "LOOK")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#fff",
+      border: "1.5px solid #ebebeb",
+      borderRadius: "16px",
+      padding: "32px",
+      width: "100%",
+      maxWidth: "380px",
+      boxShadow: "0 4px 24px rgba(0,0,0,0.06)"
+    }
+  }, /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontSize: "20px",
+      fontWeight: "900",
+      color: "#111",
+      letterSpacing: "-0.02em",
+      margin: "0 0 6px"
+    }
+  }, "Connexion"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: "13px",
+      color: "#bbb",
+      margin: "0 0 24px",
+      fontWeight: "500"
+    }
+  }, "Acc\xE8s r\xE9serv\xE9 \xE0 l'\xE9quipe Just In Look"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "12px"
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "email",
+    value: email,
+    onChange: e => setEmail(e.target.value),
+    onKeyDown: e => e.key === "Enter" && handleLogin(),
+    placeholder: "votre@email.com",
+    style: {
+      width: "100%",
+      background: "#fafafa",
+      border: "1.5px solid #ebebeb",
+      borderRadius: "8px",
+      color: "#111",
+      padding: "12px 14px",
+      fontSize: "14px",
+      fontFamily: "'DM Sans', sans-serif",
+      boxSizing: "border-box",
+      outline: "none"
+    }
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "password",
+    value: password,
+    onChange: e => setPassword(e.target.value),
+    onKeyDown: e => e.key === "Enter" && handleLogin(),
+    placeholder: "Mot de passe",
+    style: {
+      width: "100%",
+      background: "#fafafa",
+      border: "1.5px solid #ebebeb",
+      borderRadius: "8px",
+      color: "#111",
+      padding: "12px 14px",
+      fontSize: "14px",
+      fontFamily: "'DM Sans', sans-serif",
+      boxSizing: "border-box",
+      outline: "none"
+    }
+  }), error && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "12px",
+      color: "#ef4444",
+      fontWeight: "600",
+      background: "#FEF2F2",
+      border: "1px solid #FECACA",
+      borderRadius: "8px",
+      padding: "8px 12px"
+    }
+  }, error), /*#__PURE__*/React.createElement("button", {
+    onClick: handleLogin,
+    disabled: loading,
+    style: {
+      width: "100%",
+      background: loading ? "#ccc" : "#111",
+      border: "none",
+      color: "#fff",
+      padding: "13px",
+      borderRadius: "8px",
+      cursor: loading ? "not-allowed" : "pointer",
+      fontSize: "13px",
+      fontWeight: "800",
+      fontFamily: "'DM Sans', sans-serif",
+      marginTop: "4px"
+    }
+  }, loading ? "Connexion..." : "Se connecter →"))));
+}
+
+/* ─────────────── PROFILE PICKER (après auth) ─────────────── */
+
+function ProfilePicker(_ref15) {
+  let {
+    onPick,
+    onLogout,
+    isMobile
+  } = _ref15;
+  const [hovered, setHovered] = useState(null);
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      minHeight: "100vh",
+      background: "#f7f7f5",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      fontFamily: "'DM Sans', sans-serif",
+      padding: isMobile ? "24px 16px" : "48px 40px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "baseline",
+      gap: "8px",
+      marginBottom: isMobile ? "28px" : "36px"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: isMobile ? "20px" : "24px",
+      fontWeight: "900",
+      color: "#111",
+      fontFamily: "'Playfair Display', serif",
+      letterSpacing: "-0.02em"
+    }
+  }, "JUST IN"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "10px",
+      fontWeight: "700",
+      color: "#bbb",
+      letterSpacing: "0.3em",
+      textTransform: "uppercase"
+    }
+  }, "LOOK")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: isMobile ? "24px" : "32px",
+      textAlign: "center"
+    }
+  }, /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontSize: isMobile ? "22px" : "28px",
+      fontWeight: "900",
+      color: "#111",
+      letterSpacing: "-0.03em",
+      margin: "0 0 6px"
+    }
+  }, "Qui \xEAtes-vous ?"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: "13px",
+      color: "#bbb",
+      margin: 0,
+      fontWeight: "500"
+    }
+  }, "S\xE9lectionnez votre profil pour continuer")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: isMobile ? "10px" : "12px",
+      flexWrap: "wrap",
+      justifyContent: "center",
+      maxWidth: "720px"
+    }
+  }, USERS.map(user => /*#__PURE__*/React.createElement("div", {
+    key: user.id,
+    onClick: () => onPick(user),
+    onMouseEnter: () => setHovered(user.id),
+    onMouseLeave: () => setHovered(null),
+    style: {
+      background: hovered === user.id ? user.bg : "#fff",
+      border: "1.5px solid " + (hovered === user.id ? user.color : "#ebebeb"),
+      borderRadius: "14px",
+      padding: isMobile ? "14px 12px" : "16px 20px",
+      cursor: "pointer",
+      transition: "all 0.15s ease",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: "8px",
+      width: isMobile ? "calc(50% - 5px)" : "160px",
+      boxShadow: hovered === user.id ? "0 4px 14px rgba(0,0,0,0.07)" : "0 1px 3px rgba(0,0,0,0.04)",
+      transform: hovered === user.id ? "translateY(-2px)" : "none"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: "48px",
+      height: "48px",
+      borderRadius: "50%",
+      background: user.bg,
+      border: "1.5px solid " + user.color,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "16px",
+      fontWeight: "900",
+      color: user.color
+    }
+  }, user.avatar)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "center"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "14px",
+      fontWeight: "800",
+      color: "#111",
+      letterSpacing: "-0.01em"
+    }
+  }, user.name), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "11px",
+      fontWeight: "600",
+      color: "#bbb",
+      marginTop: "2px"
+    }
+  }, user.role))))), /*#__PURE__*/React.createElement("button", {
+    onClick: onLogout,
+    style: {
+      marginTop: "32px",
+      background: "none",
+      border: "none",
+      color: "#bbb",
+      fontSize: "12px",
+      fontWeight: "600",
+      cursor: "pointer",
+      fontFamily: "'DM Sans', sans-serif"
+    }
+  }, "Se d\xE9connecter"));
+}
+
+/* ─────────────── HELPERS DB ─────────────── */
+
+function dbToCard(row) {
+  return {
+    id: row.id,
+    title: row.title || "",
+    stage: row.stage || "idea",
+    assignees: row.assignees || [],
+    date: row.date || "",
+    time: row.time || "",
+    caption: row.caption || "",
+    recipe: row.recipe || "",
+    link: row.link || "",
+    refs: row.refs || "",
+    shopping: row.shopping || "",
+    platform: row.platform || "instagram",
+    priority: row.priority || "normal",
+    blocked: row.blocked || false,
+    blockReason: row.block_reason || "",
+    comments: row.comments || "",
+    deadlines: row.deadlines || {}
+  };
+}
+function cardToDb(card) {
+  return {
+    title: card.title,
+    stage: card.stage,
+    assignees: card.assignees || [],
+    date: card.date || "",
+    time: card.time || "",
+    caption: card.caption || "",
+    recipe: card.recipe || "",
+    link: card.link || "",
+    refs: card.refs || "",
+    shopping: card.shopping || "",
+    platform: card.platform || "instagram",
+    priority: card.priority || "normal",
+    blocked: card.blocked || false,
+    block_reason: card.blockReason || "",
+    comments: card.comments || "",
+    deadlines: card.deadlines || {}
+  };
+}
+function dbToArchived(row) {
+  return {
+    id: row.id,
+    title: row.title || "",
+    stage: row.stage || "scheduled",
+    assignees: row.assignees || [],
+    date: row.date || "",
+    caption: row.caption || "",
+    recipe: row.recipe || "",
+    link: row.link || "",
+    shopping: row.shopping || "",
+    platform: row.platform || "instagram",
+    archivedAt: row.archived_at || ""
+  };
+}
+
+/* ─────────────── useIsMobile ─────────────── */
+
+function useIsMobile() {
+  let breakpoint = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 900;
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth <= breakpoint : false);
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= breakpoint);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [breakpoint]);
+  return isMobile;
+}
+
+/* ─────────────── APP ─────────────── */
+
+function App() {
+  const isMobile = useIsMobile();
+  const [session, setSession] = useState(null);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [view, setView] = useState("dashboard");
+  const [cards, setCards] = useState([]);
+  const [archived, setArchived] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [weeklyGoal, setWeeklyGoal] = useState(12);
+  const [pipelineFilter, setPipelineFilter] = useState(null);
+  const [focusConfig, setFocusConfig] = useState(null);
+  const [dashboardCard, setDashboardCard] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [showEventModal, setShowEventModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saveIndicator, setSaveIndicator] = useState(false);
+  useEffect(() => {
+    if (isMobile) setSidebarOpen(false);
+  }, [isMobile]);
+
+  // Check session on mount
+  useEffect(() => {
+    sb.auth.getSession().then(_ref16 => {
+      let {
+        data: {
+          session
+        }
+      } = _ref16;
+      setSession(session);
+      setAuthChecked(true);
+    });
+    const {
+      data: {
+        subscription
+      }
+    } = sb.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Load data from Supabase when authenticated
+  useEffect(() => {
+    if (!session) {
+      setLoading(false);
+      return;
+    }
+    loadAllData();
+  }, [session]);
+  async function loadAllData() {
+    setLoading(true);
+    try {
+      const [cardsRes, eventsRes, archivedRes] = await Promise.all([sb.from("cards").select("*").order("created_at", {
+        ascending: true
+      }), sb.from("events").select("*").order("date", {
+        ascending: true
+      }), sb.from("archived").select("*").order("created_at", {
+        ascending: false
+      })]);
+      if (cardsRes.data) setCards(cardsRes.data.length > 0 ? cardsRes.data.map(dbToCard) : INITIAL_CARDS);
+      if (eventsRes.data) setEvents(eventsRes.data.length > 0 ? eventsRes.data : INITIAL_EVENTS);
+      if (archivedRes.data) setArchived(archivedRes.data.map(dbToArchived));
+
+      // If no cards exist yet, seed with initial data
+      if (cardsRes.data && cardsRes.data.length === 0) {
+        const toInsert = INITIAL_CARDS.map(c => cardToDb(c));
+        const {
+          data: inserted
+        } = await sb.from("cards").insert(toInsert).select();
+        if (inserted) setCards(inserted.map(dbToCard));
+        await sb.from("events").insert(INITIAL_EVENTS.map(e => ({
+          id: e.id,
+          title: e.title,
+          date: e.date,
+          type: e.type,
+          assignee: e.assignee
+        })));
+        setEvents(INITIAL_EVENTS);
+      }
+    } catch (e) {
+      console.error("Load error", e);
+    }
+    setLoading(false);
+  }
+
+  // Wrap setCards to also persist to Supabase
+  async function updateCard(card) {
+    setCards(p => p.map(c => c.id === card.id ? card : c));
+    showSave();
+    await sb.from("cards").update(cardToDb(card)).eq("id", card.id);
+  }
+  async function addCard(stageId, title) {
+    const defaults = STAGE_DEFAULTS[stageId] || [];
+    const newCard = {
+      title,
+      stage: stageId,
+      assignees: defaults,
+      date: "",
+      time: "",
+      caption: "",
+      recipe: "",
+      link: "",
+      refs: "",
+      shopping: "",
+      platform: "instagram",
+      priority: "normal",
+      blocked: false,
+      block_reason: "",
+      comments: "",
+      deadlines: {}
+    };
+    const {
+      data
+    } = await sb.from("cards").insert([newCard]).select().single();
+    if (data) {
+      setCards(p => [...p, dbToCard(data)]);
+      showSave();
+    }
+  }
+  async function deleteCard(id) {
+    setCards(p => p.filter(c => c.id !== id));
+    showSave();
+    await sb.from("cards").delete().eq("id", id);
+  }
+  async function archiveCard(card) {
+    const archivedRow = {
+      id: card.id,
+      title: card.title,
+      stage: card.stage,
+      assignees: card.assignees || [],
+      date: card.date || "",
+      caption: card.caption || "",
+      recipe: card.recipe || "",
+      link: card.link || "",
+      shopping: card.shopping || "",
+      platform: card.platform || "instagram",
+      archived_at: new Date().toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      })
+    };
+    setCards(p => p.filter(c => c.id !== card.id));
+    setArchived(p => [dbToArchived(archivedRow), ...p]);
+    showSave();
+    await sb.from("cards").delete().eq("id", card.id);
+    await sb.from("archived").insert([archivedRow]);
+  }
+  async function unarchiveCard(card) {
+    const newCard = cardToDb({
+      ...card,
+      stage: "scheduled",
+      blocked: false,
+      blockReason: "",
+      comments: "",
+      deadlines: {},
+      time: "",
+      refs: ""
+    });
+    const {
+      data
+    } = await sb.from("cards").insert([newCard]).select().single();
+    if (data) {
+      setCards(p => [...p, dbToCard(data)]);
+      setArchived(p => p.filter(x => x.id !== card.id));
+      await sb.from("archived").delete().eq("id", card.id);
+      showSave();
+    }
+  }
+  async function addEvent(ev) {
+    setEvents(p => [...p, ev]);
+    showSave();
+    await sb.from("events").insert([{
+      id: ev.id,
+      title: ev.title,
+      date: ev.date,
+      type: ev.type,
+      assignee: ev.assignee
+    }]);
+  }
+  async function deleteEvent(id) {
+    setEvents(p => p.filter(e => e.id !== id));
+    await sb.from("events").delete().eq("id", id);
+  }
+  async function advanceCard(card) {
+    const si = STAGES.findIndex(s => s.id === card.stage);
+    if (si >= STAGES.length - 1) return;
+    const nextStage = STAGES[si + 1].id;
+    const defaults = STAGE_DEFAULTS[nextStage] || [];
+    const updated = {
+      ...card,
+      stage: nextStage,
+      assignees: defaults.length >= 1 ? defaults : card.assignees || []
+    };
+    await updateCard(updated);
+  }
+  async function rewindCard(card) {
+    const si = STAGES.findIndex(s => s.id === card.stage);
+    if (si <= 0) return;
+    const updated = {
+      ...card,
+      stage: STAGES[si - 1].id
+    };
+    await updateCard(updated);
+  }
+  function showSave() {
+    setSaveIndicator(true);
+    setTimeout(() => setSaveIndicator(false), 1800);
+  }
+
+  // Wrap setCards for Pipeline (which expects setCards directly)
+  function setCardsWrapper(fn) {
+    setCards(prev => {
+      const next = typeof fn === "function" ? fn(prev) : fn;
+      // Detect changes and sync to Supabase
+      next.forEach(card => {
+        const old = prev.find(c => c.id === card.id);
+        if (!old) {
+          // new card — handled by addCard
+        } else if (JSON.stringify(old) !== JSON.stringify(card)) {
+          sb.from("cards").update(cardToDb(card)).eq("id", card.id);
+        }
+      });
+      showSave();
+      return next;
+    });
+  }
+  function setArchivedWrapper(fn) {
+    setArchived(prev => {
+      const next = typeof fn === "function" ? fn(prev) : fn;
+      return next;
+    });
+  }
+  function setEventsWrapper(fn) {
+    setEvents(prev => {
+      const next = typeof fn === "function" ? fn(prev) : fn;
+      return next;
+    });
+  }
+  const archiveCount = archived.length;
+  const stock = cards.filter(c => c.stage === "to_validate" || c.stage === "scheduled").length;
+  const stockAlert = stock < 3;
+  if (!authChecked) return /*#__PURE__*/React.createElement("div", {
+    style: {
+      minHeight: "100vh",
+      background: "#f7f7f5",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "13px",
+      color: "#bbb",
+      fontFamily: "'DM Sans', sans-serif",
+      fontWeight: "600"
+    }
+  }, "Chargement..."));
+  if (!session) return /*#__PURE__*/React.createElement(AuthScreen, {
+    isMobile: isMobile,
+    onAuth: s => setSession(s)
+  });
+  if (!currentUser) return /*#__PURE__*/React.createElement(ProfilePicker, {
+    isMobile: isMobile,
+    onPick: u => setCurrentUser(u),
+    onLogout: async () => {
+      await sb.auth.signOut();
+      setSession(null);
+      setCurrentUser(null);
+    }
+  });
+  if (loading) return /*#__PURE__*/React.createElement("div", {
+    style: {
+      minHeight: "100vh",
+      background: "#f7f7f5",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "12px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "22px",
+      fontWeight: "900",
+      color: "#111",
+      fontFamily: "'Playfair Display', serif"
+    }
+  }, "JUST IN ", /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "10px",
+      fontWeight: "700",
+      color: "#bbb",
+      letterSpacing: "0.3em"
+    }
+  }, "LOOK")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "13px",
+      color: "#bbb",
+      fontFamily: "'DM Sans', sans-serif",
+      fontWeight: "600"
+    }
+  }, "Chargement des donn\xE9es..."));
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: isMobile ? "column" : "row",
+      height: "100vh",
+      overflow: "hidden",
+      background: "#f7f7f5",
+      fontFamily: "'DM Sans', sans-serif"
+    }
+  }, /*#__PURE__*/React.createElement("link", {
+    href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap",
+    rel: "stylesheet"
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: isMobile ? "100%" : sidebarOpen ? "290px" : "82px",
+      flexShrink: 0,
+      background: "#fff",
+      borderRight: isMobile ? "none" : "1.5px solid #ebebeb",
+      borderBottom: isMobile ? "1.5px solid #ebebeb" : "none",
+      display: "flex",
+      flexDirection: isMobile ? "row" : "column",
+      transition: "width 0.2s ease",
+      overflow: "hidden"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "26px 22px 22px",
+      borderBottom: "1.5px solid #ebebeb",
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      minHeight: "82px"
+    }
+  }, !isMobile && sidebarOpen ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "22px",
+      fontWeight: "900",
+      color: "#111",
+      letterSpacing: "-0.01em",
+      fontFamily: "'Playfair Display', serif",
+      whiteSpace: "nowrap"
+    }
+  }, "JUST IN"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "12px",
+      fontWeight: "700",
+      color: "#bbb",
+      letterSpacing: "0.32em",
+      textTransform: "uppercase",
+      whiteSpace: "nowrap"
+    }
+  }, "LOOK"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "9px",
+      fontWeight: "700",
+      color: saveIndicator ? "#7DC9A8" : "transparent",
+      transition: "color 0.3s",
+      whiteSpace: "nowrap"
+    }
+  }, "\u2713 Sauvegard\xE9")) : /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "20px",
+      fontWeight: "900",
+      color: "#111",
+      fontFamily: "'Playfair Display', serif"
+    }
+  }, "J")), /*#__PURE__*/React.createElement("nav", {
+    style: {
+      flex: 1,
+      padding: isMobile ? "10px 8px" : "18px 12px",
+      display: isMobile ? "flex" : "block",
+      overflowX: isMobile ? "auto" : "visible"
+    }
+  }, NAV.map(item => {
+    const isActive = view === item.id || view === "focus" && item.id === "dashboard";
+    const badge = item.id === "archives" && archiveCount > 0 ? archiveCount : null;
+    const alert = item.id === "dashboard" && stockAlert;
+    return /*#__PURE__*/React.createElement("button", {
+      key: item.id,
+      onClick: () => setView(item.id),
+      style: {
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        gap: "14px",
+        padding: isMobile ? "12px 14px" : sidebarOpen ? "14px 16px" : "12px",
+        borderRadius: "10px",
+        border: "none",
+        background: isActive ? "#f0f0ee" : "transparent",
+        cursor: "pointer",
+        marginBottom: "2px",
+        transition: "background 0.12s",
+        justifyContent: isMobile || sidebarOpen ? "flex-start" : "center",
+        position: "relative"
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: "15px",
+        flexShrink: 0
+      }
+    }, item.emoji), (isMobile || sidebarOpen) && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: "13px",
+        fontWeight: isActive ? "800" : "600",
+        color: isActive ? "#111" : "#666",
+        whiteSpace: "nowrap"
+      }
+    }, item.label), badge && /*#__PURE__*/React.createElement("span", {
+      style: {
+        marginLeft: "auto",
+        fontSize: "10px",
+        fontWeight: "800",
+        background: "#f0f0f0",
+        color: "#888",
+        padding: "1px 7px",
+        borderRadius: "20px"
+      }
+    }, badge), alert && /*#__PURE__*/React.createElement("span", {
+      style: {
+        marginLeft: "auto",
+        width: "8px",
+        height: "8px",
+        borderRadius: "50%",
+        background: "#ef4444",
+        flexShrink: 0
+      }
+    })), !isMobile && !sidebarOpen && alert && /*#__PURE__*/React.createElement("span", {
+      style: {
+        position: "absolute",
+        top: "6px",
+        right: "6px",
+        width: "7px",
+        height: "7px",
+        borderRadius: "50%",
+        background: "#ef4444"
+      }
+    }));
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "10px 8px",
+      borderTop: isMobile ? "none" : "1.5px solid #ebebeb",
+      borderLeft: isMobile ? "1.5px solid #ebebeb" : "none"
+    }
+  }, sidebarOpen ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      padding: "6px 8px",
+      borderRadius: "10px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: "28px",
+      height: "28px",
+      borderRadius: "50%",
+      background: currentUser.bg,
+      border: "1.5px solid " + currentUser.color,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexShrink: 0
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "10px",
+      fontWeight: "900",
+      color: currentUser.color
+    }
+  }, currentUser.avatar)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      minWidth: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "12px",
+      fontWeight: "800",
+      color: "#111",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis"
+    }
+  }, currentUser.name), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: "10px",
+      color: "#bbb",
+      fontWeight: "600"
+    }
+  }, currentUser.role)), /*#__PURE__*/React.createElement("button", {
+    onClick: async () => {
+      await sb.auth.signOut();
+      setSession(null);
+      setCurrentUser(null);
+    },
+    title: "Se d\xE9connecter",
+    style: {
+      background: "none",
+      border: "none",
+      color: "#ccc",
+      cursor: "pointer",
+      fontSize: "13px",
+      padding: "2px",
+      flexShrink: 0
+    }
+  }, "\u21C4")) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "center"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    onClick: async () => {
+      await sb.auth.signOut();
+      setSession(null);
+      setCurrentUser(null);
+    },
+    title: "Se d\xE9connecter",
+    style: {
+      width: "28px",
+      height: "28px",
+      borderRadius: "50%",
+      background: currentUser.bg,
+      border: "1.5px solid " + currentUser.color,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      cursor: "pointer"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "10px",
+      fontWeight: "900",
+      color: currentUser.color
+    }
+  }, currentUser.avatar)))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "6px 8px 10px",
+      display: isMobile ? "none" : "block"
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setSidebarOpen(o => !o),
+    style: {
+      width: "100%",
+      padding: "6px",
+      borderRadius: "10px",
+      border: "none",
+      background: "transparent",
+      cursor: "pointer",
+      fontSize: "14px",
+      color: "#bbb",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: sidebarOpen ? "flex-end" : "center"
+    }
+  }, sidebarOpen ? "←" : "→"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      overflowY: "auto",
+      overflowX: isMobile ? "auto" : "hidden",
+      display: "flex",
+      justifyContent: "center"
+    }
+  }, view === "focus" && focusConfig && (() => {
+    const thisMonth = new Date().getMonth();
+    const thisYear = new Date().getFullYear();
+    const focusCards = cards.filter(c => {
+      if (!focusConfig.stages.includes(c.stage)) return false;
+      if (focusConfig.stages.length === 1 && focusConfig.stages[0] === "scheduled") {
+        return c.date && new Date(c.date).getMonth() === thisMonth && new Date(c.date).getFullYear() === thisYear;
+      }
+      return true;
+    });
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        padding: "32px 36px",
+        maxWidth: "860px"
+      }
+    }, /*#__PURE__*/React.createElement("button", {
+      onClick: () => setView("dashboard"),
+      style: {
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "6px",
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        fontSize: "12px",
+        fontWeight: "700",
+        color: "#bbb",
+        fontFamily: "'DM Sans', sans-serif",
+        marginBottom: "24px",
+        letterSpacing: "0.04em"
+      }
+    }, "\u2190 Tableau de bord"), /*#__PURE__*/React.createElement("h2", {
+      style: {
+        fontSize: "28px",
+        fontWeight: "900",
+        color: "#111",
+        letterSpacing: "-0.04em",
+        margin: "0 0 4px"
+      }
+    }, focusConfig.label), /*#__PURE__*/React.createElement("p", {
+      style: {
+        color: "#bbb",
+        fontSize: "13px",
+        margin: "0 0 28px",
+        fontWeight: "600"
+      }
+    }, focusConfig.desc, " \xB7 ", focusCards.length, " vid\xE9o", focusCards.length > 1 ? "s" : ""), focusCards.length === 0 ? /*#__PURE__*/React.createElement("div", {
+      style: {
+        textAlign: "center",
+        padding: "60px 0",
+        color: "#ccc"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: "36px",
+        marginBottom: "12px"
+      }
+    }, "\uD83C\uDF89"), /*#__PURE__*/React.createElement("p", {
+      style: {
+        fontSize: "14px",
+        fontWeight: "600"
+      }
+    }, "Aucune vid\xE9o dans cette cat\xE9gorie.")) : /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "8px"
+      }
+    }, focusCards.map(card => {
+      const stage = STAGES.find(s => s.id === card.stage);
+      const tags = STAGE_TAGS[card.stage] || {};
+      return /*#__PURE__*/React.createElement("div", {
+        key: card.id,
+        style: {
+          background: "#fff",
+          border: "1.5px solid #ebebeb",
+          borderLeft: "3.5px solid " + (stage?.color || "#ddd"),
+          borderRadius: "12px",
+          padding: "16px 20px",
+          cursor: "pointer",
+          transition: "all 0.12s"
+        },
+        onMouseEnter: e => {
+          e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.06)";
+          e.currentTarget.style.borderColor = stage?.color || "#ddd";
+        },
+        onMouseLeave: e => {
+          e.currentTarget.style.boxShadow = "none";
+          e.currentTarget.style.borderColor = "#ebebeb";
+          e.currentTarget.style.borderLeftColor = stage?.color || "#ddd";
+        },
+        onClick: () => {
+          setDashboardCard(card);
+          setView("pipeline");
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          gap: "12px"
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          flex: 1
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          fontSize: "14px",
+          fontWeight: "800",
+          color: "#111",
+          letterSpacing: "-0.02em",
+          marginBottom: "6px"
+        }
+      }, card.title), /*#__PURE__*/React.createElement("div", {
+        style: {
+          display: "flex",
+          gap: "6px",
+          flexWrap: "wrap",
+          alignItems: "center"
+        }
+      }, /*#__PURE__*/React.createElement("span", {
+        style: {
+          fontSize: "10px",
+          fontWeight: "700",
+          background: stage?.bg,
+          color: stage?.color,
+          padding: "2px 8px",
+          borderRadius: "20px"
+        }
+      }, stage?.emoji, " ", stage?.label), (card.assignees || []).map(a => /*#__PURE__*/React.createElement("span", {
+        key: a,
+        style: {
+          fontSize: "10px",
+          fontWeight: "700",
+          background: "#f0f0f0",
+          color: "#666",
+          padding: "2px 7px",
+          borderRadius: "20px"
+        }
+      }, a)), card.date && /*#__PURE__*/React.createElement("span", {
+        style: {
+          fontSize: "13px",
+          color: "#bbb",
+          fontWeight: "600"
+        }
+      }, new Date(card.date + "T12:00:00").toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long"
+      }), card.time ? " · " + card.time : ""))), /*#__PURE__*/React.createElement("div", {
+        style: {
+          display: "flex",
+          gap: "6px",
+          fontSize: "14px"
+        }
+      }, tags.recipe && card.recipe && /*#__PURE__*/React.createElement("span", {
+        title: "Fiche recette"
+      }, "\uD83C\uDF7D\uFE0F"), tags.caption && card.caption && /*#__PURE__*/React.createElement("span", {
+        title: "Caption"
+      }, "\u270D\uFE0F"), tags.link && card.link && /*#__PURE__*/React.createElement("span", {
+        title: "Lien"
+      }, "\uD83D\uDD17"), card.comments && /*#__PURE__*/React.createElement("span", {
+        title: "Commentaires"
+      }, "\uD83D\uDCAC"))), card.shopping && /*#__PURE__*/React.createElement("div", {
+        style: {
+          marginTop: "10px",
+          fontSize: "12px",
+          color: "#c47a00",
+          fontWeight: "600"
+        }
+      }, "\uD83D\uDED2 Liste de courses remplie"));
+    })));
+  })(), view === "dashboard" && /*#__PURE__*/React.createElement(Dashboard, {
+    cards: cards,
+    events: events,
+    weeklyGoal: weeklyGoal,
+    setWeeklyGoal: setWeeklyGoal,
+    onNavigate: (v, focus) => {
+      if (v === "focus") {
+        setFocusConfig(focus);
+        setView("focus");
+      } else {
+        setView(v);
+        setPipelineFilter(focus);
+      }
+    },
+    onOpenCard: c => {
+      setView("pipeline");
+      setDashboardCard(c);
+    },
+    user: currentUser,
+    isMobile: isMobile
+  }), view === "pipeline" && /*#__PURE__*/React.createElement(Pipeline, {
+    cards: cards,
+    setCards: setCardsWrapper,
+    archived: archived,
+    setArchived: setArchivedWrapper,
+    stageFilter: pipelineFilter,
+    onClearFilter: () => setPipelineFilter(null),
+    initialOpenCard: dashboardCard,
+    onClearOpenCard: () => setDashboardCard(null),
+    onAddEvent: () => setShowEventModal(true),
+    isMobile: isMobile,
+    onUpdateCard: updateCard,
+    onAddCard: addCard,
+    onDeleteCard: deleteCard,
+    onArchiveCard: archiveCard,
+    onAdvanceCard: advanceCard,
+    onRewindCard: rewindCard
+  }), view === "calendar" && /*#__PURE__*/React.createElement(CalendarView, {
+    cards: cards,
+    events: events,
+    setEvents: setEventsWrapper,
+    isMobile: isMobile,
+    onAddEvent: addEvent
+  }), view === "archives" && /*#__PURE__*/React.createElement(Archives, {
+    archived: archived,
+    setArchived: setArchivedWrapper,
+    setCards: setCardsWrapper,
+    onUnarchive: unarchiveCard,
+    isMobile: isMobile
+  })), showEventModal && /*#__PURE__*/React.createElement(AddEventModal, {
+    onClose: () => setShowEventModal(false),
+    onAdd: addEvent
+  }));
+}
+ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
+  </script>
 </body>
 </html>
